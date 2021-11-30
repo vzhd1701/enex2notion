@@ -1,0 +1,208 @@
+name: release_github
+
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 'Release after build'
+        required: true
+        default: 'no'
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+env:
+  BUILD_PYTHON_VERSION: 3.9
+  BUILD_POETRY_VERSION: 1.1.11
+  PACKAGE_NAME: enex2notion
+
+jobs:
+  build_python:
+    runs-on: ubuntu-latest
+    env:
+      POETRY_VIRTUALENVS_CREATE: false
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python ${{ env.BUILD_PYTHON_VERSION }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.BUILD_PYTHON_VERSION }}
+
+      - name: Set up Poetry ${{ env.BUILD_POETRY_VERSION }}
+        uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: ${{ env.BUILD_POETRY_VERSION }}
+
+      - name: Export requirements
+        run: poetry export --without-hashes -f requirements.txt --output requirements.txt
+
+      - name: Build project for distribution
+        run: poetry build
+
+      - name: Save release python requirements
+        uses: actions/upload-artifact@v2
+        with:
+          name: release_dist_reqs
+          path: requirements.txt
+
+      - name: Save release python packages
+        uses: actions/upload-artifact@v2
+        with:
+          name: release_dist_python
+          path: dist
+
+  build_binaries_mac:
+    needs: build_python
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get tag version
+        run: echo "TAG_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Load release python requirements
+        uses: actions/download-artifact@v2
+        with:
+          name: release_dist_reqs
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          pip install -r requirements.txt
+
+      - name: Build with pyinstaller for macos
+        run: pyinstaller ${{ env.PACKAGE_NAME }}.spec
+
+      - name: Make directory for bins
+        run: mkdir dist_bin
+
+      - name: Pack up binary for macos
+        run: zip -q -j dist_bin/bin_${{ env.PACKAGE_NAME }}_${TAG_VERSION}_macos_x64.zip ./dist/${{ env.PACKAGE_NAME }}
+
+      - name: Save release binaries for macos x64
+        uses: actions/upload-artifact@v2
+        with:
+          name: release_dist_bin_macos_x64
+          path: dist_bin
+
+  build_binaries:
+    needs: build_python
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [windows, linux]
+        arch: [32, 64]
+        include:
+          - os: windows
+            image: "cdrx/pyinstaller-windows"
+          - os: linux
+            image: "cdrx/pyinstaller-linux"
+          - arch: 32
+            arch_code: "x86"
+            image_tag: "python3-32bit"
+          - arch: 64
+            arch_code: "x64"
+            image_tag: "python3"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Get tag version
+        run: echo "TAG_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Load release python requirements
+        uses: actions/download-artifact@v2
+        with:
+          name: release_dist_reqs
+
+      - name: Build binary for ${{ matrix.os }} ${{ matrix.arch_code }}
+        env:
+          IMAGE: ${{ matrix.image }}
+          IMAGE_TAG: ${{ matrix.image_tag }}
+        run: docker run -v "$(pwd):/src/" ${IMAGE}:${IMAGE_TAG}
+
+      - name: Make directory for bins
+        run: mkdir dist_bin
+
+      - name: Pack up binary for windows
+        if: matrix.os == 'windows'
+        env:
+          BUILD_ARCH: ${{ matrix.arch_code }}
+        run: zip -q -j dist_bin/bin_${{ env.PACKAGE_NAME }}_${TAG_VERSION}_win_${BUILD_ARCH}.zip ./dist/windows/${{ env.PACKAGE_NAME }}.exe
+
+      - name: Pack up binary for linux
+        if: matrix.os == 'linux'
+        env:
+          BUILD_ARCH: ${{ matrix.arch_code }}
+        run: tar -zcvf dist_bin/bin_${{ env.PACKAGE_NAME }}_${TAG_VERSION}_linux_${BUILD_ARCH}.tar.gz -C ./dist/linux ${{ env.PACKAGE_NAME }}
+
+      - name: Save release binaries for ${{ matrix.os }} ${{ matrix.arch_code }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: release_dist_bin_${{ matrix.os }}_${{ matrix.arch_code }}
+          path: dist_bin
+
+  release:
+    if: github.event_name == 'push' || github.event.inputs.release == 'yes'
+    needs: [build_binaries, build_binaries_mac]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Extract release changelog
+        run: |
+          sed "0,/### \[/d;/### \[/Q" CHANGELOG.md > release_changelog
+          echo -n "**Full Changelog**: " >> release_changelog
+          sed -n 's/### \[.*\](\(.*\)) (.*/\1/p' CHANGELOG.md | head -1 >> release_changelog
+
+      - name: Load release python packages
+        uses: actions/download-artifact@v2
+        with:
+          name: release_dist_python
+          path: dist
+
+      - name: Load release binaries for linux x86
+        uses: actions/download-artifact@v2
+        with:
+          name: release_dist_bin_linux_x86
+          path: dist
+
+      - name: Load release binaries for linux x64
+        uses: actions/download-artifact@v2
+        with:
+          name: release_dist_bin_linux_x64
+          path: dist
+
+      - name: Load release binaries for windows x86
+        uses: actions/download-artifact@v2
+        with:
+          name: release_dist_bin_windows_x86
+          path: dist
+
+      - name: Load release binaries for windows x64
+        uses: actions/download-artifact@v2
+        with:
+          name: release_dist_bin_windows_x64
+          path: dist
+
+      - name: Load release binaries for macos x64
+        uses: actions/download-artifact@v2
+        with:
+          name: release_dist_bin_macos_x64
+          path: dist
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          bodyFile: release_changelog
+          artifacts: "dist/*"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          draft: false

@@ -1,0 +1,61 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '*.*'
+    paths-ignore:
+      - "*.md"
+      - ".pre-commit-config.yaml"
+      - "pyproject.toml"
+      - "**/version.py"
+
+env:
+  BUILD_POETRY_VERSION: 1.1.11
+  POETRY_VIRTUALENVS_CREATE: false
+  PACKAGE_NAME: enex2notion
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.6, 3.7, 3.8, 3.9]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+           python-version: ${{ matrix.python-version }}
+
+      - name: Set up Poetry ${{ env.BUILD_POETRY_VERSION }}
+        uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: ${{ env.BUILD_POETRY_VERSION }}
+
+      - name: Set up Poetry cache for Python dependencies
+        uses: actions/cache@v2
+        if: startsWith(runner.os, 'Linux')
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: ${{ runner.os }}-poetry-
+
+      - name: Install dependencies
+        run: |
+            poetry install
+
+      - name: Run tests
+        env:
+          NOTION_TEST_TOKEN: ${{ secrets.NOTION_TEST_TOKEN }}
+        run: |
+            poetry run pytest --cov-report=xml --cov=${{ env.PACKAGE_NAME }} tests/
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        if: matrix.python-version == '3.9'
