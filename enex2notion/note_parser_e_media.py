@@ -1,10 +1,10 @@
-import base64
 import hashlib
 import logging
 import mimetypes
 import re
 
 from bs4 import Tag
+from w3lib.url import parse_data_uri
 
 from enex2notion.enex_parser import EvernoteResource
 from enex2notion.notion_blocks_embeddable import NotionImageEmbedBlock
@@ -61,16 +61,15 @@ def parse_img(element: Tag):
 
 
 def _parse_img_resource(bin_src: str):
-    imd_bin = base64.b64decode(bin_src.split("base64,")[1])
-    img_md5 = hashlib.md5(imd_bin).hexdigest()
-    img_mime = re.match("^data:(.*?);", bin_src).group(1)
-    img_ext = mimetypes.guess_extension(img_mime) or ""
+    img_data = parse_data_uri(bin_src)
+    img_md5 = hashlib.md5(img_data.data).hexdigest()
+    img_ext = mimetypes.guess_extension(img_data.media_type) or ""
 
     return EvernoteResource(
-        data_bin=imd_bin,
-        size=len(imd_bin),
+        data_bin=img_data.data,
+        size=len(img_data.data),
         md5=img_md5,
-        mime=img_mime,
+        mime=img_data.media_type,
         file_name=f"{img_md5}{img_ext}",
     )
 

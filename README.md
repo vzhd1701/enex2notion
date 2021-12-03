@@ -127,3 +127,4 @@ Uploading 'Test note' |####                            | 40/304
 - [python-dateutil](https://github.com/dateutil/dateutil)
 - [progress](http://github.com/verigak/progress/)
 - [requests](https://github.com/psf/requests)
+- [w3lib](https://github.com/scrapy/w3lib)

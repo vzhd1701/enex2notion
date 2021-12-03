@@ -43,6 +43,20 @@ def smallest_gif():
 
 
 @pytest.fixture()
+def smallest_svg():
+    svg_bin = b"<svg xmlns='http://www.w3.org/2000/svg'>"
+    svg_md5 = md5(svg_bin).hexdigest()
+
+    return EvernoteResource(
+        data_bin=svg_bin,
+        size=len(svg_bin),
+        md5=svg_md5,
+        mime="image/svg+xml",
+        file_name="smallest.svg",
+    )
+
+
+@pytest.fixture()
 def tiny_file():
     bin = b"0"
     bin_md5 = md5(bin).hexdigest()

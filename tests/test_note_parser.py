@@ -235,6 +235,30 @@ def test_embedded_inline_img_bin(smallest_gif):
     assert result_block.height is None
 
 
+def test_embedded_inline_img_svg(smallest_svg):
+    test_note = parse_html(
+        f'<img width="100px" '
+        f'src="data:{smallest_svg.mime},'
+        f'{smallest_svg.data_bin.decode("utf-8")}" />'
+    )
+
+    result_block = parse_note_dom(test_note)[0]
+
+    assert result_block == NotionImageBlock(
+        md5_hash=smallest_svg.md5,
+        width=100,
+        resource=EvernoteResource(
+            data_bin=smallest_svg.data_bin,
+            size=smallest_svg.size,
+            md5=smallest_svg.md5,
+            mime=smallest_svg.mime,
+            file_name=f"{smallest_svg.md5}.svg",
+        ),
+    )
+    assert result_block.width == 100
+    assert result_block.height is None
+
+
 def test_embedded_inline_img_url():
     test_note = parse_html('<img src="https://google.com/image.jpg" />')
 
