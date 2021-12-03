@@ -494,12 +494,29 @@ def test_extract_embedded():
         '<td><en-media type="image/png" hash="test" /></td>'
         "</tr>"
         "</table>"
+        "</div>"
     )
 
     result_blocks = parse_note_dom(test_note)
 
     assert len(result_blocks) == 2
     assert result_blocks[1] == NotionImageBlock(md5_hash="test")
+
+
+def test_extract_embedded_skip_webclip(caplog):
+    test_note = parse_html(
+        '<div style="--en-clipped-content:fullPage">'
+        '<en-media type="image/png" hash="test" />'
+        "</div>"
+    )
+
+    with caplog.at_level(logging.DEBUG):
+        result_blocks = parse_note_dom(test_note)
+
+    log_messages = "\n".join([record.message for record in caplog.records])
+
+    assert "Skipping webclip block" in log_messages
+    assert result_blocks == []
 
 
 def test_unknown_block():

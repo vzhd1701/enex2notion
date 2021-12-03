@@ -25,7 +25,8 @@ def extract_nested_blocks(root: Tag):
 
     for child in root.children:
         # may be strings inside root (hopefully only empty linebreaks)
-        if not isinstance(child, Tag):
+        # also skip special blocks, like weblicp with images
+        if not isinstance(child, Tag) or _is_div_special_block(child):
             continue
 
         # tables, pictures (or files), encrypted blocks
