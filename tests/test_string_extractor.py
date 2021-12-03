@@ -283,3 +283,17 @@ def test_extract_text_color_background_highlight_unknown():
     assert extract_string(test_note) == TextProp(
         text="glurpurle", properties=[["glurpurle"]]
     )
+
+
+def test_extract_text_color_inversion():
+    test_note = parse_html(
+        "<div>"
+        '<span style="color:rgb(229, 158, 37);--inversion-type-color:simple;">'
+        "yellow"
+        "</span>"
+        "</div>"
+    )
+
+    assert extract_string(test_note) == TextProp(
+        text="yellow", properties=[["yellow", [["h", "yellow"]]]]
+    )

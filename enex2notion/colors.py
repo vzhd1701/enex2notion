@@ -75,6 +75,8 @@ COLORS_BG = MappingProxyType(
 
 
 def extract_color(style):
+    style = style.replace("inversion-type-color", "")
+
     color_map = {
         ".*en-highlight:(.*?);": _extract_background_text,
         r".*background-color:\s*(.*?);": _extract_background_rgb,
