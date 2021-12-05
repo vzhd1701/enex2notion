@@ -1,3 +1,9 @@
+### [0.1.2](https://github.com/vzhd1701/enex2notion/compare/v0.1.1...v0.1.2) (2021-12-05)
+
+### Bug Fixes
+
+- add proper css style parsing for colors ([ffbbd69](https://github.com/vzhd1701/enex2notion/commit/ffbbd69a9f532fad5a35821375a3a4e3d5923f5a))
+
 ### [0.1.1](https://github.com/vzhd1701/enex2notion/compare/v0.1.0...v0.1.1) (2021-12-03)
 
 ### Bug Fixes
