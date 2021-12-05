@@ -1,3 +1,9 @@
+### [0.1.3](https://github.com/vzhd1701/enex2notion/compare/v0.1.2...v0.1.3) (2021-12-05)
+
+### Bug Fixes
+
+- add % escaping to prevent progress bar crash ([9c24c94](https://github.com/vzhd1701/enex2notion/commit/9c24c94eaaba43a3c0d38bbd5d2244a7b496c83b))
+
 ### [0.1.2](https://github.com/vzhd1701/enex2notion/compare/v0.1.1...v0.1.2) (2021-12-05)
 
 ### Bug Fixes
