@@ -128,3 +128,4 @@ Uploading 'Test note' |####                            | 40/304
 - [progress](http://github.com/verigak/progress/)
 - [requests](https://github.com/psf/requests)
 - [w3lib](https://github.com/scrapy/w3lib)
+- [tinycss2](https://github.com/Kozea/tinycss2)

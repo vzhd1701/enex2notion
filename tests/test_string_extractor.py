@@ -191,12 +191,41 @@ def test_extract_text_color_black():
     test_note = parse_html(
         '<div><span style="color:rgb(51, 51, 51);">black</span></div>'
         '<div><span style="color:rgb(255, 255, 255);">white</span></div>'
+        '<div><span style="background-color:rgb(51, 51, 51);">black</span></div>'
+        '<div><span style="background-color:rgb(255, 255, 255);">white</span></div>'
     )
 
     assert extract_string(test_note) == TextProp(
-        text="black\nwhite",
-        properties=[["black\nwhite"]],
+        text="black\nwhite\nblack\nwhite",
+        properties=[["black\nwhite\nblack\nwhite"]],
     )
+
+
+def test_extract_text_color_strange():
+    test_note = parse_html(
+        '<div><span style="color:magentific;">strange</span></div>'
+        '<div><span style="background-color:magentific;">strange</span></div>'
+    )
+
+    assert extract_string(test_note) == TextProp(
+        text="strange\nstrange",
+        properties=[["strange\nstrange"]],
+    )
+
+
+def test_extract_text_color_empty():
+    test_note = parse_html('<div><span style="color:;--boop">empty</span></div>')
+
+    assert extract_string(test_note) == TextProp(
+        text="empty",
+        properties=[["empty"]],
+    )
+
+
+def test_extract_text_bad_css():
+    test_note = parse_html('<div><span style="--boop">bad</span></div>')
+
+    assert extract_string(test_note) == TextProp(text="bad", properties=[["bad"]])
 
 
 def test_extract_text_color_near():

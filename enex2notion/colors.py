@@ -1,7 +1,11 @@
+import contextlib
 import re
 from functools import partial
 from math import sqrt
 from types import MappingProxyType
+
+from tinycss2 import parse_declaration_list
+from tinycss2.color3 import parse_color
 
 HEX_BASE = 16
 
@@ -60,6 +64,8 @@ COLORS_FG = MappingProxyType(
 
 COLORS_BG = MappingProxyType(
     {
+        "black_background": (0, 0, 0),
+        "white_background": (255, 255, 255),
         "gray_background": (241, 241, 239),
         "brown_background": (244, 238, 238),
         "orange_background": (255, 209, 176),
@@ -74,27 +80,54 @@ COLORS_BG = MappingProxyType(
 )
 
 
-def extract_color(style):
-    style = style.replace("inversion-type-color", "")
-
+def extract_color(style):  # noqa: WPS210
     color_map = {
-        ".*en-highlight:(.*?);": _extract_background_text,
-        r".*background-color:\s*(.*?);": _extract_background_rgb,
-        r".*color:\s*(.*?);": _extract_foreground_rgb,
+        ".*en-highlight$": _extract_background_text,
+        "^background-color$": _extract_background_rgb,
+        "^color$": _extract_foreground_rgb,
     }
 
-    for regex, color_extract_func in color_map.items():
-        match = re.match(regex, style)
-        if match:
-            color = color_extract_func(match.group(1))
-            if color:
-                return color
+    for s_name, s_value in _parse_style(style).items():
+        for regex, color_extract_func in color_map.items():
+            if re.match(regex, s_name):
+                color = color_extract_func(s_value)
+                if color:
+                    return color
 
     return None
 
 
-def _extract_background_text(color):
-    color = f"{color}_background"
+def _parse_style(style):
+    result_styles = {}
+
+    declarations = (
+        d
+        for d in parse_declaration_list(style, skip_comments=True, skip_whitespace=True)
+        if d.type == "declaration"
+    )
+
+    for dec in declarations:
+        with contextlib.suppress(StopIteration):
+            result_styles[dec.lower_name] = next(
+                v for v in dec.value if v.type not in {"whitespace", "comment"}
+            )
+
+    return result_styles
+
+
+def _parse_css_color(color_token):
+    rgba = parse_color(color_token)
+
+    if rgba is None:
+        return None
+
+    float_to_int_rgb = 255
+
+    return tuple(int(c * float_to_int_rgb) for c in (rgba[:3]))
+
+
+def _extract_background_text(color_token):
+    color = f"{color_token.value}_background"
 
     if color == "green_background":
         color = "teal_background"
@@ -105,17 +138,28 @@ def _extract_background_text(color):
     return None
 
 
-def _extract_background_rgb(rgb_str):
-    rbg_bg = _parse_rgb(rgb_str)
+def _extract_background_rgb(color_token):
+    rbg_bg = _parse_css_color(color_token)
+
+    if rbg_bg is None:
+        return None
 
     if EVERNOTE_STANDARD_BG.get(rbg_bg):
         return EVERNOTE_STANDARD_BG[rbg_bg]
+    else:
+        color = _closest_color(COLORS_BG, rbg_bg)
 
-    return _closest_color(COLORS_BG, rbg_bg)
+    if color not in {"black_background", "white_background"}:
+        return color
+
+    return None
 
 
-def _extract_foreground_rgb(rgb_str):
-    rbg_fg = _parse_rgb(rgb_str)
+def _extract_foreground_rgb(color_token):
+    rbg_fg = _parse_css_color(color_token)
+
+    if rbg_fg is None:
+        return None
 
     if EVERNOTE_STANDARD_FG.get(rbg_fg):
         color = EVERNOTE_STANDARD_FG[rbg_fg]
@@ -128,15 +172,6 @@ def _extract_foreground_rgb(rgb_str):
     return None
 
 
-def _parse_rgb(color: str):
-    if "rgb" in color:
-        color_str = re.match(r"^rgb\((.*?)\)$", color).group(1)
-        return tuple(map(int, color_str.split(",")))
-
-    color_str = re.match("^#(.*?)$", color).group(1)
-    return tuple(map(base16, _chunk_string(color_str, 2)))
-
-
 def _closest_color(colors, rgb):  # noqa: WPS210
     r, g, b = rgb
     color_diffs = []
@@ -147,8 +182,3 @@ def _closest_color(colors, rgb):  # noqa: WPS210
         )
         color_diffs.append((color_diff, color_name))
     return min(color_diffs)[1]
-
-
-def _chunk_string(string: str, max_length: int):
-    chunk_steps = range(0, len(string), max_length)
-    return [string[i : i + max_length] for i in chunk_steps]
