@@ -119,6 +119,32 @@ def test_list_ul_nested():
     assert parse_note_dom(test_note) == expected
 
 
+def test_list_ul_strings_inside(caplog):
+    test_note = parse_html("<ul><li><div>test1</div></li>test2</ul>")
+
+    with caplog.at_level(logging.WARNING):
+        result_blocks = parse_note_dom(test_note)
+
+    assert "Non-empty string element inside list" in caplog.records[0].message
+    assert result_blocks == [
+        NotionBulletedListBlock(text_prop=TextProp("test1")),
+        NotionTextBlock(text_prop=TextProp("test2")),
+    ]
+
+
+def test_list_ul_unexpected_inside(caplog):
+    test_note = parse_html("<ul><li><div>test1</div></li><span>test2</span></ul>")
+
+    with caplog.at_level(logging.WARNING):
+        result_blocks = parse_note_dom(test_note)
+
+    assert "Unexpected tag inside list" in caplog.records[0].message
+    assert result_blocks == [
+        NotionBulletedListBlock(text_prop=TextProp("test1")),
+        NotionTextBlock(text_prop=TextProp("test2")),
+    ]
+
+
 def test_table():
     test_note = parse_html(
         "<table>"

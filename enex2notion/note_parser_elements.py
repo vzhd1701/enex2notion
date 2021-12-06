@@ -1,7 +1,8 @@
 import logging
 
-from bs4 import Tag
+from bs4 import NavigableString, Tag
 
+from enex2notion.notion_blocks import NotionTextBlock, TextProp
 from enex2notion.notion_blocks_header import (
     NotionHeaderBlock,
     NotionSubheaderBlock,
@@ -36,9 +37,25 @@ def parse_list(element: Tag):
             nodes[-1].children.extend(parse_list(subelement))
 
         else:
-            logger.warning(f"Unexpected tag inside list: {subelement.name}")
+            li_odd_item = _parse_odd_item(subelement)
+            if li_odd_item is None:
+                continue
+
+            nodes.append(li_odd_item)
 
     return nodes
+
+
+def _parse_odd_item(element: Tag):
+    if isinstance(element, NavigableString):
+        if not element.text.strip():
+            return None
+
+        logger.warning("Non-empty string element inside list")
+        return NotionTextBlock(text_prop=TextProp(text=element.text.strip()))
+
+    logger.warning(f"Unexpected tag inside list: {element.name}, parsing as text")
+    return NotionTextBlock(text_prop=extract_string(element))
 
 
 def _parse_list_item(list_item, is_ul):
