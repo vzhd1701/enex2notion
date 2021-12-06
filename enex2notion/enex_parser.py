@@ -1,5 +1,6 @@
 import base64
 import hashlib
+import logging
 import mimetypes
 import uuid
 from collections import defaultdict
@@ -10,6 +11,8 @@ from typing import List
 from xml.etree import ElementTree
 
 from dateutil.parser import isoparse
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -137,7 +140,11 @@ def _convert_resource(resource_raw):
         ext = mimetypes.guess_extension(resource_raw["mime"]) or ""
         file_name = f"{uuid.uuid4()}{ext}"
 
-    data_bin = base64.b64decode(resource_raw["data"]["#text"])
+    if resource_raw["data"].get("#text"):
+        data_bin = base64.b64decode(resource_raw["data"]["#text"])
+    else:
+        logger.warning("Empty resource")
+        data_bin = b""
     data_md5 = hashlib.md5(data_bin).hexdigest()
 
     return EvernoteResource(
