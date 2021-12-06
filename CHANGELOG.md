@@ -1,3 +1,10 @@
+### [0.1.5](https://github.com/vzhd1701/enex2notion/compare/v0.1.4...v0.1.5) (2021-12-06)
+
+### Bug Fixes
+
+- parse unexpected elements in lists as text ([952feb2](https://github.com/vzhd1701/enex2notion/commit/952feb2b6905ecd65e0c2ba491bef16cd2f24ea9))
+- skip webclip notes before parsing ([9af7912](https://github.com/vzhd1701/enex2notion/commit/9af79120707d17a6410085305b54c8ea97a8ede9))
+
 ### [0.1.4](https://github.com/vzhd1701/enex2notion/compare/v0.1.3...v0.1.4) (2021-12-06)
 
 ### Bug Fixes
