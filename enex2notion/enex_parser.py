@@ -2,6 +2,7 @@ import base64
 import hashlib
 import logging
 import mimetypes
+import re
 import uuid
 from collections import defaultdict
 from dataclasses import dataclass
@@ -33,6 +34,7 @@ class EvernoteNote(object):
     tags: List[str]
     author: str
     url: str
+    is_webclip: bool
     resources: List[EvernoteResource]
     _note_hash: str = None
 
@@ -125,7 +127,21 @@ def _process_note(note_raw: dict):
         tags=note_tags,
         author=note_attrs.get("author", ""),
         url=note_attrs.get("source-url", ""),
+        is_webclip=_is_webclip(note_raw),
         resources=resources,
+    )
+
+
+def _is_webclip(note_raw: dict):
+    note_attrs = note_raw.get("note-attributes") or {}
+
+    if "web.clip" in note_attrs.get("source", ""):
+        return True
+    if "webclipper" in note_attrs.get("source-application", ""):
+        return True
+
+    return bool(
+        re.match('<div[^>]+style="[^"]+en-clipped-content[^"]*"', note_raw["content"])
     )
 
 

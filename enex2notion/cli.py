@@ -51,6 +51,10 @@ class EnexUploader(object):
                 logger.debug(f"Skipping note '{note.title}' (already uploaded)")
                 continue
 
+            if note.is_webclip:
+                logger.warning(f"Skipping note '{note.title}' [WEBCLIPS NOT SUPPORTED]")
+                continue
+
             note_blocks = parse_note(note, self.add_meta)
             if not note_blocks:
                 continue

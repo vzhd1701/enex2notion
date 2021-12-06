@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 
 from enex2notion.cli import cli
@@ -18,7 +20,7 @@ def mock_api(mocker):
 @pytest.fixture()
 def fake_note_factory(mocker):
     mock_iter = mocker.patch("enex2notion.cli.iter_notes")
-    mock_iter.return_value = [mocker.MagicMock(note_hash="fake_hash")]
+    mock_iter.return_value = [mocker.MagicMock(note_hash="fake_hash", is_webclip=False)]
 
     return mock_iter
 
@@ -101,8 +103,8 @@ def test_done_file(mock_api, fake_note_factory, mocker, fs):
     fs.create_file("done.txt")
 
     fake_note_factory.return_value = [
-        mocker.MagicMock(note_hash="fake_hash1"),
-        mocker.MagicMock(note_hash="fake_hash2"),
+        mocker.MagicMock(note_hash="fake_hash1", is_webclip=False),
+        mocker.MagicMock(note_hash="fake_hash2", is_webclip=False),
     ]
 
     cli(["--token", "fake_token", "--done-file", "done.txt", "fake.enex"])
@@ -141,6 +143,20 @@ def test_bad_file(mock_api, fake_note_factory):
     cli(["fake.enex"])
 
     mock_api["parse_note"].assert_called_once()
+
+
+def test_webclip(mock_api, fake_note_factory, mocker, caplog):
+    fake_note_factory.return_value = [
+        mocker.MagicMock(note_hash="fake_hash1", is_webclip=True),
+    ]
+
+    with caplog.at_level(logging.WARNING):
+        cli(["fake.enex"])
+
+    assert "[WEBCLIPS NOT SUPPORTED]" in caplog.text
+
+    mock_api["upload_note"].assert_not_called()
+    mock_api["parse_note"].assert_not_called()
 
 
 def test_cli_main_import():

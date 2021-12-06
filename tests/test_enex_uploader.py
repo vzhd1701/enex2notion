@@ -111,6 +111,7 @@ def test_upload_note(notion_test_page):
         tags=[],
         author="",
         url="",
+        is_webclip=False,
         resources=[],
     )
 
@@ -135,6 +136,7 @@ def test_upload_note_with_meta(notion_test_page):
         tags=[],
         author="",
         url="",
+        is_webclip=False,
         resources=[],
     )
 
@@ -165,6 +167,7 @@ def test_upload_note_with_file(notion_test_page, tiny_file):
         tags=[],
         author="",
         url="",
+        is_webclip=False,
         resources=[tiny_file],
     )
 
@@ -190,6 +193,7 @@ def test_upload_note_db(notion_test_page):
         tags=[],
         author="",
         url="",
+        is_webclip=False,
         resources=[],
     )
 

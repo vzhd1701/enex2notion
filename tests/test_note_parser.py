@@ -578,6 +578,7 @@ def test_bad_resource(caplog):
         tags=[],
         author="",
         url="",
+        is_webclip=False,
         resources=[],
     )
 
@@ -597,6 +598,7 @@ def test_bad_note(caplog):
         tags=[],
         author="",
         url="",
+        is_webclip=False,
         resources=[],
     )
 
@@ -616,6 +618,7 @@ def test_note_with_meta():
         tags=["tag1", "tag2"],
         author="",
         url="https://google.com",
+        is_webclip=False,
         resources=[],
     )
 

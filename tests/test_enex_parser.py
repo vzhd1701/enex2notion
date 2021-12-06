@@ -35,6 +35,7 @@ def test_iter_notes_single(fs):
             tags=[],
             author="",
             url="",
+            is_webclip=False,
             resources=[],
         ),
     ]
@@ -90,6 +91,7 @@ def test_iter_notes_single_tags(fs):
             tags=["tag1", "tag2"],
             author="",
             url="",
+            is_webclip=False,
             resources=[],
         ),
     ]
@@ -123,6 +125,7 @@ def test_iter_notes_single_one_tag(fs):
             tags=["tag1"],
             author="",
             url="",
+            is_webclip=False,
             resources=[],
         ),
     ]
@@ -137,8 +140,8 @@ def test_iter_notes_single_attrs(fs):
         <created>20211118T085332Z</created>
         <updated>20211118T085920Z</updated>
         <note-attributes>
-        <author>test@user.com</author>
-        <source-url>https://google.com</source-url>
+            <author>test@user.com</author>
+            <source-url>https://google.com</source-url>
         </note-attributes>
         <content>test</content>
       </note>
@@ -157,6 +160,110 @@ def test_iter_notes_single_attrs(fs):
             tags=[],
             author="test@user.com",
             url="https://google.com",
+            is_webclip=False,
+            resources=[],
+        ),
+    ]
+
+
+def test_iter_notes_webclip1(fs):
+    test_enex = """<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">
+    <en-export export-date="20211218T085932Z" application="Evernote" version="10.25.6">
+      <note>
+        <title>test1</title>
+        <created>20211118T085332Z</created>
+        <updated>20211118T085920Z</updated>
+        <note-attributes>
+            <source>web.clip</source>
+        </note-attributes>
+        <content>test</content>
+      </note>
+    </en-export>
+    """
+    fs.create_file("test.enex", contents=test_enex)
+
+    notes = list(iter_notes(Path("test.enex")))
+
+    assert notes == [
+        EvernoteNote(
+            title="test1",
+            created=datetime.datetime(2021, 11, 18, 8, 53, 32, tzinfo=tzutc()),
+            updated=datetime.datetime(2021, 11, 18, 8, 59, 20, tzinfo=tzutc()),
+            content="test",
+            tags=[],
+            author="",
+            url="",
+            is_webclip=True,
+            resources=[],
+        ),
+    ]
+
+
+def test_iter_notes_webclip2(fs):
+    test_enex = """<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">
+    <en-export export-date="20211218T085932Z" application="Evernote" version="10.25.6">
+      <note>
+        <title>test1</title>
+        <created>20211118T085332Z</created>
+        <updated>20211118T085920Z</updated>
+        <note-attributes>
+            <source-application>webclipper.evernote</source-application>
+        </note-attributes>
+        <content>test</content>
+      </note>
+    </en-export>
+    """
+    fs.create_file("test.enex", contents=test_enex)
+
+    notes = list(iter_notes(Path("test.enex")))
+
+    assert notes == [
+        EvernoteNote(
+            title="test1",
+            created=datetime.datetime(2021, 11, 18, 8, 53, 32, tzinfo=tzutc()),
+            updated=datetime.datetime(2021, 11, 18, 8, 59, 20, tzinfo=tzutc()),
+            content="test",
+            tags=[],
+            author="",
+            url="",
+            is_webclip=True,
+            resources=[],
+        ),
+    ]
+
+
+def test_iter_notes_webclip_content(fs):
+    test_enex = """<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">
+    <en-export export-date="20211218T085932Z" application="Evernote" version="10.25.6">
+      <note>
+        <title>test1</title>
+        <created>20211118T085332Z</created>
+        <updated>20211118T085920Z</updated>
+        <note-attributes>
+        </note-attributes>
+        <content><![CDATA[
+        <div style="--en-clipped-content:article;">test</div>
+        ]]></content>
+      </note>
+    </en-export>
+    """
+    fs.create_file("test.enex", contents=test_enex)
+
+    notes = list(iter_notes(Path("test.enex")))
+
+    assert notes == [
+        EvernoteNote(
+            title="test1",
+            created=datetime.datetime(2021, 11, 18, 8, 53, 32, tzinfo=tzutc()),
+            updated=datetime.datetime(2021, 11, 18, 8, 59, 20, tzinfo=tzutc()),
+            content='<div style="--en-clipped-content:article;">test</div>',
+            tags=[],
+            author="",
+            url="",
+            is_webclip=True,
             resources=[],
         ),
     ]
@@ -197,6 +304,7 @@ def test_iter_notes_multi(fs):
             tags=[],
             author="",
             url="",
+            is_webclip=False,
             resources=[],
         ),
         EvernoteNote(
@@ -207,6 +315,7 @@ def test_iter_notes_multi(fs):
             tags=[],
             author="",
             url="",
+            is_webclip=False,
             resources=[],
         ),
     ]
@@ -259,6 +368,7 @@ def test_iter_notes_single_with_resource(fs):
             tags=[],
             author="",
             url="",
+            is_webclip=False,
             resources=[expected_resource],
         ),
     ]
@@ -306,6 +416,7 @@ def test_iter_notes_single_with_noname_resource(fs, mocker):
             tags=[],
             author="",
             url="",
+            is_webclip=False,
             resources=[
                 EvernoteResource(
                     data_bin=(
@@ -367,6 +478,7 @@ def test_iter_notes_single_with_empty_resource(fs, caplog):
             tags=[],
             author="",
             url="",
+            is_webclip=False,
             resources=[expected_resource],
         ),
     ]
