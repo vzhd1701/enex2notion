@@ -5,6 +5,7 @@ from bs4 import Tag
 
 from enex2notion.notion_blocks import NotionBookmarkBlock, NotionTextBlock
 from enex2notion.notion_blocks_container import NotionCodeBlock
+from enex2notion.notion_blocks_list import NotionTodoBlock
 from enex2notion.string_extractor import extract_string
 
 logger = logging.getLogger(__name__)
@@ -39,7 +40,14 @@ def parse_codeblock(element: Tag):
 
 
 def parse_text(element: Tag):
-    return NotionTextBlock(text_prop=extract_string(element))
+    element_text = extract_string(element)
+
+    todo = element.find("en-todo")
+    if todo:
+        is_checked = todo.get("checked") == "true"
+        return NotionTodoBlock(text_prop=element_text, checked=is_checked)
+
+    return NotionTextBlock(text_prop=element_text)
 
 
 def parse_richlink(element: Tag):

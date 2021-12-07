@@ -435,6 +435,18 @@ def test_text_block():
     assert parse_note_dom(test_note) == [NotionTextBlock(text_prop=TextProp("test1"))]
 
 
+def test_text_block_todo():
+    test_note = parse_html(
+        '<div><en-todo checked="false" />test1</div>'
+        '<div><en-todo checked="true" />test2</div>'
+    )
+
+    assert parse_note_dom(test_note) == [
+        NotionTodoBlock(text_prop=TextProp("test1"), checked=False),
+        NotionTodoBlock(text_prop=TextProp("test2"), checked=True),
+    ]
+
+
 def test_skipped_blocks():
     test_note = parse_html(
         '<div style="--en-task-group:true;" <!--irrelevant_attrs--> >'
