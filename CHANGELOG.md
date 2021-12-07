@@ -1,3 +1,9 @@
+### [0.1.6](https://github.com/vzhd1701/enex2notion/compare/v0.1.5...v0.1.6) (2021-12-07)
+
+### Bug Fixes
+
+- add todo parsing for paragraphs ([f3e9871](https://github.com/vzhd1701/enex2notion/commit/f3e987148c2e5dbd091eecc87e2252dfe46be64f))
+
 ### [0.1.5](https://github.com/vzhd1701/enex2notion/compare/v0.1.4...v0.1.5) (2021-12-06)
 
 ### Bug Fixes
