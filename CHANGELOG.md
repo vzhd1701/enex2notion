@@ -1,3 +1,9 @@
+### [0.1.7](https://github.com/vzhd1701/enex2notion/compare/v0.1.6...v0.1.7) (2021-12-13)
+
+### Bug Fixes
+
+- add proper parsing for missing note attributes ([562ddc6](https://github.com/vzhd1701/enex2notion/commit/562ddc640f559f53b8c4d2e004d41ae7bfe8c852))
+
 ### [0.1.6](https://github.com/vzhd1701/enex2notion/compare/v0.1.5...v0.1.6) (2021-12-07)
 
 ### Bug Fixes
