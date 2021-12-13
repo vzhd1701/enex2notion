@@ -6,7 +6,7 @@ import pytest
 from dateutil.tz import tzutc
 from notion.block import CalloutBlock, CollectionViewPageBlock, FileBlock, PageBlock
 
-from enex2notion.enex_parser import EvernoteNote
+from enex2notion.enex_types import EvernoteNote
 from enex2notion.enex_uploader import get_import_root, upload_note
 from enex2notion.enex_uploader_modes import get_notebook_database, get_notebook_page
 from enex2notion.note_parser import parse_note

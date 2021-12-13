@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-from enex2notion.enex_parser import EvernoteNote
+from enex2notion.enex_types import EvernoteNote
 from enex2notion.note_parser_dom import logger, parse_note_dom
 from enex2notion.notion_blocks import TextProp
 from enex2notion.notion_blocks_container import NotionCalloutBlock

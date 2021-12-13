@@ -5,64 +5,15 @@ import mimetypes
 import re
 import uuid
 from collections import defaultdict
-from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import List
 from xml.etree import ElementTree
 
 from dateutil.parser import isoparse
 
+from enex2notion.enex_types import EvernoteNote, EvernoteResource
+
 logger = logging.getLogger(__name__)
-
-
-@dataclass(frozen=True)
-class EvernoteResource(object):
-    data_bin: bytes
-    size: int
-    md5: str
-    mime: str
-    file_name: str
-
-
-@dataclass
-class EvernoteNote(object):
-    title: str
-    created: datetime
-    updated: datetime
-    content: str  # noqa: WPS110
-    tags: List[str]
-    author: str
-    url: str
-    is_webclip: bool
-    resources: List[EvernoteResource]
-    _note_hash: str = None
-
-    def resource_by_md5(self, md5):
-        for resource in self.resources:
-            if resource.md5 == md5:
-                return resource
-        return None
-
-    @property
-    def note_hash(self):
-        if self._note_hash is None:
-            hashable = [
-                self.title,
-                self.created.isoformat(),
-                self.updated.isoformat(),
-                self.content,
-                "".join(self.tags),
-                self.author,
-                self.url,
-            ]
-
-            s1_hash = hashlib.sha1()
-            for h in hashable:
-                s1_hash.update(h.encode("utf-8"))
-            self._note_hash = s1_hash.hexdigest()  # noqa: WPS601
-
-        return self._note_hash
 
 
 def iter_notes(enex_file: Path):
@@ -108,28 +59,37 @@ def _etree_to_dict(t):  # noqa: WPS210, WPS231, C901
 
 
 def _process_note(note_raw: dict):
+    if not note_raw:
+        note_raw = {}
+
     note_attrs = note_raw.get("note-attributes") or {}
 
     note_tags = note_raw.get("tag", [])
     if isinstance(note_tags, str):
         note_tags = [note_tags]
 
-    note_resources = note_raw.get("resource", [])
-    if isinstance(note_resources, dict):
-        note_resources = [note_resources]
-    resources = [_convert_resource(r) for r in note_resources]
+    now = datetime.now()
 
     return EvernoteNote(
-        title=note_raw["title"],
-        created=isoparse(note_raw["created"]),
-        updated=isoparse(note_raw["updated"]),
-        content=note_raw["content"],
+        title=note_raw.get("title", "Untitled"),
+        created=isoparse(note_raw.get("created", now.isoformat())),
+        updated=isoparse(note_raw.get("updated", now.isoformat())),
+        content=note_raw.get("content", ""),
         tags=note_tags,
         author=note_attrs.get("author", ""),
         url=note_attrs.get("source-url", ""),
         is_webclip=_is_webclip(note_raw),
-        resources=resources,
+        resources=_parse_resources(note_raw),
     )
+
+
+def _parse_resources(note_raw):
+    note_resources = note_raw.get("resource", [])
+
+    if isinstance(note_resources, dict):
+        note_resources = [note_resources]
+
+    return [_convert_resource(r) for r in note_resources]
 
 
 def _is_webclip(note_raw: dict):
@@ -141,7 +101,9 @@ def _is_webclip(note_raw: dict):
         return True
 
     return bool(
-        re.match('<div[^>]+style="[^"]+en-clipped-content[^"]*"', note_raw["content"])
+        re.match(
+            '<div[^>]+style="[^"]+en-clipped-content[^"]*"', note_raw.get("content", "")
+        )
     )
 
 

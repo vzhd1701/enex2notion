@@ -6,7 +6,7 @@ import re
 from bs4 import Tag
 from w3lib.url import parse_data_uri
 
-from enex2notion.enex_parser import EvernoteResource
+from enex2notion.enex_types import EvernoteResource
 from enex2notion.notion_blocks_embeddable import NotionImageEmbedBlock
 from enex2notion.notion_blocks_uploadable import (
     NotionAudioBlock,

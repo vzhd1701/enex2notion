@@ -5,7 +5,8 @@ from pathlib import Path
 import pytest
 from dateutil.tz import tzutc
 
-from enex2notion.enex_parser import EvernoteNote, EvernoteResource, iter_notes
+from enex2notion.enex_parser import iter_notes
+from enex2notion.enex_types import EvernoteNote, EvernoteResource
 
 
 def test_iter_notes_single(fs):
@@ -485,4 +486,35 @@ def test_iter_notes_single_with_empty_resource(fs, caplog):
     assert (
         notes[0].resource_by_md5("d41d8cd98f00b204e9800998ecf8427e")
         == expected_resource
+    )
+
+
+def test_iter_notes_single_empty(fs, mocker):
+    test_enex = """<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">
+    <en-export export-date="20211218T085932Z" application="Evernote" version="10.25.6">
+      <note>
+      </note>
+    </en-export>
+    """
+    fs.create_file("test.enex", contents=test_enex)
+
+    fake_now = datetime.datetime(2021, 11, 18, 8, 0, 0, tzinfo=tzutc())
+    mock_iter = mocker.patch("enex2notion.enex_parser.datetime")
+    mock_iter.now.return_value = fake_now
+
+    test_note = list(iter_notes(Path("test.enex")))[0]
+
+    assert test_note.note_hash == "479b590db4f4d8817f93d01af51f21c894815920"
+    assert test_note == EvernoteNote(
+        title="Untitled",
+        created=fake_now,
+        updated=fake_now,
+        content="",
+        tags=[],
+        author="",
+        url="",
+        is_webclip=False,
+        resources=[],
+        _note_hash="479b590db4f4d8817f93d01af51f21c894815920",
     )

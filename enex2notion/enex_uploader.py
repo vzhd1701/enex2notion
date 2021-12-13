@@ -1,7 +1,7 @@
 from notion.block import CollectionViewPageBlock, PageBlock
 from progress.bar import Bar
 
-from enex2notion.enex_parser import EvernoteNote
+from enex2notion.enex_types import EvernoteNote
 from enex2notion.note_parser_dom import logger
 from enex2notion.note_uploader import upload_block
 

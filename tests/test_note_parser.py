@@ -7,7 +7,7 @@ import pytest
 from bs4 import BeautifulSoup
 from dateutil.tz import tzutc
 
-from enex2notion.enex_parser import EvernoteNote, EvernoteResource
+from enex2notion.enex_types import EvernoteNote, EvernoteResource
 from enex2notion.note_parser import parse_note
 from enex2notion.note_parser_dom import parse_note_dom
 from enex2notion.notion_blocks import (

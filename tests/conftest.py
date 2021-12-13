@@ -8,7 +8,7 @@ import pytest
 from notion.block import PageBlock
 from notion.client import NotionClient
 
-from enex2notion.enex_parser import EvernoteResource
+from enex2notion.enex_types import EvernoteResource
 
 
 @pytest.fixture()

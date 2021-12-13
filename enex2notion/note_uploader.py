@@ -2,7 +2,7 @@ import requests
 from notion.block import FileBlock
 from notion.settings import S3_URL_PREFIX
 
-from enex2notion.enex_parser import EvernoteResource
+from enex2notion.enex_types import EvernoteResource
 from enex2notion.notion_blocks_uploadable import NotionUploadableBlock
 
 
