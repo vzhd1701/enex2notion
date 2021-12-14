@@ -67,6 +67,34 @@ def test_list_ul():
     ]
 
 
+def test_list_ul_ul():
+    test_note = parse_html(
+        "<ul><ul><li><div>test_sub</div></li></ul><li><div>test</div></li></ul>"
+    )
+
+    expected = [
+        NotionBulletedListBlock(text_prop=TextProp(text="")),
+        NotionBulletedListBlock(text_prop=TextProp("test")),
+    ]
+    expected[0].children = [NotionBulletedListBlock(text_prop=TextProp("test_sub"))]
+
+    assert parse_note_dom(test_note) == expected
+
+
+def test_list_ol_ol():
+    test_note = parse_html(
+        "<ol><ol><li><div>test_sub</div></li></ol><li><div>test</div></li></ol>"
+    )
+
+    expected = [
+        NotionNumberedListBlock(text_prop=TextProp(text="")),
+        NotionNumberedListBlock(text_prop=TextProp("test")),
+    ]
+    expected[0].children = [NotionNumberedListBlock(text_prop=TextProp("test_sub"))]
+
+    assert parse_note_dom(test_note) == expected
+
+
 def test_list_ul_todo():
     test_note = parse_html(
         (

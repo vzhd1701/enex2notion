@@ -34,6 +34,9 @@ def parse_list(element: Tag):
             nodes.append(li_item)
 
         elif subelement.name in {"ul", "ol"}:
+            if not nodes:
+                nodes.append(_make_blank_node(is_ul))
+
             nodes[-1].children.extend(parse_list(subelement))
 
         else:
@@ -44,6 +47,13 @@ def parse_list(element: Tag):
             nodes.append(li_odd_item)
 
     return nodes
+
+
+def _make_blank_node(is_ul):
+    if is_ul:
+        return NotionBulletedListBlock(text_prop=TextProp(text=""))
+
+    return NotionNumberedListBlock(text_prop=TextProp(text=""))
 
 
 def _parse_odd_item(element: Tag):
