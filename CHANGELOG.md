@@ -1,3 +1,9 @@
+### [0.1.8](https://github.com/vzhd1701/enex2notion/compare/v0.1.7...v0.1.8) (2021-12-14)
+
+### Bug Fixes
+
+- handle embedded lists at the start of other lists ([f3b83ac](https://github.com/vzhd1701/enex2notion/commit/f3b83ace963ede55a40e520bcbc0138624e67ce9))
+
 ### [0.1.7](https://github.com/vzhd1701/enex2notion/compare/v0.1.6...v0.1.7) (2021-12-13)
 
 ### Bug Fixes
