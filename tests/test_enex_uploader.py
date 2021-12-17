@@ -102,6 +102,22 @@ def test_import_root_new(notion_test_page, runner_id, caplog):
 
 
 @pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+def test_empty_database_cleanup(notion_test_page, runner_id):
+    test_import_title = f"Evernote ENEX Import (TEST {runner_id})"
+
+    root = get_import_root(notion_test_page._client, test_import_title)
+
+    root.children.add_new(CollectionViewPageBlock)
+
+    get_notebook_database(root, "test_database")
+
+    assert len(root.children) == 1
+    assert root.children[0].title == "test_database"
+
+    root.remove(permanently=True)
+
+
+@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
 def test_upload_note(notion_test_page):
     test_note = EvernoteNote(
         title="test1",

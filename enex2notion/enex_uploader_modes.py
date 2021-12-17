@@ -20,6 +20,8 @@ def _get_existing_notebook_page(root, title):
 
 
 def get_notebook_database(root, title):
+    _cleanup_empty_databases(root)
+
     existing = _get_existing_notebook_database(root, title)
     if existing is not None:
         return existing
@@ -35,13 +37,14 @@ def get_notebook_database(root, title):
             "collection", parent=cvb, schema=schema
         )
     )
-    cvb.title = title
 
     view = cvb.views.add_new(view_type="list")
 
     # Set properties display order and visibility options
     view.set("format.list_properties", properties_order)
     cvb.collection.set("format.collection_page_properties", properties_order)
+
+    cvb.title = title
 
     return cvb
 
@@ -79,6 +82,14 @@ def _get_existing_notebook_database(root, title):
         child.collection.set(f"schema.{tag_col_id}.options", [])
 
     return child
+
+
+def _cleanup_empty_databases(root):
+    collections = (c for c in root.children if isinstance(c, CollectionViewPageBlock))
+
+    for c in collections:
+        if c.collection is None or not c.title:
+            c.remove(permanently=True)
 
 
 def _properties_order(schema, *fields):
