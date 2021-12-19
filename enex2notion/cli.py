@@ -164,8 +164,10 @@ def parse_args(argv):
 
 
 def _setup_logging(is_verbose):
-    if is_verbose:
-        logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
-    else:
-        logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+    logging.basicConfig(format="%(levelname)s: %(message)s")
+
+    logging.getLogger("enex2notion").setLevel(
+        logging.DEBUG if is_verbose else logging.INFO
+    )
+
     logging.getLogger("urllib3").setLevel(logging.ERROR)
