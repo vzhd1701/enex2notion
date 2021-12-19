@@ -108,10 +108,9 @@ def _is_div_special_block(element: Tag):
     1. Code blocks
     2. Task
     3. Google drive links
-    4. Web Clipped content
     """
 
-    div_style = element.get("style")
+    div_style = element.get("style", "")
 
     if not div_style:
         return False
@@ -120,9 +119,6 @@ def _is_div_special_block(element: Tag):
         "en-codeblock",
         "en-task-group",
         "en-richlink",
-        "en-clipped-content",
     )
 
-    return any(
-        block_style in element.get("style", "") for block_style in special_block_styles
-    )
+    return any(block_style in div_style for block_style in special_block_styles)

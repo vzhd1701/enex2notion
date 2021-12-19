@@ -101,7 +101,7 @@ def _is_webclip(note_raw: dict):
         return True
 
     return bool(
-        re.match(
+        re.search(
             '<div[^>]+style="[^"]+en-clipped-content[^"]*"', note_raw.get("content", "")
         )
     )

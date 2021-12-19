@@ -19,10 +19,6 @@ def parse_div(element: Tag):
         logger.debug("Skipping task block")
         return None
 
-    if "en-clipped-content" in style:
-        logger.debug("Skipping webclip block")
-        return None
-
     # Google drive links
     if "en-richlink" in style:
         return parse_richlink(element)
