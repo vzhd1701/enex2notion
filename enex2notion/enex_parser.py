@@ -121,7 +121,7 @@ def _convert_resource(resource_raw):
     if resource_raw["data"].get("#text"):
         data_bin = base64.b64decode(resource_raw["data"]["#text"])
     else:
-        logger.warning("Empty resource")
+        logger.debug("Empty resource")
         data_bin = b""
     data_md5 = hashlib.md5(data_bin).hexdigest()
 

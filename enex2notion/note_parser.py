@@ -1,11 +1,14 @@
+import logging
+
 from bs4 import BeautifulSoup
 
 from enex2notion.enex_types import EvernoteNote
-from enex2notion.note_parser_dom import logger, parse_note_dom
+from enex2notion.note_parser_dom import parse_note_dom
 from enex2notion.notion_blocks import TextProp
 from enex2notion.notion_blocks_container import NotionCalloutBlock
 from enex2notion.notion_blocks_uploadable import NotionUploadableBlock
 
+logger = logging.getLogger(__name__)
 
 def parse_note(note: EvernoteNote, is_meta_attached: bool):
     logger.debug(f"Parsing note '{note.title}'...")
@@ -40,7 +43,7 @@ def _resolve_resources(note_blocks, note: EvernoteNote):
             block.resource = note.resource_by_md5(block.md5_hash)
 
             if block.resource is None:
-                logger.warning(f"Failed to resolve resource in '{note.title}'")
+                logger.debug(f"Failed to resolve resource in '{note.title}'")
                 note_blocks.remove(block)
 
 

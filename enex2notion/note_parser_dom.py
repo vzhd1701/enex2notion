@@ -54,7 +54,7 @@ def _append_branch(blocks, branch):
 
 def _parse_indented_group(child):
     if is_indentation_inconsistent(child):
-        logger.warning("Inconsistent indentation detected, parsing as plain")
+        logger.debug("Inconsistent indentation detected, parsing as plain")
         return parse_indented_plain(child)
 
     return parse_indented(child)
@@ -78,9 +78,9 @@ def _parse_block(element: Tag):
 
     if isinstance(element, NavigableString):
         if element.text.strip():
-            logger.warning("Non-empty string element in root")
+            logger.debug("Non-empty string element in root")
             return NotionTextBlock(text_prop=TextProp(text=element.text.strip()))
         return None
 
-    logger.warning(f"Unknown block: {element.name}, parsing as text")
+    logger.debug(f"Unknown block: {element.name}, parsing as text")
     return parse_text(element)

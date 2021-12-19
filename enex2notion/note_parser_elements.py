@@ -61,10 +61,10 @@ def _parse_odd_item(element: Tag):
         if not element.text.strip():
             return None
 
-        logger.warning("Non-empty string element inside list")
+        logger.debug("Non-empty string element inside list")
         return NotionTextBlock(text_prop=TextProp(text=element.text.strip()))
 
-    logger.warning(f"Unexpected tag inside list: {element.name}, parsing as text")
+    logger.debug(f"Unexpected tag inside list: {element.name}, parsing as text")
     return NotionTextBlock(text_prop=extract_string(element))
 
 
