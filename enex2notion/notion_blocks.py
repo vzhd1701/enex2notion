@@ -4,7 +4,11 @@ from notion import block
 class TextProp(object):
     def __init__(self, text, properties=None):
         self.text = text
+
         self.properties = [[text]] if properties is None else properties
+
+        if properties is None:
+            self.properties = [[text]] if text else []
 
     def __eq__(self, other):
         return self.text == other.text and self.properties == other.properties
@@ -27,6 +31,7 @@ class NotionBaseBlock(object):
         return (
             self.type == other.type
             and self.attrs == other.attrs
+            and self.properties == other.properties
             and self.children == other.children
         )
 

@@ -95,10 +95,10 @@ def test_import_root_new(notion_test_page, runner_id, caplog):
 
     root.remove(permanently=True)
 
-    with caplog.at_level(logging.INFO):
+    with caplog.at_level(logging.INFO, logger="enex2notion"):
         get_import_root(notion_test_page._client, test_import_title)
 
-    assert f"Creating '{test_import_title}' page..." in caplog.records[0].message
+    assert f"Creating '{test_import_title}' page..." in caplog.text
 
 
 @pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
@@ -131,7 +131,7 @@ def test_upload_note(notion_test_page):
         resources=[],
     )
 
-    note_blocks = parse_note(test_note, False)
+    note_blocks = parse_note(test_note)
 
     upload_note(notion_test_page, test_note, note_blocks)
 
@@ -140,33 +140,6 @@ def test_upload_note(notion_test_page):
     assert isinstance(uploaded_page, PageBlock)
     assert uploaded_page.title == "test1"
     assert uploaded_page.children[0].title == "test"
-
-
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
-def test_upload_note_with_meta(notion_test_page):
-    test_note = EvernoteNote(
-        title="test1",
-        created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
-        updated=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
-        content="<en-note><div>test</div></en-note>",
-        tags=[],
-        author="",
-        url="",
-        is_webclip=False,
-        resources=[],
-    )
-
-    note_blocks = parse_note(test_note, True)
-
-    upload_note(notion_test_page, test_note, note_blocks)
-
-    uploaded_page = notion_test_page.children[0]
-
-    assert isinstance(uploaded_page, PageBlock)
-    assert uploaded_page.title == "test1"
-    assert len(uploaded_page.children) == 2
-    assert isinstance(uploaded_page.children[0], CalloutBlock)
-    assert uploaded_page.children[1].title == "test"
 
 
 @pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
@@ -187,7 +160,7 @@ def test_upload_note_with_file(notion_test_page, tiny_file):
         resources=[tiny_file],
     )
 
-    note_blocks = parse_note(test_note, False)
+    note_blocks = parse_note(test_note)
 
     upload_note(notion_test_page, test_note, note_blocks)
 
@@ -215,7 +188,7 @@ def test_upload_note_db(notion_test_page):
 
     test_database = get_notebook_database(notion_test_page, "test_database")
 
-    note_blocks = parse_note(test_note, False)
+    note_blocks = parse_note(test_note)
 
     upload_note(test_database, test_note, note_blocks)
 

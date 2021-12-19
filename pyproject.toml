@@ -40,6 +40,8 @@ progress = "^1.6"
 requests = "^2.26.0"
 w3lib = "^1.22.0"
 tinycss2 = "^1.1.1"
+pdfkit = "^1.0.0"
+html5lib = "^1.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.3"

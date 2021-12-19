@@ -18,7 +18,7 @@ from enex2notion.notion_blocks import NotionDividerBlock, NotionTextBlock, TextP
 logger = logging.getLogger(__name__)
 
 
-def parse_note_dom(note: Tag):
+def parse_note_blocks(note: Tag):
     flatten_root(note)
 
     extract_nested_blocks(note)

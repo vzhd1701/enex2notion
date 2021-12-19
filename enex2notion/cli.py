@@ -35,9 +35,17 @@ class DoneFile(object):
 
 
 class EnexUploader(object):
-    def __init__(self, import_root, mode: str, done_file, add_meta: bool):
+    def __init__(
+        self,
+        import_root,
+        mode: str,
+        mode_webclips: str,
+        done_file: Path,
+        add_meta: bool,
+    ):
         self.import_root = import_root
         self.mode = mode
+        self.mode_webclips = mode_webclips
         self.done_hashes = DoneFile(done_file) if done_file else set()
         self.add_meta = add_meta
 
@@ -51,11 +59,9 @@ class EnexUploader(object):
                 logger.debug(f"Skipping note '{note.title}' (already uploaded)")
                 continue
 
-            if note.is_webclip:
-                logger.warning(f"Skipping note '{note.title}' [WEBCLIPS NOT SUPPORTED]")
-                continue
-
-            note_blocks = parse_note(note, self.add_meta)
+            note_blocks = parse_note(
+                note, mode_webclips=self.mode_webclips, is_add_meta=self.add_meta
+            )
             if not note_blocks:
                 continue
 
@@ -88,9 +94,15 @@ def cli(argv):
         )
         root = None
 
-    enex_uploader = EnexUploader(root, args.mode, args.done_file, args.add_meta)
+    enex_uploader = EnexUploader(
+        import_root=root,
+        mode=args.mode,
+        mode_webclips=args.mode_webclips,
+        done_file=args.done_file,
+        add_meta=args.add_meta,
+    )
 
-    for enex_input in map(Path, args.enex_input):
+    for enex_input in args.enex_input:
         if enex_input.is_dir():
             logger.info(f"Processing directory '{enex_input.name}'...")
             for enex_file in sorted(enex_input.glob("**/*.enex")):
@@ -133,6 +145,14 @@ def parse_args(argv):
                 " (default: DB)"
             ),
         },
+        "--mode-webclips": {
+            "choices": ["TXT", "PDF"],
+            "default": "TXT",
+            "help": (
+                "convert webclips to text (TXT) or pdf (PDF) before upload"
+                " (default: TXT)"
+            ),
+        },
         "--add-meta": {
             "action": "store_true",
             "default": False,
@@ -142,7 +162,7 @@ def parse_args(argv):
             ),
         },
         "--done-file": {
-            "type": str,
+            "type": Path,
             "metavar": "FILE",
             "help": "file for uploaded notes hashes to resume interrupted upload",
         },

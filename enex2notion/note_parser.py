@@ -3,37 +3,45 @@ import logging
 from bs4 import BeautifulSoup
 
 from enex2notion.enex_types import EvernoteNote
-from enex2notion.note_parser_dom import parse_note_dom
+from enex2notion.note_parser_blocks import parse_note_blocks
+from enex2notion.note_parser_webclip import parse_webclip
+from enex2notion.note_parser_webclip_pdf import parse_webclip_to_pdf
 from enex2notion.notion_blocks import TextProp
 from enex2notion.notion_blocks_container import NotionCalloutBlock
 from enex2notion.notion_blocks_uploadable import NotionUploadableBlock
 
 logger = logging.getLogger(__name__)
 
-def parse_note(note: EvernoteNote, is_meta_attached: bool):
-    logger.debug(f"Parsing note '{note.title}'...")
 
-    note_dom = BeautifulSoup(note.content, "html.parser").find("en-note")
-
+def parse_note(note: EvernoteNote, mode_webclips="TXT", is_add_meta=False):
+    note_dom = _parse_note_dom(note)
     if not note_dom:
-        logger.error(f"Failed to extract DOM from note '{note.title}'")
         return []
 
-    note_blocks = parse_note_dom(note_dom)
+    if note.is_webclip:
+        if mode_webclips == "PDF":
+            note_blocks = parse_webclip_to_pdf(note, note_dom)
+        else:
+            note_blocks = parse_webclip(note_dom)
+    else:
+        note_blocks = parse_note_blocks(note_dom)
+
+    if is_add_meta:
+        _add_meta(note_blocks, note)
 
     _resolve_resources(note_blocks, note)
 
-    # Add metadata block
-    if is_meta_attached:
-        note_blocks.insert(
-            0,
-            NotionCalloutBlock(
-                icon="ℹ️",
-                text_prop=TextProp(_get_note_meta(note)),
-            ),
-        )
-
     return note_blocks
+
+
+def _parse_note_dom(note: EvernoteNote):
+    note_dom = BeautifulSoup(note.content, "html5lib").find("en-note")
+
+    if not note_dom:
+        logger.error(f"Failed to extract DOM from note '{note.title}'")
+        return None
+
+    return note_dom
 
 
 def _resolve_resources(note_blocks, note: EvernoteNote):
@@ -45,6 +53,16 @@ def _resolve_resources(note_blocks, note: EvernoteNote):
             if block.resource is None:
                 logger.debug(f"Failed to resolve resource in '{note.title}'")
                 note_blocks.remove(block)
+
+
+def _add_meta(note_blocks, note: EvernoteNote):
+    note_blocks.insert(
+        0,
+        NotionCalloutBlock(
+            icon="ℹ️",
+            text_prop=TextProp(_get_note_meta(note)),
+        ),
+    )
 
 
 def _get_note_meta(note: EvernoteNote):

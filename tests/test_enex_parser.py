@@ -2,7 +2,6 @@ import datetime
 import logging
 from pathlib import Path
 
-import pytest
 from dateutil.tz import tzutc
 
 from enex2notion.enex_parser import iter_notes
@@ -458,7 +457,7 @@ def test_iter_notes_single_with_empty_resource(fs, caplog):
     """
     fs.create_file("test.enex", contents=test_enex)
 
-    with caplog.at_level(logging.WARNING):
+    with caplog.at_level(logging.DEBUG, logger="enex2notion"):
         notes = list(iter_notes(Path("test.enex")))
 
     expected_resource = EvernoteResource(
@@ -469,7 +468,7 @@ def test_iter_notes_single_with_empty_resource(fs, caplog):
         file_name="smallest.gif",
     )
 
-    assert "Empty resource" in caplog.records[0].message
+    assert "Empty resource" in caplog.text
     assert notes == [
         EvernoteNote(
             title="test1",

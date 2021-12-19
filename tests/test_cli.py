@@ -1,5 +1,3 @@
-import logging
-
 import pytest
 
 from enex2notion.cli import cli
@@ -49,23 +47,25 @@ def test_empty_dir(mock_api, fake_note_factory, fs):
 
 
 def test_verbose(mock_api, fake_note_factory, mocker):
+    fake_logs = {}
     mock_logger = mocker.patch("enex2notion.cli.logging")
+    mock_logger.getLogger = lambda name: fake_logs.setdefault(name, mocker.MagicMock())
 
     cli(["--verbose", "fake.enex"])
 
-    mock_logger.basicConfig.assert_called_once_with(
-        level=mock_logger.DEBUG, format=mocker.ANY
-    )
+    mock_logger.basicConfig.assert_called_once_with(format=mocker.ANY)
+    mock_logger.getLogger("enex2notion").setLevel.assert_called_with(mock_logger.DEBUG)
 
 
 def test_no_verbose(mock_api, fake_note_factory, mocker):
+    fake_logs = {}
     mock_logger = mocker.patch("enex2notion.cli.logging")
+    mock_logger.getLogger = lambda name: fake_logs.setdefault(name, mocker.MagicMock())
 
     cli(["fake.enex"])
 
-    mock_logger.basicConfig.assert_called_once_with(
-        level=mock_logger.INFO, format=mocker.ANY
-    )
+    mock_logger.basicConfig.assert_called_once_with(format=mocker.ANY)
+    mock_logger.getLogger("enex2notion").setLevel.assert_called_with(mock_logger.INFO)
 
 
 def test_db_mode(mock_api, fake_note_factory, mocker):
@@ -83,9 +83,11 @@ def test_page_mode(mock_api, fake_note_factory, mocker):
 
 
 def test_add_meta(mock_api, fake_note_factory, mocker):
-    cli(["--token", "fake_token", "--add-meta", "fake.enex"])
+    cli(["--add-meta", "fake.enex"])
 
-    mock_api["parse_note"].assert_called_once_with(mocker.ANY, True)
+    mock_api["parse_note"].assert_called_once_with(
+        mocker.ANY, mode_webclips="TXT", is_add_meta=True
+    )
 
 
 def test_skip_dupe(mock_api, fake_note_factory, mocker):
@@ -145,18 +147,28 @@ def test_bad_file(mock_api, fake_note_factory):
     mock_api["parse_note"].assert_called_once()
 
 
-def test_webclip(mock_api, fake_note_factory, mocker, caplog):
+def test_webclip(mock_api, fake_note_factory, mocker):
     fake_note_factory.return_value = [
         mocker.MagicMock(note_hash="fake_hash1", is_webclip=True),
     ]
 
-    with caplog.at_level(logging.WARNING):
-        cli(["fake.enex"])
+    cli(["fake.enex"])
 
-    assert "[WEBCLIPS NOT SUPPORTED]" in caplog.text
+    mock_api["parse_note"].assert_called_once_with(
+        mocker.ANY, mode_webclips="TXT", is_add_meta=False
+    )
 
-    mock_api["upload_note"].assert_not_called()
-    mock_api["parse_note"].assert_not_called()
+
+def test_webclip_pdf(mock_api, fake_note_factory, mocker):
+    fake_note_factory.return_value = [
+        mocker.MagicMock(note_hash="fake_hash1", is_webclip=True),
+    ]
+
+    cli(["--mode-webclips", "PDF", "fake.enex"])
+
+    mock_api["parse_note"].assert_called_once_with(
+        mocker.ANY, mode_webclips="PDF", is_add_meta=False
+    )
 
 
 def test_cli_main_import():

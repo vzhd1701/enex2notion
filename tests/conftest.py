@@ -5,6 +5,7 @@ import platform
 from hashlib import md5
 
 import pytest
+from bs4 import BeautifulSoup
 from notion.block import PageBlock
 from notion.client import NotionClient
 
@@ -74,3 +75,11 @@ def tiny_file():
 def runner_id():
     runner_id = platform.platform() + platform.python_version()
     return hashlib.md5(runner_id.encode("utf-8")).hexdigest()[:8]
+
+
+@pytest.fixture()
+def parse_html():
+    def inner(html):
+        return BeautifulSoup(html, "html5lib").find("body")
+
+    return inner

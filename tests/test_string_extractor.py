@@ -1,26 +1,20 @@
-from functools import partial
-
-from bs4 import BeautifulSoup
-
 from enex2notion.notion_blocks import TextProp
 from enex2notion.string_extractor import extract_string
 
-parse_html = partial(BeautifulSoup, features="html.parser")
 
-
-def test_extract_text():
+def test_extract_text(parse_html):
     test_note = parse_html("<div>test1</div>")
 
     assert extract_string(test_note) == TextProp(text="test1", properties=[["test1"]])
 
 
-def test_extract_text_inside():
+def test_extract_text_inside(parse_html):
     test_note = parse_html("test1")
 
     assert extract_string(test_note) == TextProp(text="test1", properties=[["test1"]])
 
 
-def test_extract_text_newline():
+def test_extract_text_newline(parse_html):
     test_note = parse_html("<div>test1</div><div>test2</div>")
 
     assert extract_string(test_note) == TextProp(
@@ -28,7 +22,7 @@ def test_extract_text_newline():
     )
 
 
-def test_extract_text_overlap():
+def test_extract_text_overlap(parse_html):
     test_note = parse_html(
         "<div>head <b>middle_head <i>inside</i> middle_tail</b> tail</div>"
     )
@@ -45,7 +39,7 @@ def test_extract_text_overlap():
     )
 
 
-def test_extract_text_style_bold():
+def test_extract_text_style_bold(parse_html):
     test_note = parse_html('<div><span style="font-weight: bold;">bold</span></div>')
 
     assert extract_string(test_note) == TextProp(
@@ -54,7 +48,7 @@ def test_extract_text_style_bold():
     )
 
 
-def test_extract_text_style_italic():
+def test_extract_text_style_italic(parse_html):
     test_note = parse_html('<div><span style="font-style: italic;">italic</span></div>')
 
     assert extract_string(test_note) == TextProp(
@@ -63,7 +57,7 @@ def test_extract_text_style_italic():
     )
 
 
-def test_extract_text_style_bold_italic():
+def test_extract_text_style_bold_italic(parse_html):
     test_note = parse_html(
         "<div>"
         '<span style="font-weight: bold; font-style: italic;">bold italic</span>'
@@ -76,7 +70,7 @@ def test_extract_text_style_bold_italic():
     )
 
 
-def test_extract_text_bold():
+def test_extract_text_bold(parse_html):
     test_note = parse_html("<div><b>test1</b></div>")
 
     assert extract_string(test_note) == TextProp(
@@ -84,7 +78,7 @@ def test_extract_text_bold():
     )
 
 
-def test_extract_text_italic():
+def test_extract_text_italic(parse_html):
     test_note = parse_html("<div><i>test1</i></div>")
 
     assert extract_string(test_note) == TextProp(
@@ -92,7 +86,7 @@ def test_extract_text_italic():
     )
 
 
-def test_extract_text_strikethrough():
+def test_extract_text_strikethrough(parse_html):
     test_note = parse_html("<div><s>test1</s></div>")
 
     assert extract_string(test_note) == TextProp(
@@ -100,7 +94,7 @@ def test_extract_text_strikethrough():
     )
 
 
-def test_extract_text_underline():
+def test_extract_text_underline(parse_html):
     test_note = parse_html("<div><u>test1</u></div>")
 
     assert extract_string(test_note) == TextProp(
@@ -108,7 +102,7 @@ def test_extract_text_underline():
     )
 
 
-def test_extract_text_url():
+def test_extract_text_url(parse_html):
     test_note = parse_html('<div><a href="https://google.com">test1</a></div>')
 
     assert extract_string(test_note) == TextProp(
@@ -116,19 +110,19 @@ def test_extract_text_url():
     )
 
 
-def test_extract_text_url_empty():
+def test_extract_text_url_empty(parse_html):
     test_note = parse_html("<div><a>test1</a></div>")
 
     assert extract_string(test_note) == TextProp(text="test1", properties=[["test1"]])
 
 
-def test_extract_span_empty():
+def test_extract_span_empty(parse_html):
     test_note = parse_html("<div><span>empty</span></div>")
 
     assert extract_string(test_note) == TextProp(text="empty", properties=[["empty"]])
 
 
-def test_extract_text_color():
+def test_extract_text_color(parse_html):
     test_note = parse_html(
         '<div><span style="color:rgb(90, 90, 90);">dark gray</span></div>'
         '<div><span style="color:rgb(140, 140, 140);">gray</span></div>'
@@ -187,7 +181,7 @@ def test_extract_text_color():
     )
 
 
-def test_extract_text_color_black():
+def test_extract_text_color_black(parse_html):
     test_note = parse_html(
         '<div><span style="color:rgb(51, 51, 51);">black</span></div>'
         '<div><span style="color:rgb(255, 255, 255);">white</span></div>'
@@ -201,7 +195,7 @@ def test_extract_text_color_black():
     )
 
 
-def test_extract_text_color_strange():
+def test_extract_text_color_strange(parse_html):
     test_note = parse_html(
         '<div><span style="color:magentific;">strange</span></div>'
         '<div><span style="background-color:magentific;">strange</span></div>'
@@ -213,7 +207,7 @@ def test_extract_text_color_strange():
     )
 
 
-def test_extract_text_color_empty():
+def test_extract_text_color_empty(parse_html):
     test_note = parse_html('<div><span style="color:;--boop">empty</span></div>')
 
     assert extract_string(test_note) == TextProp(
@@ -222,13 +216,13 @@ def test_extract_text_color_empty():
     )
 
 
-def test_extract_text_bad_css():
+def test_extract_text_bad_css(parse_html):
     test_note = parse_html('<div><span style="--boop">bad</span></div>')
 
     assert extract_string(test_note) == TextProp(text="bad", properties=[["bad"]])
 
 
-def test_extract_text_color_near():
+def test_extract_text_color_near(parse_html):
     test_note = parse_html(
         '<div><span style="color:rgb(200, 158, 37);">yellow</span></div>'
         '<div><span style="background-color: rgb(200, 158, 37);">yellow</span></div>'
@@ -244,7 +238,7 @@ def test_extract_text_color_near():
     )
 
 
-def test_extract_text_color_background():
+def test_extract_text_color_background(parse_html):
     test_note = parse_html(
         '<div><span style="background-color: rgb(255, 250, 165);">yellow old</span>'
         "</div>"
@@ -276,7 +270,7 @@ def test_extract_text_color_background():
     )
 
 
-def test_extract_text_color_background_highlight():
+def test_extract_text_color_background_highlight(parse_html):
     test_note = parse_html(
         '<div><span style="--en-highlight:yellow;">yellow</span></div>'
         '<div><span style="--en-highlight:red;">red</span></div>'
@@ -304,7 +298,7 @@ def test_extract_text_color_background_highlight():
     )
 
 
-def test_extract_text_color_background_highlight_unknown():
+def test_extract_text_color_background_highlight_unknown(parse_html):
     test_note = parse_html(
         '<div><span style="--en-highlight:glurpurle;">glurpurle</span></div>'
     )
@@ -314,7 +308,7 @@ def test_extract_text_color_background_highlight_unknown():
     )
 
 
-def test_extract_text_color_inversion():
+def test_extract_text_color_inversion(parse_html):
     test_note = parse_html(
         "<div>"
         '<span style="color:rgb(229, 158, 37);--inversion-type-color:simple;">'

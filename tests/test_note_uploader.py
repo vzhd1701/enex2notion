@@ -1,19 +1,15 @@
 import os
-from functools import partial
 
 import pytest
-from bs4 import BeautifulSoup
 from notion.block import FileBlock
 
 from enex2notion.colors import COLORS_BG, COLORS_FG
-from enex2notion.note_parser_dom import parse_note_dom
+from enex2notion.note_parser_blocks import parse_note_blocks
 from enex2notion.note_uploader import _sizeof_fmt, upload_block
-
-parse_html = partial(BeautifulSoup, features="html.parser")
 
 
 @pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
-def test_color_text(notion_test_page):
+def test_color_text(parse_html, notion_test_page):
     test_colors = dict(COLORS_FG)
     test_colors.update(COLORS_BG)
 
@@ -24,7 +20,7 @@ def test_color_text(notion_test_page):
     ]
 
     test_note = parse_html("".join(test_note))
-    test_blocks = parse_note_dom(test_note)
+    test_blocks = parse_note_blocks(test_note)
 
     for block in test_blocks:
         upload_block(notion_test_page, block)
@@ -38,7 +34,7 @@ def test_color_text(notion_test_page):
 
 
 @pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
-def test_embedded_link(notion_test_page):
+def test_embedded_link(parse_html, notion_test_page):
     test_note = parse_html(
         '<div style="--en-richlink:true;'
         " --en-href:https://google.com;"
@@ -48,7 +44,7 @@ def test_embedded_link(notion_test_page):
         "</div>"
     )
 
-    test_blocks = parse_note_dom(test_note)
+    test_blocks = parse_note_blocks(test_note)
 
     for block in test_blocks:
         upload_block(notion_test_page, block)
@@ -59,14 +55,14 @@ def test_embedded_link(notion_test_page):
 
 
 @pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
-def test_resized_image(notion_test_page, smallest_gif):
+def test_resized_image(parse_html, notion_test_page, smallest_gif):
     test_note = parse_html(
         '<en-media type="image/gif"'
         ' style="--en-naturalWidth:100; --en-naturalHeight:200;"'
         f' hash="{smallest_gif.md5}" />'
     )
 
-    test_blocks = parse_note_dom(test_note)
+    test_blocks = parse_note_blocks(test_note)
 
     test_blocks[0].resource = smallest_gif
     upload_block(notion_test_page, test_blocks[0])
@@ -78,14 +74,14 @@ def test_resized_image(notion_test_page, smallest_gif):
 
 
 @pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
-def test_resized_image_only_width(notion_test_page, smallest_gif):
+def test_resized_image_only_width(parse_html, notion_test_page, smallest_gif):
     test_note = parse_html(
         f'<en-media type="{smallest_gif.mime}"'
         ' style="--en-naturalWidth:100;"'
         f' hash="{smallest_gif.md5}" />'
     )
 
-    test_blocks = parse_note_dom(test_note)
+    test_blocks = parse_note_blocks(test_note)
 
     test_blocks[0].resource = smallest_gif
     upload_block(notion_test_page, test_blocks[0])
@@ -97,12 +93,12 @@ def test_resized_image_only_width(notion_test_page, smallest_gif):
 
 
 @pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
-def test_file_upload(notion_test_page, tiny_file):
+def test_file_upload(parse_html, notion_test_page, tiny_file):
     test_note = parse_html(
         f'<en-media type="{tiny_file.mime}" hash="{tiny_file.md5}" />'
     )
 
-    test_blocks = parse_note_dom(test_note)
+    test_blocks = parse_note_blocks(test_note)
 
     test_blocks[0].resource = tiny_file
     upload_block(notion_test_page, test_blocks[0])
@@ -115,7 +111,7 @@ def test_file_upload(notion_test_page, tiny_file):
 
 
 @pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
-def test_table(notion_test_page):
+def test_table(parse_html, notion_test_page):
     test_note = parse_html(
         "<table>"
         "<tr><td>test1</td><td>test2</td><td>test3</td></tr>"
@@ -124,7 +120,7 @@ def test_table(notion_test_page):
         "</table>"
     )
 
-    test_table = parse_note_dom(test_note)[0]
+    test_table = parse_note_blocks(test_note)[0]
 
     upload_block(notion_test_page, test_table)
 
@@ -149,12 +145,12 @@ def test_table(notion_test_page):
 
 
 @pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
-def test_indented(notion_test_page):
+def test_indented(parse_html, notion_test_page):
     test_note = parse_html(
         '<div>test1</div><div style="padding-left:40px;">test2</div>'
     )
 
-    test_blocks = parse_note_dom(test_note)
+    test_blocks = parse_note_blocks(test_note)
 
     for block in test_blocks:
         upload_block(notion_test_page, block)
