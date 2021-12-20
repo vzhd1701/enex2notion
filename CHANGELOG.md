@@ -1,3 +1,16 @@
+## [0.2.0](https://github.com/vzhd1701/enex2notion/compare/v0.1.8...v0.2.0) (2021-12-20)
+
+### Features
+
+- add support for webclips ([6370bac](https://github.com/vzhd1701/enex2notion/commit/6370bace153c129f50c682e9701b19c373694aef))
+
+### Bug Fixes
+
+- cleanup empty databases before creating new one ([fc594f1](https://github.com/vzhd1701/enex2notion/commit/fc594f18e8d9b5975bf1f88e52f4748ae7132dfc))
+- fix webclip detection ([bb64e3c](https://github.com/vzhd1701/enex2notion/commit/bb64e3c8ff6ae0c99a0cc75d3ab5a1904f6ffd11))
+- move some harmless warnings into debug log ([ec53bad](https://github.com/vzhd1701/enex2notion/commit/ec53bad586f60968bb7b120fa0188ec07e70cd32))
+- set fixed size for sizeless SVG images ([b94419f](https://github.com/vzhd1701/enex2notion/commit/b94419ffe8e8abadd091dd922405345b165024c3))
+
 ### [0.1.8](https://github.com/vzhd1701/enex2notion/compare/v0.1.7...v0.1.8) (2021-12-14)
 
 ### Bug Fixes
