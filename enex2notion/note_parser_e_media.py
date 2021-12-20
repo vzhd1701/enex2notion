@@ -52,6 +52,10 @@ def parse_img(element: Tag):
 
     img_resource = _parse_img_resource(src)
 
+    # Make SVG small by default to avoid them spreading too much
+    if "svg" in img_resource.mime and not any((w, h)):
+        w, h = 50, 50
+
     return NotionImageBlock(
         width=w,
         height=h,
@@ -78,6 +82,11 @@ def _parse_media(block_type, element):
     block = block_type(md5_hash=element["hash"])
 
     w, h = _parse_dimensions(element)
+
+    # Make SVG small by default to avoid them spreading too much
+    if "svg" in element["type"] and not any((w, h)):
+        w, h = 50, 50
+
     block.width = w
     block.height = h
 

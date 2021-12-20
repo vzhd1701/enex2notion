@@ -261,6 +261,14 @@ def test_embedded_media_with_dimensions_old_style(parse_html):
     ]
 
 
+def test_embedded_media_svg_no_size(parse_html):
+    test_note = parse_html('<en-media type="image/svg+xml" hash="test" />')
+
+    assert parse_note_blocks(test_note) == [
+        NotionImageBlock(md5_hash="test", width=50, height=50)
+    ]
+
+
 def test_embedded_inline_img_bin(parse_html, smallest_gif):
     test_note = parse_html(
         f'<img width="100px" '
@@ -307,6 +315,29 @@ def test_embedded_inline_img_svg(parse_html, smallest_svg):
     )
     assert result_block.width == 100
     assert result_block.height is None
+
+
+def test_embedded_inline_svg_no_size(parse_html, smallest_svg):
+    test_note = parse_html(
+        f"<img "
+        f'src="data:{smallest_svg.mime},'
+        f'{smallest_svg.data_bin.decode("utf-8")}" />'
+    )
+
+    result_block = parse_note_blocks(test_note)[0]
+
+    assert result_block == NotionImageBlock(
+        md5_hash=smallest_svg.md5,
+        height=50,
+        width=50,
+        resource=EvernoteResource(
+            data_bin=smallest_svg.data_bin,
+            size=smallest_svg.size,
+            md5=smallest_svg.md5,
+            mime=smallest_svg.mime,
+            file_name=f"{smallest_svg.md5}.svg",
+        ),
+    )
 
 
 def test_embedded_inline_img_url(parse_html):
