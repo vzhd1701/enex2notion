@@ -164,6 +164,8 @@ def test_webclip_pdf(mock_api, fake_note_factory, mocker):
         mocker.MagicMock(note_hash="fake_hash1", is_webclip=True),
     ]
 
+    mocker.patch("enex2notion.cli.ensure_wkhtmltopdf")
+
     cli(["--mode-webclips", "PDF", "fake.enex"])
 
     mock_api["parse_note"].assert_called_once_with(

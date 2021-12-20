@@ -5,6 +5,7 @@ from pathlib import Path
 
 from notion.client import NotionClient
 
+from enex2notion.cli_wkhtmltopdf import ensure_wkhtmltopdf
 from enex2notion.enex_parser import iter_notes
 from enex2notion.enex_uploader import get_import_root, upload_note
 from enex2notion.enex_uploader_modes import get_notebook_database, get_notebook_page
@@ -84,6 +85,9 @@ def cli(argv):
 
     _setup_logging(args.verbose)
 
+    if args.mode_webclips == "PDF":
+        ensure_wkhtmltopdf()
+
     if args.token:
         root = get_import_root(
             NotionClient(token_v2=args.token), "Evernote ENEX Import"
@@ -149,7 +153,7 @@ def parse_args(argv):
             "choices": ["TXT", "PDF"],
             "default": "TXT",
             "help": (
-                "convert webclips to text (TXT) or pdf (PDF) before upload"
+                "convert web clips to text (TXT) or pdf (PDF) before upload"
                 " (default: TXT)"
             ),
         },
