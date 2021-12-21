@@ -80,6 +80,6 @@ def runner_id():
 @pytest.fixture()
 def parse_html():
     def inner(html):
-        return BeautifulSoup(html, "html5lib").find("body")
+        return BeautifulSoup(html, "html.parser")
 
     return inner

@@ -35,7 +35,7 @@ def parse_note(note: EvernoteNote, mode_webclips="TXT", is_add_meta=False):
 
 
 def _parse_note_dom(note: EvernoteNote):
-    note_dom = BeautifulSoup(note.content, "html5lib").find("en-note")
+    note_dom = BeautifulSoup(note.content, "html.parser").find("en-note")
 
     if not note_dom:
         logger.error(f"Failed to extract DOM from note '{note.title}'")

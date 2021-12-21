@@ -11,7 +11,7 @@ def test_empty(parse_html):
 
 
 def test_invisible_blocks(parse_html):
-    test_note = parse_html("<nav>test</nav><menu>test</menu><menuitem>test</menuitem>")
+    test_note = parse_html("<nav>test</nav><menu>test</menu>")
 
     assert parse_webclip(test_note) == []
 

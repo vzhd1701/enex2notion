@@ -80,7 +80,7 @@ def parse_webclip(note_dom: Tag):
 
 
 def _remove_unprocessable(root: Tag):
-    for e in root.find_all(["nav", "menu", "menuitem"]):
+    for e in root.find_all(["nav", "menu"]):
         e.extract()
 
 
