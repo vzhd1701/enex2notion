@@ -94,40 +94,10 @@ def _parse_media(block_type, element):
 
 
 def _parse_dimensions(element: Tag):
-    """Media blocks can have 2 size attributes
-    1. --en-naturalWidth, --en-naturalHeight to store original size
-    2. width, height to store user set size
-
-    user set - priority
-    original - fallback
-
-    <en-media style="--en-naturalWidth:800; --en-naturalHeight:600;" width="150px"
-     hash="c491f9f01343c4c79404405f8e35b896" type="image/jpeg" />
-    """
-
-    width, height = _parse_dimensions_user_set(element)
-
-    if width or height:
-        return width, height
-
-    return _parse_dimensions_original(element)
-
-
-def _parse_dimensions_user_set(element):
     width_m = re.match("^([0-9]+)", element.get("width", ""))
     width = int(width_m.group(1)) if width_m else None
 
     height_m = re.match("^([0-9]+)", element.get("height", ""))
-    height = int(height_m.group(1)) if height_m else None
-
-    return width, height
-
-
-def _parse_dimensions_original(element):
-    width_m = re.match(".*en-naturalWidth:(.*?);", element.get("style", ""))
-    width = int(width_m.group(1)) if width_m else None
-
-    height_m = re.match(".*en-naturalHeight:(.*?);", element.get("style", ""))
     height = int(height_m.group(1)) if height_m else None
 
     return width, height

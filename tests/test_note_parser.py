@@ -238,19 +238,6 @@ def test_embedded_media(mime, expected_block, parse_html):
     assert parse_note_blocks(test_note) == [expected_block(md5_hash="test")]
 
 
-def test_embedded_media_with_dimensions(parse_html):
-    test_note = parse_html(
-        '<en-media type="image/png"'
-        ' style="--en-naturalWidth:100; --en-naturalHeight:200;" hash="test" />'
-    )
-
-    result_block = parse_note_blocks(test_note)[0]
-
-    assert result_block == NotionImageBlock(md5_hash="test", width=100, height=200)
-    assert result_block.width == 100
-    assert result_block.height == 200
-
-
 def test_embedded_media_with_dimensions_old_style(parse_html):
     test_note = parse_html(
         '<en-media type="image/png" width=100 height=200 hash="test" />'
