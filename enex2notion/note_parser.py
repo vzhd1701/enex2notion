@@ -53,6 +53,8 @@ def _resolve_resources(note_blocks, note: EvernoteNote):
             if block.resource is None:
                 logger.debug(f"Failed to resolve resource in '{note.title}'")
                 note_blocks.remove(block)
+        if block.children:
+            _resolve_resources(block.children, note)
 
 
 def _add_meta(note_blocks, note: EvernoteNote):

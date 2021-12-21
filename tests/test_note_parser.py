@@ -143,6 +143,26 @@ def test_list_ul_nested(parse_html):
     assert parse_note_blocks(test_note) == expected
 
 
+def test_list_ul_images_inside(parse_html, caplog):
+    test_note = parse_html(
+        "<ul>"
+        "<li>"
+        "<div>test1</div>"
+        '<en-media type="image/png" hash="fake_hash" />'
+        '<img src="https://google.com/image.jpg" />'
+        "</li>"
+        "</ul>"
+    )
+
+    expected_block = NotionBulletedListBlock(text_prop=TextProp("test1"))
+    expected_block.children = [
+        NotionImageBlock(md5_hash="fake_hash"),
+        NotionImageEmbedBlock(url="https://google.com/image.jpg"),
+    ]
+
+    assert parse_note_blocks(test_note) == [expected_block]
+
+
 def test_list_ul_strings_inside(parse_html, caplog):
     test_note = parse_html("<ul><li><div>test1</div></li>test2</ul>")
 
@@ -606,6 +626,32 @@ def test_linebreaks_inside_root(parse_html):
     assert parse_note_blocks(test_note) == [
         NotionTextBlock(text_prop=TextProp("texty")),
     ]
+
+
+def test_resource_recursive(smallest_gif):
+    test_note = EvernoteNote(
+        title="test1",
+        created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        updated=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        content=(
+            "<en-note>"
+            "<ul><li>"
+            f'<en-media type="{smallest_gif.mime}" hash="{smallest_gif.md5}" />'
+            "</li></ul>"
+            "</en-note>"
+        ),
+        tags=[],
+        author="",
+        url="",
+        is_webclip=False,
+        resources=[smallest_gif],
+    )
+
+    test_embedded_image = parse_note(test_note)[0].children[0]
+
+    assert test_embedded_image == NotionImageBlock(
+        md5_hash=smallest_gif.md5, resource=smallest_gif
+    )
 
 
 def test_bad_resource(caplog):

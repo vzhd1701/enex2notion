@@ -30,7 +30,10 @@ def extract_nested_blocks(root: Tag):
             continue
 
         # tables, pictures (or files), encrypted blocks
-        subblocks = child.find_all(["img", "en-media", "table", "en-crypt"])
+        if child.name in {"ol", "ul"}:
+            subblocks = child.find_all(["table", "en-crypt"])
+        else:
+            subblocks = child.find_all(["img", "en-media", "table", "en-crypt"])
 
         # special evernote blocks
         subblocks += filter(_is_div_special_block, child.find_all("div"))

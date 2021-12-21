@@ -2,6 +2,7 @@ import logging
 
 from bs4 import NavigableString, Tag
 
+from enex2notion.note_parser_e_media import parse_img, parse_media
 from enex2notion.notion_blocks import NotionTextBlock, TextProp
 from enex2notion.notion_blocks_header import (
     NotionHeaderBlock,
@@ -29,7 +30,12 @@ def parse_list(element: Tag):
 
     for subelement in element.children:
         if subelement.name == "li":
+            embedded_media = _extract_media(subelement)
+
             li_item = _parse_list_item(subelement, is_ul)
+
+            if embedded_media:
+                li_item.children = embedded_media
 
             nodes.append(li_item)
 
@@ -47,6 +53,16 @@ def parse_list(element: Tag):
             nodes.append(li_odd_item)
 
     return nodes
+
+
+def _extract_media(element: Tag):
+    media = []
+    for img in element.find_all(["en-media", "img"]):
+        if img.name == "en-media":
+            media.append(parse_media(img.extract()))
+        else:
+            media.append(parse_img(img.extract()))
+    return media
 
 
 def _make_blank_node(is_ul):
