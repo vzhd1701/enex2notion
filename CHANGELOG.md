@@ -1,3 +1,11 @@
+### [0.2.1](https://github.com/vzhd1701/enex2notion/compare/v0.2.0...v0.2.1) (2021-12-21)
+
+### Bug Fixes
+
+- parse images as children elements in lists ([c214bd4](https://github.com/vzhd1701/enex2notion/commit/c214bd43ea83ff700286be5068b8700c1fcf486e))
+- remove original size parsing for images to avoid oversized image blocks ([e72752e](https://github.com/vzhd1701/enex2notion/commit/e72752eab99200e7282c116291c0e2a6ea58a38f))
+- revert back to html.parser, html5lib can't parse ENML properly ([441cc74](https://github.com/vzhd1701/enex2notion/commit/441cc74814b2856bfd52270d02ba530462987975))
+
 ## [0.2.0](https://github.com/vzhd1701/enex2notion/compare/v0.1.8...v0.2.0) (2021-12-20)
 
 ### Features
