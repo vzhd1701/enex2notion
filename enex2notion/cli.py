@@ -2,6 +2,7 @@ import argparse
 import logging
 import sys
 from pathlib import Path
+from typing import Optional
 
 from notion.client import NotionClient
 
@@ -90,7 +91,7 @@ class EnexUploader(object):
 def cli(argv):
     args = parse_args(argv)
 
-    _setup_logging(args.verbose)
+    _setup_logging(args.verbose, args.log)
 
     if args.mode_webclips == "PDF":
         ensure_wkhtmltopdf()
@@ -177,6 +178,11 @@ def parse_args(argv):
             "metavar": "FILE",
             "help": "file for uploaded notes hashes to resume interrupted upload",
         },
+        "--log": {
+            "type": Path,
+            "metavar": "FILE",
+            "help": "file to store program log",
+        },
         "--verbose": {
             "action": "store_true",
             "default": False,
@@ -194,11 +200,18 @@ def parse_args(argv):
     return parser.parse_args(argv)
 
 
-def _setup_logging(is_verbose):
+def _setup_logging(is_verbose: bool, log_file: Optional[Path]):
     logging.basicConfig(format="%(levelname)s: %(message)s")
 
     logging.getLogger("enex2notion").setLevel(
         logging.DEBUG if is_verbose else logging.INFO
     )
+
+    if log_file:
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setFormatter(
+            logging.Formatter("%(asctime)s [%(levelname)-8.8s] %(message)s")
+        )
+        logging.getLogger("enex2notion").addHandler(file_handler)
 
     logging.getLogger("urllib3").setLevel(logging.ERROR)

@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 
 from enex2notion.cli import cli
@@ -183,6 +185,17 @@ def test_unhandled_exception(mock_api, fake_note_factory, caplog):
 
     assert e.value == fake_exception
     assert "Unhandled exception while parsing note" in caplog.text
+
+
+def test_file_log(mock_api, fake_note_factory, fs):
+    fs.create_file("log.txt")
+
+    cli(["--log", "log.txt", "fake.enex"])
+
+    with open("log.txt") as f:
+        done_result = f.read()
+
+    assert "No token provided, dry run mode." in done_result
 
 
 def test_cli_main_import():
