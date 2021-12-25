@@ -173,5 +173,17 @@ def test_webclip_pdf(mock_api, fake_note_factory, mocker):
     )
 
 
+def test_unhandled_exception(mock_api, fake_note_factory, caplog):
+    fake_exception = Exception("fake")
+    mock_api["parse_note"].side_effect = fake_exception
+
+    with caplog.at_level(logging.ERROR, logger="enex2notion"):
+        with pytest.raises(Exception) as e:
+            cli(["fake.enex"])
+
+    assert e.value == fake_exception
+    assert "Unhandled exception while parsing note" in caplog.text
+
+
 def test_cli_main_import():
     from enex2notion import __main__

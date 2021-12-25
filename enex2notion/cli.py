@@ -60,15 +60,22 @@ class EnexUploader(object):
                 logger.debug(f"Skipping note '{note.title}' (already uploaded)")
                 continue
 
-            note_blocks = parse_note(
-                note, mode_webclips=self.mode_webclips, is_add_meta=self.add_meta
-            )
+            note_blocks = self._parse_note(note)
             if not note_blocks:
                 continue
 
             if notebook_root is not None:
                 upload_note(notebook_root, note, note_blocks)
                 self.done_hashes.add(note.note_hash)
+
+    def _parse_note(self, note):
+        try:
+            return parse_note(
+                note, mode_webclips=self.mode_webclips, is_add_meta=self.add_meta
+            )
+        except Exception:
+            logger.error(f"Unhandled exception while parsing note '{note.title}'!")
+            raise
 
     def _get_notebook_root(self, notebook_title):
         if self.import_root is None:
