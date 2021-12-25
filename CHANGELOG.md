@@ -1,3 +1,13 @@
+### [0.2.3](https://github.com/vzhd1701/enex2notion/compare/v0.2.2...v0.2.3) (2021-12-25)
+
+### Features
+
+- add option to log output into file ([f50bb58](https://github.com/vzhd1701/enex2notion/commit/f50bb5899fe2f697a95f2c378a11e4f7cc93c673))
+
+### Bug Fixes
+
+- log note title on exception ([95d7796](https://github.com/vzhd1701/enex2notion/commit/95d77967bf46b956d6a69e4503a81b5d515e1a93))
+
 ### [0.2.2](https://github.com/vzhd1701/enex2notion/compare/v0.2.1...v0.2.2) (2021-12-25)
 
 ### Bug Fixes
