@@ -63,7 +63,7 @@ $ poetry run enex2notion
 
 ```shell
 $ enex2notion --help
-usage: enex2notion [-h] [--token TOKEN] [--mode {DB,PAGE}] [--mode-webclips {TXT,PDF}] [--add-meta] [--done-file FILE] [--verbose] [--version] FILE/DIR [FILE/DIR ...]
+usage: enex2notion [-h] [--token TOKEN] [--mode {DB,PAGE}] [--mode-webclips {TXT,PDF}] [--add-meta] [--done-file FILE] [--log FILE] [--verbose] [--version] FILE/DIR [FILE/DIR ...]
 
 Uploads ENEX files to Notion
 
@@ -78,6 +78,7 @@ optional arguments:
                         convert web clips to text (TXT) or pdf (PDF) before upload (default: TXT)
   --add-meta            include metadata (created, tags, etc) in notes, makes sense only with PAGE mode
   --done-file FILE      file for uploaded notes hashes to resume interrupted upload
+  --log FILE            file to store program log
   --verbose             output debug information
   --version             show program's version number and exit
 ```
