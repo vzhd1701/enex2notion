@@ -1,3 +1,9 @@
+### [0.2.2](https://github.com/vzhd1701/enex2notion/compare/v0.2.1...v0.2.2) (2021-12-25)
+
+### Bug Fixes
+
+- fix crash on parsing nested spaces in webclips ([0c389ed](https://github.com/vzhd1701/enex2notion/commit/0c389edead0510c5ea87f0165e20d06b9555382a))
+
 ### [0.2.1](https://github.com/vzhd1701/enex2notion/compare/v0.2.0...v0.2.1) (2021-12-21)
 
 ### Bug Fixes
