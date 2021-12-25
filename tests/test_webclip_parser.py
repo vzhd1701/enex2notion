@@ -162,12 +162,14 @@ def test_remove_empty(parse_html):
 
 def test_strip_paragraphs(parse_html):
     test_note = parse_html(
+        "<ul><li><div><br /></div></li></ul>"
         "<div>  test1  </div>"
         "<div>  <span>test2</span>  </div>"
         "<ul><li><div></div></li></ul>"
     )
 
     assert parse_webclip(test_note) == [
+        NotionBulletedListBlock(text_prop=TextProp("")),
         NotionTextBlock(text_prop=TextProp("test1")),
         NotionTextBlock(text_prop=TextProp("test2")),
         NotionBulletedListBlock(text_prop=TextProp("")),

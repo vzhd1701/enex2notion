@@ -249,7 +249,7 @@ def _strip_paragraphs(root: Tag):
 
 
 def _strip_right(e):
-    while isinstance(e.contents[-1], NavigableString):
+    while e.contents and isinstance(e.contents[-1], NavigableString):
         rstripped = e.contents[-1].text.rstrip()
         if rstripped:
             e.contents[-1].replace_with(rstripped)
@@ -259,7 +259,7 @@ def _strip_right(e):
 
 
 def _strip_left(e):
-    while isinstance(e.contents[0], NavigableString):
+    while e.contents and isinstance(e.contents[0], NavigableString):
         lstripped = e.contents[0].text.lstrip()
         if lstripped:
             e.contents[0].replace_with(lstripped)
