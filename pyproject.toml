@@ -41,6 +41,7 @@ requests = "^2.26.0"
 w3lib = "^1.22.0"
 tinycss2 = "^1.1.1"
 pdfkit = "^1.0.0"
+dataclasses = {version = ">=0.6", markers = "python_version < \"3.7\""}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.3"
