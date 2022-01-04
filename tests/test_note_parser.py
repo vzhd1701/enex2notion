@@ -242,6 +242,12 @@ def test_table_padded(parse_html):
     ]
 
 
+def test_table_empty(parse_html):
+    test_note = parse_html("<table></table>")
+
+    assert parse_note_blocks(test_note) == []
+
+
 @pytest.mark.parametrize(
     "mime, expected_block",
     [
