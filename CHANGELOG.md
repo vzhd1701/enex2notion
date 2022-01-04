@@ -1,3 +1,12 @@
+### [0.2.4](https://github.com/vzhd1701/enex2notion/compare/v0.2.3...v0.2.4) (2022-01-04)
+
+### Bug Fixes
+
+- add missing dataclasses dependency for python 3.6 ([601b1d2](https://github.com/vzhd1701/enex2notion/commit/601b1d2793004fa9fdfbb8ed23ece0f72ca76ee0))
+- convert inline newline tags in paragraphs ([b6cb781](https://github.com/vzhd1701/enex2notion/commit/b6cb78102ad6fca424c1c867a0c070d477971b2d))
+- prevent error when parsing empty tables ([2397971](https://github.com/vzhd1701/enex2notion/commit/239797196b84b71c19ea511ee52acf8e899d8d52))
+- split paragraphs before parsing line by line ([b692136](https://github.com/vzhd1701/enex2notion/commit/b692136b36cbb2aa4eabefa4281ec947a649464a))
+
 ### [0.2.3](https://github.com/vzhd1701/enex2notion/compare/v0.2.2...v0.2.3) (2021-12-25)
 
 ### Features
