@@ -30,6 +30,14 @@ def test_extract_text_newline_inline(parse_html):
     )
 
 
+def test_extract_text_tagless_strings(parse_html):
+    test_note = parse_html("<td>test1<div>test2</div></td>").find("td")
+
+    assert extract_string(test_note) == TextProp(
+        text="test1\ntest2", properties=[["test1\ntest2"]]
+    )
+
+
 def test_extract_text_overlap(parse_html):
     test_note = parse_html(
         "<div>head <b>middle_head <i>inside</i> middle_tail</b> tail</div>"
