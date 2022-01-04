@@ -34,6 +34,7 @@ def _extract_blocks(div_lines):
 
     string_blocks = []
     for div in div_lines:
+        _convert_newlines(div)
         for string in div.strings:
             parent_stack = _parents_upto(string, div)
             string_properties = resolve_string_properties(parent_stack)
@@ -46,6 +47,11 @@ def _extract_blocks(div_lines):
         if div != div_lines[-1]:
             _add_string_block(string_blocks, "\n", set())
     return string_blocks
+
+
+def _convert_newlines(element: Tag):
+    for br in element.find_all("br"):
+        br.replace_with("\n")
 
 
 def _parents_upto(tag: Tag, upto: Tag):
@@ -83,5 +89,8 @@ def _format_blocks(string_blocks):
         else:
             result_properties.append([block["string"]])
     result_string = "".join(b["string"] for b in string_blocks)
+
+    if not result_string.strip():
+        return [], ""
 
     return result_properties, result_string
