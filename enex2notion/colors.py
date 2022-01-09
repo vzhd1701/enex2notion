@@ -118,7 +118,7 @@ def _parse_style(style):
 def _parse_css_color(color_token):
     rgba = parse_color(color_token)
 
-    if rgba is None:
+    if rgba is None or rgba == "currentColor":
         return None
 
     float_to_int_rgb = 255

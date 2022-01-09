@@ -223,11 +223,12 @@ def test_extract_text_color_strange(parse_html):
     test_note = parse_html(
         '<div><span style="color:magentific;">strange</span></div>'
         '<div><span style="background-color:magentific;">strange</span></div>'
+        '<div><span style="background-color:currentcolor;">strange</span></div>'
     )
 
     assert extract_string(test_note) == TextProp(
-        text="strange\nstrange",
-        properties=[["strange\nstrange"]],
+        text="strange\nstrange\nstrange",
+        properties=[["strange\nstrange\nstrange"]],
     )
 
 
