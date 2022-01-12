@@ -379,6 +379,112 @@ def test_iter_notes_single_with_resource(fs):
     assert notes[0].resource_by_md5("000") is None
 
 
+def test_iter_notes_single_with_noext_resource(fs):
+    test_enex = """<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">
+    <en-export export-date="20211218T085932Z" application="Evernote" version="10.25.6">
+      <note>
+        <title>test1</title>
+        <created>20211118T085332Z</created>
+        <updated>20211118T085920Z</updated>
+        <note-attributes>
+        </note-attributes>
+        <content>test</content>
+        <resource>
+          <data encoding="base64">
+            R0lGODlhAQABAAAAACwAAAAAAQABAAAC
+          </data>
+          <mime>image/gif</mime>
+          <resource-attributes>
+            <file-name>smallest</file-name>
+          </resource-attributes>
+        </resource>
+      </note>
+    </en-export>
+    """
+    fs.create_file("test.enex", contents=test_enex)
+
+    notes = list(iter_notes(Path("test.enex")))
+
+    assert notes == [
+        EvernoteNote(
+            title="test1",
+            created=datetime.datetime(2021, 11, 18, 8, 53, 32, tzinfo=tzutc()),
+            updated=datetime.datetime(2021, 11, 18, 8, 59, 20, tzinfo=tzutc()),
+            content="test",
+            tags=[],
+            author="",
+            url="",
+            is_webclip=False,
+            resources=[
+                EvernoteResource(
+                    data_bin=(
+                        b"GIF89a\x01\x00\x01\x00\x00\x00\x00,"
+                        b"\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02"
+                    ),
+                    size=24,
+                    md5="bc32ed98d624acb4008f986349a20d26",
+                    mime="image/gif",
+                    file_name="smallest.gif",
+                )
+            ],
+        ),
+    ]
+
+
+def test_iter_notes_single_with_noext_badmime_resource(fs):
+    test_enex = """<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">
+    <en-export export-date="20211218T085932Z" application="Evernote" version="10.25.6">
+      <note>
+        <title>test1</title>
+        <created>20211118T085332Z</created>
+        <updated>20211118T085920Z</updated>
+        <note-attributes>
+        </note-attributes>
+        <content>test</content>
+        <resource>
+          <data encoding="base64">
+            R0lGODlhAQABAAAAACwAAAAAAQABAAAC
+          </data>
+          <mime>application/unknown</mime>
+          <resource-attributes>
+            <file-name>smallest</file-name>
+          </resource-attributes>
+        </resource>
+      </note>
+    </en-export>
+    """
+    fs.create_file("test.enex", contents=test_enex)
+
+    notes = list(iter_notes(Path("test.enex")))
+
+    assert notes == [
+        EvernoteNote(
+            title="test1",
+            created=datetime.datetime(2021, 11, 18, 8, 53, 32, tzinfo=tzutc()),
+            updated=datetime.datetime(2021, 11, 18, 8, 59, 20, tzinfo=tzutc()),
+            content="test",
+            tags=[],
+            author="",
+            url="",
+            is_webclip=False,
+            resources=[
+                EvernoteResource(
+                    data_bin=(
+                        b"GIF89a\x01\x00\x01\x00\x00\x00\x00,"
+                        b"\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02"
+                    ),
+                    size=24,
+                    md5="bc32ed98d624acb4008f986349a20d26",
+                    mime="application/unknown",
+                    file_name="smallest.bin",
+                )
+            ],
+        ),
+    ]
+
+
 def test_iter_notes_single_with_noname_resource(fs, mocker):
     test_enex = """<?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">

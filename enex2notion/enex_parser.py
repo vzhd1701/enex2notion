@@ -115,8 +115,11 @@ def _convert_resource(resource_raw):
     file_name = res_attr.get("file-name")
 
     if not file_name:
-        ext = mimetypes.guess_extension(resource_raw["mime"]) or ""
+        ext = mimetypes.guess_extension(resource_raw["mime"]) or ".bin"
         file_name = f"{uuid.uuid4()}{ext}"
+    elif "." not in file_name:
+        ext = mimetypes.guess_extension(resource_raw["mime"]) or ".bin"
+        file_name = f"{file_name}{ext}"
 
     if resource_raw["data"].get("#text"):
         data_bin = base64.b64decode(resource_raw["data"]["#text"])
