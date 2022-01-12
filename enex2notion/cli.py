@@ -8,7 +8,11 @@ from notion.client import NotionClient
 
 from enex2notion.cli_wkhtmltopdf import ensure_wkhtmltopdf
 from enex2notion.enex_parser import iter_notes
-from enex2notion.enex_uploader import get_import_root, upload_note
+from enex2notion.enex_uploader import (
+    NoteUploadFailException,
+    get_import_root,
+    upload_note,
+)
 from enex2notion.enex_uploader_modes import get_notebook_database, get_notebook_page
 from enex2notion.note_parser import parse_note
 from enex2notion.version import __version__
@@ -34,6 +38,20 @@ class DoneFile(object):
 
         with open(self.path, "a") as f:
             f.write(f"{note_hash}\n")
+
+
+def _upload_note(notebook_root, note, note_blocks):
+    for attempt in range(5):
+        try:
+            upload_note(notebook_root, note, note_blocks)
+        except NoteUploadFailException:
+            if attempt == 4:
+                raise
+            logger.warning(
+                f"Failed to upload note '{note.title}' to Notion! Retrying..."
+            )
+            continue
+        break
 
 
 class EnexUploader(object):
@@ -66,7 +84,7 @@ class EnexUploader(object):
                 continue
 
             if notebook_root is not None:
-                upload_note(notebook_root, note, note_blocks)
+                _upload_note(notebook_root, note, note_blocks)
                 self.done_hashes.add(note.note_hash)
 
     def _parse_note(self, note):

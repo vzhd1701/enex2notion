@@ -3,6 +3,7 @@ import logging
 import pytest
 
 from enex2notion.cli import cli
+from enex2notion.enex_uploader import NoteUploadFailException
 
 
 @pytest.fixture()
@@ -82,6 +83,23 @@ def test_page_mode(mock_api, fake_note_factory, mocker):
 
     mock_api["get_notebook_database"].assert_not_called()
     mock_api["get_notebook_page"].assert_called_once_with(mocker.ANY, "fake")
+
+
+def test_upload_fail_retry(mock_api, fake_note_factory, mocker, caplog):
+    mock_api["upload_note"].side_effect = [NoteUploadFailException] * 4 + [None]
+
+    with caplog.at_level(logging.WARNING, logger="enex2notion"):
+        cli(["--token", "fake_token", "fake.enex"])
+
+    assert mock_api["upload_note"].call_count == 5
+    assert "Failed to upload note" in caplog.text
+
+
+def test_upload_fail(mock_api, fake_note_factory, mocker, caplog):
+    mock_api["upload_note"].side_effect = [NoteUploadFailException] * 5
+
+    with pytest.raises(NoteUploadFailException):
+        cli(["--token", "fake_token", "fake.enex"])
 
 
 def test_add_meta(mock_api, fake_note_factory, mocker):

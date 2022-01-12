@@ -1,12 +1,18 @@
 import logging
 
 from notion.block import CollectionViewPageBlock, PageBlock
+from notion.collection import CollectionRowBlock
 from progress.bar import Bar
+from requests import HTTPError
 
 from enex2notion.enex_types import EvernoteNote
 from enex2notion.note_uploader import upload_block
 
 logger = logging.getLogger(__name__)
+
+
+class NoteUploadFailException(Exception):
+    """Exception for when a note fails to upload"""
 
 
 def get_import_root(client, title):
@@ -26,8 +32,15 @@ def upload_note(root, note: EvernoteNote, note_blocks):
     # Escape % to prevent progress bar crashing
     note_title = note.title.replace("%", "%%")
 
-    for block in Bar(f"Uploading '{note_title}'").iter(note_blocks):
-        upload_block(new_page, block)
+    try:
+        for block in Bar(f"Uploading '{note_title}'").iter(note_blocks):
+            upload_block(new_page, block)
+    except HTTPError:
+        if isinstance(new_page, CollectionRowBlock):
+            new_page.remove()
+        else:
+            new_page.remove(permanently=True)
+        raise NoteUploadFailException
 
     # Set proper name after everything is uploaded
     new_page.title = note.title

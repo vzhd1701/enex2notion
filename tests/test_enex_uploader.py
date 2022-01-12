@@ -5,9 +5,14 @@ from datetime import datetime
 import pytest
 from dateutil.tz import tzutc
 from notion.block import CalloutBlock, CollectionViewPageBlock, FileBlock, PageBlock
+from requests import HTTPError
 
 from enex2notion.enex_types import EvernoteNote
-from enex2notion.enex_uploader import get_import_root, upload_note
+from enex2notion.enex_uploader import (
+    NoteUploadFailException,
+    get_import_root,
+    upload_note,
+)
 from enex2notion.enex_uploader_modes import get_notebook_database, get_notebook_page
 from enex2notion.note_parser import parse_note
 
@@ -140,6 +145,56 @@ def test_upload_note(notion_test_page):
     assert isinstance(uploaded_page, PageBlock)
     assert uploaded_page.title == "test1"
     assert uploaded_page.children[0].title == "test"
+
+
+@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+def test_upload_note_fail(notion_test_page, mocker):
+    test_note = EvernoteNote(
+        title="test1",
+        created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        updated=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        content="<en-note><div>test</div></en-note>",
+        tags=[],
+        author="",
+        url="",
+        is_webclip=False,
+        resources=[],
+    )
+
+    note_blocks = parse_note(test_note)
+
+    mocker.patch("enex2notion.enex_uploader.upload_block", side_effect=HTTPError)
+
+    with pytest.raises(NoteUploadFailException):
+        upload_note(notion_test_page, test_note, note_blocks)
+
+    assert len(notion_test_page.children) == 0
+
+
+@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+def test_upload_note_fail_db(notion_test_page, mocker):
+    test_note = EvernoteNote(
+        title="test1",
+        created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        updated=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        content="<en-note><div>test</div></en-note>",
+        tags=[],
+        author="",
+        url="",
+        is_webclip=False,
+        resources=[],
+    )
+
+    note_blocks = parse_note(test_note)
+
+    test_database = get_notebook_database(notion_test_page, "test_database")
+
+    mocker.patch("enex2notion.enex_uploader.upload_block", side_effect=HTTPError)
+
+    with pytest.raises(NoteUploadFailException):
+        upload_note(test_database, test_note, note_blocks)
+
+    assert len(notion_test_page.children) == 0
 
 
 @pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
