@@ -5,7 +5,7 @@ from dateutil.tz import tzutc
 
 from enex2notion.enex_types import EvernoteNote, EvernoteResource
 from enex2notion.note_parser import parse_note
-from enex2notion.notion_blocks_uploadable import NotionPDFBlock
+from enex2notion.notion_blocks_uploadable import NotionImageBlock, NotionPDFBlock
 
 
 @pytest.fixture()
@@ -50,6 +50,40 @@ def test_simple(mock_pdfkit, mock_pdf_block):
 
     assert result_html == test_note.content
     assert result_blocks == [mock_pdf_block]
+
+
+def test_simple_with_preview(mock_pdfkit, mock_pdf_block, mocker):
+    test_note = EvernoteNote(
+        title="test1",
+        created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        updated=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        content="<en-note><div>test</div></en-note>",
+        tags=[],
+        author="",
+        url="",
+        is_webclip=True,
+        resources=[],
+    )
+
+    mocker.patch(
+        "enex2notion.note_parser_webclip_pdf._get_pdf_first_page_png", return_value=b""
+    )
+
+    result_blocks = parse_note(test_note, mode_webclips="PDF", is_add_pdf_preview=True)
+
+    assert result_blocks == [
+        NotionImageBlock(
+            md5_hash="d41d8cd98f00b204e9800998ecf8427e",
+            resource=EvernoteResource(
+                data_bin=b"",
+                size=0,
+                md5="d41d8cd98f00b204e9800998ecf8427e",
+                mime="image/png",
+                file_name="d41d8cd98f00b204e9800998ecf8427e.png",
+            ),
+        ),
+        mock_pdf_block,
+    ]
 
 
 def test_local_image(mock_pdfkit, mock_pdf_block, smallest_gif):

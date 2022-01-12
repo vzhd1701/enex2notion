@@ -13,14 +13,16 @@ from enex2notion.notion_blocks_uploadable import NotionUploadableBlock
 logger = logging.getLogger(__name__)
 
 
-def parse_note(note: EvernoteNote, mode_webclips="TXT", is_add_meta=False):
+def parse_note(
+    note: EvernoteNote, mode_webclips="TXT", is_add_meta=False, is_add_pdf_preview=False
+):
     note_dom = _parse_note_dom(note)
     if not note_dom:
         return []
 
     if note.is_webclip:
         if mode_webclips == "PDF":
-            note_blocks = parse_webclip_to_pdf(note, note_dom)
+            note_blocks = parse_webclip_to_pdf(note, note_dom, is_add_pdf_preview)
         else:
             note_blocks = parse_webclip(note_dom)
     else:

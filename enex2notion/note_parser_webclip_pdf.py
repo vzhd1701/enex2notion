@@ -1,21 +1,25 @@
 import hashlib
+import io
 import logging
 import re
 from base64 import b64encode
 
+import fitz
 import pdfkit
 from bs4 import Tag
 
 from enex2notion.enex_types import EvernoteNote, EvernoteResource
-from enex2notion.notion_blocks_uploadable import NotionPDFBlock
+from enex2notion.notion_blocks_uploadable import NotionImageBlock, NotionPDFBlock
 
 logger = logging.getLogger(__name__)
 
 
-def parse_webclip_to_pdf(note: EvernoteNote, note_dom: Tag):
+def parse_webclip_to_pdf(note: EvernoteNote, note_dom: Tag, is_add_pdf_preview: bool):
     _convert_local_images(note_dom, note)
 
     _remove_remote_images(note_dom)
+
+    note_blocks = []
 
     pdf_bin = pdfkit.from_string(
         str(note_dom),
@@ -28,9 +32,12 @@ def parse_webclip_to_pdf(note: EvernoteNote, note_dom: Tag):
         },
     )
 
+    if is_add_pdf_preview:
+        note_blocks.append(_get_pdf_preview(pdf_bin))
+
     pdf_md5 = hashlib.md5(pdf_bin).hexdigest()
 
-    return [
+    note_blocks.append(
         NotionPDFBlock(
             md5_hash=pdf_md5,
             resource=EvernoteResource(
@@ -41,7 +48,33 @@ def parse_webclip_to_pdf(note: EvernoteNote, note_dom: Tag):
                 file_name=f"{pdf_md5}.pdf",
             ),
         )
-    ]
+    )
+
+    return note_blocks
+
+
+def _get_pdf_preview(pdf_bin: bytes):
+    pix_bin = _get_pdf_first_page_png(pdf_bin)
+
+    pix_md5 = hashlib.md5(pix_bin).hexdigest()
+
+    return NotionImageBlock(
+        md5_hash=pix_md5,
+        resource=EvernoteResource(
+            data_bin=pix_bin,
+            size=len(pix_bin),
+            md5=pix_md5,
+            mime="image/png",
+            file_name=f"{pix_md5}.png",
+        ),
+    )
+
+
+def _get_pdf_first_page_png(pdf_bin: bytes):  # pragma: no cover
+    doc = fitz.open("pdf", pdf_bin)
+    page = doc.loadPage(0)
+    pix = page.getPixmap()
+    return pix.getImageData()
 
 
 def _convert_local_images(note_dom: Tag, note: EvernoteNote):

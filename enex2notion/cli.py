@@ -62,12 +62,14 @@ class EnexUploader(object):
         mode_webclips: str,
         done_file: Path,
         add_meta: bool,
+        add_pdf_preview: bool,
     ):
         self.import_root = import_root
         self.mode = mode
         self.mode_webclips = mode_webclips
         self.done_hashes = DoneFile(done_file) if done_file else set()
         self.add_meta = add_meta
+        self.add_pdf_preview = add_pdf_preview
 
     def upload(self, enex_file: Path):
         logger.info(f"Processing notebook '{enex_file.stem}'...")
@@ -90,7 +92,10 @@ class EnexUploader(object):
     def _parse_note(self, note):
         try:
             return parse_note(
-                note, mode_webclips=self.mode_webclips, is_add_meta=self.add_meta
+                note,
+                mode_webclips=self.mode_webclips,
+                is_add_meta=self.add_meta,
+                is_add_pdf_preview=self.add_pdf_preview,
             )
         except Exception:
             logger.error(f"Unhandled exception while parsing note '{note.title}'!")
@@ -130,6 +135,7 @@ def cli(argv):
         mode_webclips=args.mode_webclips,
         done_file=args.done_file,
         add_meta=args.add_meta,
+        add_pdf_preview=args.add_pdf_preview,
     )
 
     for enex_input in args.enex_input:
@@ -181,6 +187,14 @@ def parse_args(argv):
             "help": (
                 "convert web clips to text (TXT) or pdf (PDF) before upload"
                 " (default: TXT)"
+            ),
+        },
+        "--add-pdf-preview": {
+            "action": "store_true",
+            "default": False,
+            "help": (
+                "include preview image with PDF webclips for gallery view thumbnail"
+                " (works only with --mode-webclips=PDF)"
             ),
         },
         "--add-meta": {
