@@ -1,3 +1,15 @@
+### [0.2.5](https://github.com/vzhd1701/enex2notion/compare/v0.2.4...v0.2.5) (2022-01-12)
+
+### Features
+
+- add option to include previews for PDF weblcips ([458e3be](https://github.com/vzhd1701/enex2notion/commit/458e3beb42512146720177b191d3013f06147a4b))
+
+### Bug Fixes
+
+- handle special css colors ([8fbc393](https://github.com/vzhd1701/enex2notion/commit/8fbc39381bd44a207e977a8767353935e0d8e266))
+- prevent resources from having empty extensions ([9a30823](https://github.com/vzhd1701/enex2notion/commit/9a308233b2b686880b1e82b5cbe244fd6db6c016))
+- retry on server side errors during upload ([2891a57](https://github.com/vzhd1701/enex2notion/commit/2891a57d975f97729089d042e9f25f6f7e45ba8a))
+
 ### [0.2.4](https://github.com/vzhd1701/enex2notion/compare/v0.2.3...v0.2.4) (2022-01-04)
 
 ### Bug Fixes
