@@ -188,25 +188,12 @@ def _is_element_has_direct_blocks(element):
 
 
 def _split_by_blocks(element: Tag):
-    try:
-        block = next(
-            c for c in element.children if isinstance(c, Tag) and c.name in BLOCK_TAGS
-        )
-    except StopIteration:
-        return
+    blocks = [c for c in element.children if isinstance(c, Tag) and c.name in BLOCK_TAGS]
+    for block in reversed(blocks):
+        element.insert_after(block)
 
-    next_siblings = list(block.next_siblings)
-    element.insert_after(block)
-
-    if next_siblings:
-        next_chunk = copy.copy(element)
-        next_chunk.clear()
-
-        next_chunk.extend(next_siblings)
-
-        block.insert_after(next_chunk)
-
-        _split_by_blocks(next_chunk)
+    for block in blocks:
+        _split_by_blocks(block)
 
     if not element.contents:
         element.extract()
