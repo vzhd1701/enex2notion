@@ -74,7 +74,11 @@ def _parse_block(element: Tag):
 
     for tags, tag_parser in tag_map.items():
         if element.name in tags:
-            return tag_parser(element)
+            try:
+                return tag_parser(element)
+            except Exception as e:
+                logger.debug('failed to parse tag %s, error: %s', element.name, e)
+                return None
 
     if isinstance(element, NavigableString):
         if element.text.strip():

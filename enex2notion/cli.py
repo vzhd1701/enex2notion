@@ -81,6 +81,7 @@ class EnexUploader(object):
                 logger.debug(f"Skipping note '{note.title}' (already uploaded)")
                 continue
 
+            logger.debug('start to parse note "%s"', note.title)
             note_blocks = self._parse_note(note)
             if not note_blocks:
                 continue
