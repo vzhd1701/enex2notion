@@ -206,7 +206,10 @@ def _split_by_blocks(element: Tag):
 
         block.insert_after(next_chunk)
 
-        _split_by_blocks(next_chunk)
+        try:
+            _split_by_blocks(next_chunk)
+        except RecursionError:
+            pass
 
     if not element.contents:
         element.extract()
