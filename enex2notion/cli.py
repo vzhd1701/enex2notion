@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Optional
 
 from notion.client import NotionClient
+from requests import HTTPError, codes
 
 from enex2notion.cli_wkhtmltopdf import ensure_wkhtmltopdf
 from enex2notion.enex_parser import iter_notes
@@ -119,15 +120,7 @@ def cli(argv):
     if args.mode_webclips == "PDF":
         ensure_wkhtmltopdf()
 
-    if args.token:
-        root = get_import_root(
-            NotionClient(token_v2=args.token), "Evernote ENEX Import"
-        )
-    else:
-        logger.warning(
-            "No token provided, dry run mode. Nothing will be uploaded to Notion!"
-        )
-        root = None
+    root = get_root(args.token)
 
     enex_uploader = EnexUploader(
         import_root=root,
@@ -145,6 +138,21 @@ def cli(argv):
                 enex_uploader.upload(enex_file)
         else:
             enex_uploader.upload(enex_input)
+
+
+def get_root(token):
+    if not token:
+        logger.warning(
+            "No token provided, dry run mode. Nothing will be uploaded to Notion!"
+        )
+        return None
+
+    try:
+        return get_import_root(NotionClient(token_v2=token), "Evernote ENEX Import")
+    except HTTPError as e:
+        if e.response.status_code == codes["unauthorized"]:
+            logger.error("Invalid token provided!")
+            sys.exit(1)
 
 
 def main():  # pragma: no cover
