@@ -76,7 +76,7 @@ def _remove_banned_files(note_blocks, note: EvernoteNote):
 
 def _is_banned_extension(filename):
     file_ext = filename.split(".")[-1]
-    return file_ext in ["exe", "com", "js"]
+    return file_ext in {"exe", "com", "js"}
 
 
 def _add_meta(note_blocks, note: EvernoteNote):

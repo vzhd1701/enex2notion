@@ -4,6 +4,11 @@ import pytest
 from notion.block import FileBlock
 
 from enex2notion.colors import COLORS_BG, COLORS_FG
+from enex2notion.enex_uploader import (
+    BadTokenException,
+    get_import_root,
+    get_notion_client,
+)
 from enex2notion.note_parser_blocks import parse_note_blocks
 from enex2notion.note_uploader import _sizeof_fmt, upload_block
 
@@ -159,6 +164,12 @@ def test_indented(parse_html, notion_test_page):
     assert notion_test_page.children[0].title_plaintext == "test1"
     assert len(notion_test_page.children[0].children) == 1
     assert notion_test_page.children[0].children[0].title_plaintext == "test2"
+
+
+@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+def test_bad_token():
+    with pytest.raises(BadTokenException):
+        get_notion_client("fake_token")
 
 
 @pytest.mark.parametrize(

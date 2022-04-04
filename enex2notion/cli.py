@@ -4,14 +4,13 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from notion.client import NotionClient
-from requests import HTTPError, codes
-
 from enex2notion.cli_wkhtmltopdf import ensure_wkhtmltopdf
 from enex2notion.enex_parser import iter_notes
 from enex2notion.enex_uploader import (
+    BadTokenException,
     NoteUploadFailException,
     get_import_root,
+    get_notion_client,
     upload_note,
 )
 from enex2notion.enex_uploader_modes import get_notebook_database, get_notebook_page
@@ -148,11 +147,12 @@ def get_root(token):
         return None
 
     try:
-        return get_import_root(NotionClient(token_v2=token), "Evernote ENEX Import")
-    except HTTPError as e:
-        if e.response.status_code == codes["unauthorized"]:
-            logger.error("Invalid token provided!")
-            sys.exit(1)
+        client = get_notion_client(token)
+    except BadTokenException:
+        logger.error("Invalid token provided!")
+        sys.exit(1)
+
+    return get_import_root(client, "Evernote ENEX Import")
 
 
 def main():  # pragma: no cover

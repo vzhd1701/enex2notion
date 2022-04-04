@@ -680,6 +680,30 @@ def test_bad_resource(caplog):
     assert result_blocks == []
 
 
+def test_bad_resource_extension(caplog, tiny_exe_file):
+    test_note = EvernoteNote(
+        title="test1",
+        created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        updated=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        content=(
+            f"<en-note>"
+            f'<en-media type="{tiny_exe_file.mime}" hash="{tiny_exe_file.md5}" />'
+            f"</en-note>"
+        ),
+        tags=[],
+        author="",
+        url="",
+        is_webclip=False,
+        resources=[tiny_exe_file],
+    )
+
+    with caplog.at_level(logging.WARNING, logger="enex2notion"):
+        result_blocks = parse_note(test_note)
+
+    assert "this file extensions is banned by Notion" in caplog.text
+    assert result_blocks == []
+
+
 def test_bad_note(caplog):
     test_note = EvernoteNote(
         title="test1",

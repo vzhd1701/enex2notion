@@ -1,9 +1,10 @@
 import logging
 
 import pytest
+from requests import HTTPError
 
 from enex2notion.cli import cli
-from enex2notion.enex_uploader import NoteUploadFailException
+from enex2notion.enex_uploader import BadTokenException, NoteUploadFailException
 
 
 @pytest.fixture()
@@ -11,6 +12,7 @@ def mock_api(mocker):
     return {
         "NotionClient": mocker.patch("enex2notion.cli.NotionClient"),
         "get_import_root": mocker.patch("enex2notion.cli.get_import_root"),
+        "get_notion_client": mocker.patch("enex2notion.cli.get_notion_client"),
         "get_notebook_database": mocker.patch("enex2notion.cli.get_notebook_database"),
         "get_notebook_page": mocker.patch("enex2notion.cli.get_notebook_page"),
         "upload_note": mocker.patch("enex2notion.cli.upload_note"),
@@ -228,6 +230,16 @@ def test_file_log(mock_api, fake_note_factory, fs):
         done_result = f.read()
 
     assert "No token provided, dry run mode." in done_result
+
+
+def test_bad_token(mock_api, fake_note_factory, caplog):
+    mock_api["get_notion_client"].side_effect = BadTokenException
+
+    with caplog.at_level(logging.ERROR, logger="enex2notion"):
+        with pytest.raises(SystemExit):
+            cli(["--token", "fake_token", "fake.enex"])
+
+    assert "Invalid token provided!" in caplog.text
 
 
 def test_cli_main_import():

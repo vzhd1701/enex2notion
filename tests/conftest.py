@@ -72,6 +72,20 @@ def tiny_file():
 
 
 @pytest.fixture()
+def tiny_exe_file():
+    bin = b"0"
+    bin_md5 = md5(bin).hexdigest()
+
+    return EvernoteResource(
+        data_bin=bin,
+        size=len(bin),
+        md5=bin_md5,
+        mime="application/x-msdownload",
+        file_name="tiny.exe",
+    )
+
+
+@pytest.fixture()
 def runner_id():
     runner_id = platform.platform() + platform.python_version()
     return hashlib.md5(runner_id.encode("utf-8")).hexdigest()[:8]
