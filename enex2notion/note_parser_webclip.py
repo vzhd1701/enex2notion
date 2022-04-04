@@ -188,28 +188,38 @@ def _is_element_has_direct_blocks(element):
 
 
 def _split_by_blocks(element: Tag):
-    try:
-        block = next(
-            c for c in element.children if isinstance(c, Tag) and c.name in BLOCK_TAGS
-        )
-    except StopIteration:
-        return
+    next_element = element
 
-    next_siblings = list(block.next_siblings)
-    element.insert_after(block)
+    while next_element is not None:
+        cur_element = next_element
 
-    if next_siblings:
-        next_chunk = copy.copy(element)
-        next_chunk.clear()
+        try:
+            block = next(
+                c
+                for c in cur_element.children
+                if isinstance(c, Tag) and c.name in BLOCK_TAGS
+            )
+        except StopIteration:
+            return
 
-        next_chunk.extend(next_siblings)
+        next_siblings = list(block.next_siblings)
+        cur_element.insert_after(block)
 
-        block.insert_after(next_chunk)
+        if next_siblings:
+            # Create an empty clone of the current element
+            next_chunk = copy.copy(cur_element)
+            next_chunk.clear()
 
-        _split_by_blocks(next_chunk)
+            next_chunk.extend(next_siblings)
 
-    if not element.contents:
-        element.extract()
+            block.insert_after(next_chunk)
+
+            next_element = next_chunk
+        else:
+            next_element = None
+
+        if not cur_element.contents:
+            cur_element.extract()
 
 
 def _remove_empty_blocks(root: Tag):
