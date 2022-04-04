@@ -10,7 +10,6 @@ from enex2notion.enex_uploader import BadTokenException, NoteUploadFailException
 @pytest.fixture()
 def mock_api(mocker):
     return {
-        "NotionClient": mocker.patch("enex2notion.cli.NotionClient"),
         "get_import_root": mocker.patch("enex2notion.cli.get_import_root"),
         "get_notion_client": mocker.patch("enex2notion.cli.get_notion_client"),
         "get_notebook_database": mocker.patch("enex2notion.cli.get_notebook_database"),
