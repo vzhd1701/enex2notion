@@ -16,7 +16,12 @@ class NoteUploadFailException(Exception):
 
 
 def get_import_root(client, title):
-    for page in client.get_top_level_pages():
+    try:
+        top_pages = client.get_top_level_pages()
+    except KeyError:
+        top_pages = []
+
+    for page in top_pages:
         if isinstance(page, PageBlock) and page.title == title:
             logger.info(f"'{title}' page found")
             return page
