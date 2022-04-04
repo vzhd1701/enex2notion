@@ -33,6 +33,8 @@ def parse_note(
 
     _resolve_resources(note_blocks, note)
 
+    _remove_banned_files(note_blocks, note)
+
     return note_blocks
 
 
@@ -57,6 +59,24 @@ def _resolve_resources(note_blocks, note: EvernoteNote):
                 note_blocks.remove(block)
         if block.children:
             _resolve_resources(block.children, note)
+
+
+def _remove_banned_files(note_blocks, note: EvernoteNote):
+    for block in note_blocks.copy():
+        if isinstance(block, NotionUploadableBlock):
+            if _is_banned_extension(block.resource.file_name):
+                logger.warning(
+                    f"Cannot upload '{block.resource.file_name}' from '{note.title}',"
+                    f" this file extensions is banned by Notion"
+                )
+                note_blocks.remove(block)
+        if block.children:
+            _remove_banned_files(block.children, note)
+
+
+def _is_banned_extension(filename):
+    file_ext = filename.split(".")[-1]
+    return file_ext in ["exe", "com", "js"]
 
 
 def _add_meta(note_blocks, note: EvernoteNote):
