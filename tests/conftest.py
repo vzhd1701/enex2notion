@@ -18,7 +18,13 @@ def notion_test_page(runner_id):
 
     test_page_title = f"TESTING PAGE {runner_id}"
 
-    for page in client.get_top_level_pages():
+    try:
+        top_pages = client.get_top_level_pages()
+    except KeyError:  # pragma: no cover
+        # Need empty account to test
+        top_pages = []
+
+    for page in top_pages:
         if isinstance(page, PageBlock) and page.title == test_page_title:
             page.remove(permanently=True)
 
