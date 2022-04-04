@@ -1,3 +1,12 @@
+### [0.2.6](https://github.com/vzhd1701/enex2notion/compare/v0.2.5...v0.2.6) (2022-04-04)
+
+### Bug Fixes
+
+- filter out unsupported file extensions for upload ([e6e6fba](https://github.com/vzhd1701/enex2notion/commit/e6e6fba7815ab7de727ffd2a3feec8d5ba00ef33))
+- get rid of recursion when splitting blocks for weblcips ([b5e8b19](https://github.com/vzhd1701/enex2notion/commit/b5e8b190f251187f341dced6c020536dc10fe3c8)), closes [#17](https://github.com/vzhd1701/enex2notion/issues/17)
+- handle bad token error ([437208f](https://github.com/vzhd1701/enex2notion/commit/437208f136d9b46a1c347fe4adb833db63198468))
+- skip root page search for empty accounts ([807b04c](https://github.com/vzhd1701/enex2notion/commit/807b04caa464abfef3e6745870c4f48682c5a658))
+
 ### [0.2.5](https://github.com/vzhd1701/enex2notion/compare/v0.2.4...v0.2.5) (2022-01-12)
 
 ### Features
