@@ -1,3 +1,9 @@
+### [0.2.7](https://github.com/vzhd1701/enex2notion/compare/v0.2.6...v0.2.7) (2022-04-06)
+
+### Features
+
+- add option to condense lines into paragraphs ([7ce4bfe](https://github.com/vzhd1701/enex2notion/commit/7ce4bfe62f29c4b11f4ed15c46b46283f4c28155))
+
 ### [0.2.6](https://github.com/vzhd1701/enex2notion/compare/v0.2.5...v0.2.6) (2022-04-04)
 
 ### Bug Fixes
