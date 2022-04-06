@@ -63,7 +63,7 @@ $ poetry run enex2notion
 
 ```shell
 $ enex2notion --help
-usage: enex2notion [-h] [--token TOKEN] [--mode {DB,PAGE}] [--mode-webclips {TXT,PDF}] [--add-pdf-preview] [--add-meta] [--done-file FILE] [--log FILE] [--verbose] [--version] FILE/DIR [FILE/DIR ...]
+usage: enex2notion [-h] [--token TOKEN] [--mode {DB,PAGE}] [--mode-webclips {TXT,PDF}] [--add-pdf-preview] [--add-meta] [--condense-lines] [--done-file FILE] [--log FILE] [--verbose] [--version] FILE/DIR [FILE/DIR ...]
 
 Uploads ENEX files to Notion
 
@@ -78,6 +78,7 @@ optional arguments:
                         convert web clips to text (TXT) or pdf (PDF) before upload (default: TXT)
   --add-pdf-preview     include preview image with PDF webclips for gallery view thumbnail (works only with --mode-webclips=PDF)
   --add-meta            include metadata (created, tags, etc) in notes, makes sense only with PAGE mode
+  --condense-lines      condense text lines together into paragraphs to avoid making block per line
   --done-file FILE      file for uploaded notes hashes to resume interrupted upload
   --log FILE            file to store program log
   --verbose             output debug information
@@ -119,6 +120,10 @@ Due to Notion's limitations Evernote web clips cannot be uploaded as-is. `enex2n
   - web clips are converted using [wkhtmltopdf](https://wkhtmltopdf.org/), see [this page](https://github.com/JazzCore/python-pdfkit/wiki/Installing-wkhtmltopdf) on how to install it
 
 Since Notion's gallery view does not provide thumbnails for embedded PDFs, you have the `--add-pdf-preview` option to extract the first page of generated PDF as a preview for the web clip page.
+
+### Condense lines
+
+The `--condense-lines` option is helpful if you want to save up some space and make notes look more compact. [Example](https://imgur.com/a/sV0X8z7).
 
 ## Examples
 
