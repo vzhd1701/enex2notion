@@ -107,7 +107,11 @@ def test_add_meta(mock_api, fake_note_factory, mocker):
     cli(["--add-meta", "fake.enex"])
 
     mock_api["parse_note"].assert_called_once_with(
-        mocker.ANY, mode_webclips="TXT", is_add_meta=True, is_add_pdf_preview=False
+        mocker.ANY,
+        mode_webclips="TXT",
+        is_add_meta=True,
+        is_add_pdf_preview=False,
+        is_condense_paragraphs=False,
     )
 
 
@@ -176,7 +180,11 @@ def test_webclip(mock_api, fake_note_factory, mocker):
     cli(["fake.enex"])
 
     mock_api["parse_note"].assert_called_once_with(
-        mocker.ANY, mode_webclips="TXT", is_add_meta=False, is_add_pdf_preview=False
+        mocker.ANY,
+        mode_webclips="TXT",
+        is_add_meta=False,
+        is_add_pdf_preview=False,
+        is_condense_paragraphs=False,
     )
 
 
@@ -190,7 +198,11 @@ def test_webclip_pdf(mock_api, fake_note_factory, mocker):
     cli(["--mode-webclips", "PDF", "fake.enex"])
 
     mock_api["parse_note"].assert_called_once_with(
-        mocker.ANY, mode_webclips="PDF", is_add_meta=False, is_add_pdf_preview=False
+        mocker.ANY,
+        mode_webclips="PDF",
+        is_add_meta=False,
+        is_add_pdf_preview=False,
+        is_condense_paragraphs=False,
     )
 
 
@@ -204,7 +216,11 @@ def test_webclip_pdf_with_preview(mock_api, fake_note_factory, mocker):
     cli(["--mode-webclips", "PDF", "--add-pdf-preview", "fake.enex"])
 
     mock_api["parse_note"].assert_called_once_with(
-        mocker.ANY, mode_webclips="PDF", is_add_meta=False, is_add_pdf_preview=True
+        mocker.ANY,
+        mode_webclips="PDF",
+        is_add_meta=False,
+        is_add_pdf_preview=True,
+        is_condense_paragraphs=False,
     )
 
 

@@ -51,6 +51,16 @@ class NotionTextBased(NotionBaseBlock):
         if text_prop:
             self.attrs["title_plaintext"] = text_prop.text
             self.properties["properties.title"] = text_prop.properties
+        else:
+            self.attrs["title_plaintext"] = ""
+            self.properties["properties.title"] = []
+
+    @property
+    def text_prop(self):
+        return TextProp(
+            text=self.attrs["title_plaintext"],
+            properties=self.properties["properties.title"],
+        )
 
 
 class NotionTextBlock(NotionTextBased):

@@ -773,3 +773,125 @@ def test_note_webclip():
     assert fake_note_blocks == [
         NotionTextBlock(text_prop=TextProp("test")),
     ]
+
+
+def test_condense_paragraphs_empty_divide():
+    test_note = EvernoteNote(
+        title="test1",
+        created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        updated=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        content=(
+            "<en-note>"
+            "<div>test1</div>"
+            "<div>test2</div>"
+            "<div><br /></div>"
+            "<div>test3</div>"
+            "<div>test4</div>"
+            "</en-note>"
+        ),
+        tags=[],
+        author="",
+        url="",
+        is_webclip=False,
+        resources=[],
+    )
+
+    fake_note_blocks = parse_note(test_note, is_condense_paragraphs=True)
+
+    assert fake_note_blocks == [
+        NotionTextBlock(
+            text_prop=TextProp(
+                text="test1\ntest2", properties=[["test1"], ["\n"], ["test2"]]
+            )
+        ),
+        NotionTextBlock(
+            text_prop=TextProp(
+                text="test3\ntest4", properties=[["test3"], ["\n"], ["test4"]]
+            )
+        ),
+    ]
+
+
+def test_condense_paragraphs_non_text_block():
+    test_note = EvernoteNote(
+        title="test1",
+        created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        updated=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        content=(
+            "<en-note>"
+            "<div>test1</div>"
+            "<div>test2</div>"
+            "<h1>Test</h1>"
+            "<div>test3</div>"
+            "<div>test4</div>"
+            "</en-note>"
+        ),
+        tags=[],
+        author="",
+        url="",
+        is_webclip=False,
+        resources=[],
+    )
+
+    fake_note_blocks = parse_note(test_note, is_condense_paragraphs=True)
+
+    assert fake_note_blocks == [
+        NotionTextBlock(
+            text_prop=TextProp(
+                text="test1\ntest2", properties=[["test1"], ["\n"], ["test2"]]
+            )
+        ),
+        NotionHeaderBlock(text_prop=TextProp("Test")),
+        NotionTextBlock(
+            text_prop=TextProp(
+                text="test3\ntest4", properties=[["test3"], ["\n"], ["test4"]]
+            )
+        ),
+    ]
+
+
+def test_condense_paragraph_children():
+    test_note = EvernoteNote(
+        title="test1",
+        created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        updated=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        content=(
+            "<en-note>"
+            "<div>test1</div>"
+            "<div>test2</div>"
+            '<div style="padding-left:40px;">test3</div>'
+            '<div style="padding-left:40px;">test4</div>'
+            "<div>test5</div>"
+            "<div>test6</div>"
+            "</en-note>"
+        ),
+        tags=[],
+        author="",
+        url="",
+        is_webclip=False,
+        resources=[],
+    )
+
+    fake_note_blocks = parse_note(test_note, is_condense_paragraphs=True)
+
+    expected_note_blocks = [
+        NotionTextBlock(
+            text_prop=TextProp(
+                text="test1\ntest2", properties=[["test1"], ["\n"], ["test2"]]
+            )
+        ),
+        NotionTextBlock(
+            text_prop=TextProp(
+                text="test5\ntest6", properties=[["test5"], ["\n"], ["test6"]]
+            )
+        ),
+    ]
+    expected_note_blocks[0].children = [
+        NotionTextBlock(
+            text_prop=TextProp(
+                text="test3\ntest4", properties=[["test3"], ["\n"], ["test4"]]
+            )
+        )
+    ]
+
+    assert fake_note_blocks == expected_note_blocks

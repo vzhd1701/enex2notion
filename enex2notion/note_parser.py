@@ -1,4 +1,5 @@
 import logging
+from typing import List
 
 from bs4 import BeautifulSoup
 
@@ -6,7 +7,7 @@ from enex2notion.enex_types import EvernoteNote
 from enex2notion.note_parser_blocks import parse_note_blocks
 from enex2notion.note_parser_webclip import parse_webclip
 from enex2notion.note_parser_webclip_pdf import parse_webclip_to_pdf
-from enex2notion.notion_blocks import TextProp
+from enex2notion.notion_blocks import NotionBaseBlock, NotionTextBlock, TextProp
 from enex2notion.notion_blocks_container import NotionCalloutBlock
 from enex2notion.notion_blocks_uploadable import NotionUploadableBlock
 
@@ -14,7 +15,11 @@ logger = logging.getLogger(__name__)
 
 
 def parse_note(
-    note: EvernoteNote, mode_webclips="TXT", is_add_meta=False, is_add_pdf_preview=False
+    note: EvernoteNote,
+    mode_webclips="TXT",
+    is_add_meta=False,
+    is_add_pdf_preview=False,
+    is_condense_paragraphs=False,
 ):
     note_dom = _parse_note_dom(note)
     if not note_dom:
@@ -27,6 +32,9 @@ def parse_note(
             note_blocks = parse_webclip(note_dom)
     else:
         note_blocks = parse_note_blocks(note_dom)
+
+    if is_condense_paragraphs:
+        note_blocks = _condense_paragraphs(note_blocks)
 
     if is_add_meta:
         _add_meta(note_blocks, note)
@@ -103,3 +111,50 @@ def _get_note_meta(note: EvernoteNote):
         note_meta.append(f"Tags: {note_tags}")
 
     return "\n".join(note_meta)
+
+
+def _condense_paragraphs(blocks: List[NotionBaseBlock]):
+    result_blocks = []
+    solid_block = None
+
+    for b in blocks:
+        b.children = _condense_paragraphs(b.children)
+
+        if _is_empty_paragraph(b) or not isinstance(b, NotionTextBlock):
+            if solid_block:
+                result_blocks.append(solid_block)
+                solid_block = None
+
+            if not _is_empty_paragraph(b):
+                result_blocks.append(b)
+
+        else:
+            if solid_block:
+                solid_block = NotionTextBlock(
+                    text_prop=_concat_text_props(solid_block.text_prop, b.text_prop)
+                )
+            else:
+                solid_block = b
+
+            if b.children:
+                solid_block.children = b.children
+                result_blocks.append(solid_block)
+                solid_block = None
+
+    if solid_block:
+        result_blocks.append(solid_block)
+
+    return result_blocks
+
+
+def _is_empty_paragraph(block: NotionBaseBlock):
+    if isinstance(block, NotionTextBlock):
+        return block == NotionTextBlock()
+    return False
+
+
+def _concat_text_props(text_prop1: TextProp, text_prop2: TextProp) -> TextProp:
+    return TextProp(
+        text=text_prop1.text + "\n" + text_prop2.text,
+        properties=text_prop1.properties + [["\n"]] + text_prop2.properties,
+    )

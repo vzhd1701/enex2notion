@@ -63,6 +63,7 @@ class EnexUploader(object):
         done_file: Path,
         add_meta: bool,
         add_pdf_preview: bool,
+        condense_paragraphs: bool,
     ):
         self.import_root = import_root
         self.mode = mode
@@ -70,6 +71,7 @@ class EnexUploader(object):
         self.done_hashes = DoneFile(done_file) if done_file else set()
         self.add_meta = add_meta
         self.add_pdf_preview = add_pdf_preview
+        self.condense_paragraphs = condense_paragraphs
 
     def upload(self, enex_file: Path):
         logger.info(f"Processing notebook '{enex_file.stem}'...")
@@ -96,6 +98,7 @@ class EnexUploader(object):
                 mode_webclips=self.mode_webclips,
                 is_add_meta=self.add_meta,
                 is_add_pdf_preview=self.add_pdf_preview,
+                is_condense_paragraphs=self.condense_paragraphs,
             )
         except Exception:
             logger.error(f"Unhandled exception while parsing note '{note.title}'!")
@@ -128,6 +131,7 @@ def cli(argv):
         done_file=args.done_file,
         add_meta=args.add_meta,
         add_pdf_preview=args.add_pdf_preview,
+        condense_paragraphs=args.condense_paragraphs,
     )
 
     for enex_input in args.enex_input:
@@ -211,6 +215,14 @@ def parse_args(argv):
             "help": (
                 "include metadata (created, tags, etc) in notes,"
                 " makes sense only with PAGE mode"
+            ),
+        },
+        "--condense-paragraphs": {
+            "action": "store_true",
+            "default": False,
+            "help": (
+                "condense text lines together into paragraphs"
+                " to avoid making block per line"
             ),
         },
         "--done-file": {
