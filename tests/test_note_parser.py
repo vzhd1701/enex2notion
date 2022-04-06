@@ -775,7 +775,7 @@ def test_note_webclip():
     ]
 
 
-def test_condense_paragraphs_empty_divide():
+def test_condense_lines_empty_divide():
     test_note = EvernoteNote(
         title="test1",
         created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
@@ -796,7 +796,7 @@ def test_condense_paragraphs_empty_divide():
         resources=[],
     )
 
-    fake_note_blocks = parse_note(test_note, is_condense_paragraphs=True)
+    fake_note_blocks = parse_note(test_note, is_condense_lines=True)
 
     assert fake_note_blocks == [
         NotionTextBlock(
@@ -812,7 +812,7 @@ def test_condense_paragraphs_empty_divide():
     ]
 
 
-def test_condense_paragraphs_non_text_block():
+def test_condense_lines_non_text_block():
     test_note = EvernoteNote(
         title="test1",
         created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
@@ -833,7 +833,7 @@ def test_condense_paragraphs_non_text_block():
         resources=[],
     )
 
-    fake_note_blocks = parse_note(test_note, is_condense_paragraphs=True)
+    fake_note_blocks = parse_note(test_note, is_condense_lines=True)
 
     assert fake_note_blocks == [
         NotionTextBlock(
@@ -850,7 +850,7 @@ def test_condense_paragraphs_non_text_block():
     ]
 
 
-def test_condense_paragraph_children():
+def test_condense_lines_children():
     test_note = EvernoteNote(
         title="test1",
         created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
@@ -872,7 +872,7 @@ def test_condense_paragraph_children():
         resources=[],
     )
 
-    fake_note_blocks = parse_note(test_note, is_condense_paragraphs=True)
+    fake_note_blocks = parse_note(test_note, is_condense_lines=True)
 
     expected_note_blocks = [
         NotionTextBlock(

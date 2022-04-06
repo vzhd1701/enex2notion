@@ -19,7 +19,7 @@ def parse_note(
     mode_webclips="TXT",
     is_add_meta=False,
     is_add_pdf_preview=False,
-    is_condense_paragraphs=False,
+    is_condense_lines=False,
 ):
     note_dom = _parse_note_dom(note)
     if not note_dom:
@@ -33,8 +33,8 @@ def parse_note(
     else:
         note_blocks = parse_note_blocks(note_dom)
 
-    if is_condense_paragraphs:
-        note_blocks = _condense_paragraphs(note_blocks)
+    if is_condense_lines:
+        note_blocks = _condense_lines(note_blocks)
 
     if is_add_meta:
         _add_meta(note_blocks, note)
@@ -113,12 +113,12 @@ def _get_note_meta(note: EvernoteNote):
     return "\n".join(note_meta)
 
 
-def _condense_paragraphs(blocks: List[NotionBaseBlock]):
+def _condense_lines(blocks: List[NotionBaseBlock]):
     result_blocks = []
     solid_block = None
 
     for b in blocks:
-        b.children = _condense_paragraphs(b.children)
+        b.children = _condense_lines(b.children)
 
         if _is_empty_paragraph(b) or not isinstance(b, NotionTextBlock):
             if solid_block:
