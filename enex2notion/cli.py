@@ -122,7 +122,7 @@ def cli(argv):
     if args.mode_webclips == "PDF":
         ensure_wkhtmltopdf()
 
-    root = get_root(args.token)
+    root = get_root(args.token, args.root_page)
 
     enex_uploader = EnexUploader(
         import_root=root,
@@ -143,7 +143,7 @@ def cli(argv):
             enex_uploader.upload(enex_input)
 
 
-def get_root(token):
+def get_root(token, name):
     if not token:
         logger.warning(
             "No token provided, dry run mode. Nothing will be uploaded to Notion!"
@@ -156,7 +156,7 @@ def get_root(token):
         logger.error("Invalid token provided!")
         sys.exit(1)
 
-    return get_import_root(client, "Evernote ENEX Import")
+    return get_import_root(client, name)
 
 
 def main():  # pragma: no cover
@@ -184,6 +184,16 @@ def parse_args(argv):
                 "Notion token, stored in token_v2 cookie for notion.so"
                 " [NEEDED FOR UPLOAD]"
             ),
+        },
+        "--root-page": {
+            "type": str,
+            "default": "Evernote ENEX Import",
+            "help": (
+                "root page name for the imported notebooks,"
+                " it will be created if it does not exist"
+                ' (default: "Evernote ENEX Import")'
+            ),
+            "metavar": "NAME",
         },
         "--mode": {
             "choices": ["DB", "PAGE"],
