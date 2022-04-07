@@ -63,7 +63,8 @@ $ poetry run enex2notion
 
 ```shell
 $ enex2notion --help
-usage: enex2notion [-h] [--token TOKEN] [--mode {DB,PAGE}] [--mode-webclips {TXT,PDF}] [--add-pdf-preview] [--add-meta] [--condense-lines] [--done-file FILE] [--log FILE] [--verbose] [--version] FILE/DIR [FILE/DIR ...]
+usage: enex2notion [-h] [--token TOKEN] [--root-page NAME] [--mode {DB,PAGE}] [--mode-webclips {TXT,PDF}] [--add-pdf-preview] [--add-meta] [--tag TAG] [--condense-lines] [--done-file FILE] [--log FILE] [--verbose] [--version]
+                   FILE/DIR [FILE/DIR ...]
 
 Uploads ENEX files to Notion
 
@@ -73,11 +74,13 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   --token TOKEN         Notion token, stored in token_v2 cookie for notion.so [NEEDED FOR UPLOAD]
+  --root-page NAME      root page name for the imported notebooks, it will be created if it does not exist (default: "Evernote ENEX Import")
   --mode {DB,PAGE}      upload each ENEX as database (DB) or page with children (PAGE) (default: DB)
   --mode-webclips {TXT,PDF}
                         convert web clips to text (TXT) or pdf (PDF) before upload (default: TXT)
   --add-pdf-preview     include preview image with PDF webclips for gallery view thumbnail (works only with --mode-webclips=PDF)
   --add-meta            include metadata (created, tags, etc) in notes, makes sense only with PAGE mode
+  --tag TAG             add custom tag to uploaded notes
   --condense-lines      condense text lines together into paragraphs to avoid making block per line
   --done-file FILE      file for uploaded notes hashes to resume interrupted upload
   --log FILE            file to store program log
@@ -99,7 +102,7 @@ The program can run without `--token` provided though. It will not make any netw
 
 The upload will take some time since each note is uploaded block-by-block, so you'll probably need some way of resuming it. `--done-file` is precisely for that. All uploaded note hashes will be stored there, so the next time you start, the upload will continue from where you left off.
 
-All uploaded notebooks will appear under the automatically created `Evernote ENEX Import` page. The program will mark unfinished notes with `[UNFINISHED UPLOAD]` text in the title. After successful upload, the mark will be removed.
+All uploaded notebooks will appear under the automatically created `Evernote ENEX Import` page. You can change that name with the `--root-page` option. The program will mark unfinished notes with `[UNFINISHED UPLOAD]` text in the title. After successful upload, the mark will be removed.
 
 ### Upload modes
 
@@ -121,9 +124,11 @@ Due to Notion's limitations Evernote web clips cannot be uploaded as-is. `enex2n
 
 Since Notion's gallery view does not provide thumbnails for embedded PDFs, you have the `--add-pdf-preview` option to extract the first page of generated PDF as a preview for the web clip page.
 
-### Condense lines
+### Misc
 
 The `--condense-lines` option is helpful if you want to save up some space and make notes look more compact. [Example](https://imgur.com/a/sV0X8z7).
+
+The `--tag` option allows you to add a custom tag to all uploaded notes. It will add this tag to existing tags if the note already has any.
 
 ## Examples
 
