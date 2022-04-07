@@ -64,6 +64,7 @@ class EnexUploader(object):
         add_meta: bool,
         add_pdf_preview: bool,
         condense_lines: bool,
+        custom_tag: str,
     ):
         self.import_root = import_root
         self.mode = mode
@@ -72,6 +73,7 @@ class EnexUploader(object):
         self.add_meta = add_meta
         self.add_pdf_preview = add_pdf_preview
         self.condense_lines = condense_lines
+        self.custom_tag = custom_tag
 
     def upload(self, enex_file: Path):
         logger.info(f"Processing notebook '{enex_file.stem}'...")
@@ -82,6 +84,9 @@ class EnexUploader(object):
             if note.note_hash in self.done_hashes:
                 logger.debug(f"Skipping note '{note.title}' (already uploaded)")
                 continue
+
+            if self.custom_tag and self.custom_tag not in note.tags:
+                note.tags.append(self.custom_tag)
 
             note_blocks = self._parse_note(note)
             if not note_blocks:
@@ -132,6 +137,7 @@ def cli(argv):
         add_meta=args.add_meta,
         add_pdf_preview=args.add_pdf_preview,
         condense_lines=args.condense_lines,
+        custom_tag=args.tag,
     )
 
     for enex_input in args.enex_input:
@@ -226,6 +232,10 @@ def parse_args(argv):
                 "include metadata (created, tags, etc) in notes,"
                 " makes sense only with PAGE mode"
             ),
+        },
+        "--tag": {
+            "type": str,
+            "help": "add custom tag to uploaded notes",
         },
         "--condense-lines": {
             "action": "store_true",

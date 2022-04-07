@@ -257,5 +257,11 @@ def test_bad_token(mock_api, fake_note_factory, caplog):
     assert "Invalid token provided!" in caplog.text
 
 
+def test_custom_tag(mock_api, fake_note_factory):
+    cli(["--tag", "test_tag", "fake.enex"])
+
+    fake_note_factory()[0].tags.append.assert_called_once_with("test_tag")
+
+
 def test_cli_main_import():
     from enex2notion import __main__
