@@ -1,3 +1,16 @@
+### [0.2.8](https://github.com/vzhd1701/enex2notion/compare/v0.2.7...v0.2.8) (2022-04-08)
+
+### Features
+
+- add option to condense lines into paragraphs (sparse) ([58b9a95](https://github.com/vzhd1701/enex2notion/commit/58b9a95f73e36f0d6fcccaf3e2419d8a0f39f62d))
+- add option to set custom root page name ([2a7b2ce](https://github.com/vzhd1701/enex2notion/commit/2a7b2cee315703d1fce26a3fda77c4e213eeea60))
+- add option to set custom tag for uploaded pages ([1c385e1](https://github.com/vzhd1701/enex2notion/commit/1c385e1b2a42f04a6475c44a8b9c0af3bf2a69d7)), closes [#23](https://github.com/vzhd1701/enex2notion/issues/23)
+
+### Bug Fixes
+
+- avoid empty blocks in malformed enex files ([33b80fa](https://github.com/vzhd1701/enex2notion/commit/33b80fa539785b56944020711eb7631240c6b044))
+- rename deprecated functions to avoid warnings ([74246ef](https://github.com/vzhd1701/enex2notion/commit/74246ef453c49c6b1af0b59b75e2bab332588387)), closes [#21](https://github.com/vzhd1701/enex2notion/issues/21)
+
 ### [0.2.7](https://github.com/vzhd1701/enex2notion/compare/v0.2.6...v0.2.7) (2022-04-06)
 
 ### Features
