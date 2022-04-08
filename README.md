@@ -63,7 +63,8 @@ $ poetry run enex2notion
 
 ```shell
 $ enex2notion --help
-usage: enex2notion [-h] [--token TOKEN] [--root-page NAME] [--mode {DB,PAGE}] [--mode-webclips {TXT,PDF}] [--add-pdf-preview] [--add-meta] [--tag TAG] [--condense-lines] [--done-file FILE] [--log FILE] [--verbose] [--version]
+usage: enex2notion [-h] [--token TOKEN] [--root-page NAME] [--mode {DB,PAGE}] [--mode-webclips {TXT,PDF}] [--add-pdf-preview] [--add-meta] [--tag TAG] [--condense-lines] [--condense-lines-sparse] [--done-file FILE] [--log FILE]
+                   [--verbose] [--version]
                    FILE/DIR [FILE/DIR ...]
 
 Uploads ENEX files to Notion
@@ -82,6 +83,8 @@ optional arguments:
   --add-meta            include metadata (created, tags, etc) in notes, makes sense only with PAGE mode
   --tag TAG             add custom tag to uploaded notes
   --condense-lines      condense text lines together into paragraphs to avoid making block per line
+  --condense-lines-sparse
+                        like --condense-lines but leaves gaps between paragraphs
   --done-file FILE      file for uploaded notes hashes to resume interrupted upload
   --log FILE            file to store program log
   --verbose             output debug information
@@ -127,6 +130,8 @@ Since Notion's gallery view does not provide thumbnails for embedded PDFs, you h
 ### Misc
 
 The `--condense-lines` option is helpful if you want to save up some space and make notes look more compact. [Example](https://imgur.com/a/sV0X8z7).
+
+The `--condense-lines-sparse` does the same thing as `--condense-lines`, but leaves gaps between paragraphs. [Example](https://imgur.com/a/OBzeqn7).
 
 The `--tag` option allows you to add a custom tag to all uploaded notes. It will add this tag to existing tags if the note already has any.
 
