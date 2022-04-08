@@ -64,6 +64,7 @@ class EnexUploader(object):
         add_meta: bool,
         add_pdf_preview: bool,
         condense_lines: bool,
+        condense_lines_sparse: bool,
         custom_tag: str,
     ):
         self.import_root = import_root
@@ -73,6 +74,7 @@ class EnexUploader(object):
         self.add_meta = add_meta
         self.add_pdf_preview = add_pdf_preview
         self.condense_lines = condense_lines
+        self.condense_lines_sparse = condense_lines_sparse
         self.custom_tag = custom_tag
 
     def upload(self, enex_file: Path):
@@ -104,6 +106,7 @@ class EnexUploader(object):
                 is_add_meta=self.add_meta,
                 is_add_pdf_preview=self.add_pdf_preview,
                 is_condense_lines=self.condense_lines,
+                is_condense_lines_sparse=self.condense_lines_sparse,
             )
         except Exception:
             logger.error(f"Unhandled exception while parsing note '{note.title}'!")
@@ -137,6 +140,7 @@ def cli(argv):
         add_meta=args.add_meta,
         add_pdf_preview=args.add_pdf_preview,
         condense_lines=args.condense_lines,
+        condense_lines_sparse=args.condense_lines_sparse,
         custom_tag=args.tag,
     )
 
@@ -244,6 +248,11 @@ def parse_args(argv):
                 "condense text lines together into paragraphs"
                 " to avoid making block per line"
             ),
+        },
+        "--condense-lines-sparse": {
+            "action": "store_true",
+            "default": False,
+            "help": "like --condense-lines but leaves gaps between paragraphs",
         },
         "--done-file": {
             "type": Path,

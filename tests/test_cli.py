@@ -112,6 +112,7 @@ def test_add_meta(mock_api, fake_note_factory, mocker):
         is_add_meta=True,
         is_add_pdf_preview=False,
         is_condense_lines=False,
+        is_condense_lines_sparse=False,
     )
 
 
@@ -185,6 +186,7 @@ def test_webclip(mock_api, fake_note_factory, mocker):
         is_add_meta=False,
         is_add_pdf_preview=False,
         is_condense_lines=False,
+        is_condense_lines_sparse=False,
     )
 
 
@@ -203,6 +205,7 @@ def test_webclip_pdf(mock_api, fake_note_factory, mocker):
         is_add_meta=False,
         is_add_pdf_preview=False,
         is_condense_lines=False,
+        is_condense_lines_sparse=False,
     )
 
 
@@ -221,6 +224,7 @@ def test_webclip_pdf_with_preview(mock_api, fake_note_factory, mocker):
         is_add_meta=False,
         is_add_pdf_preview=True,
         is_condense_lines=False,
+        is_condense_lines_sparse=False,
     )
 
 

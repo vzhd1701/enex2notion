@@ -20,6 +20,7 @@ def parse_note(
     is_add_meta=False,
     is_add_pdf_preview=False,
     is_condense_lines=False,
+    is_condense_lines_sparse=False,
 ):
     note_dom = _parse_note_dom(note)
     if not note_dom:
@@ -33,7 +34,9 @@ def parse_note(
     else:
         note_blocks = parse_note_blocks(note_dom)
 
-    if is_condense_lines:
+    if is_condense_lines_sparse:
+        note_blocks = _condense_lines(note_blocks, is_sparse=True)
+    elif is_condense_lines:
         note_blocks = _condense_lines(note_blocks)
 
     if is_add_meta:
@@ -113,9 +116,11 @@ def _get_note_meta(note: EvernoteNote):
     return "\n".join(note_meta)
 
 
-def _condense_lines(blocks: List[NotionBaseBlock]):
+def _condense_lines(blocks: List[NotionBaseBlock], is_sparse=False):
     result_blocks = []
     solid_block = None
+
+    blocks = _join_empty_paragraphs(blocks)
 
     for b in blocks:
         b.children = _condense_lines(b.children)
@@ -125,7 +130,7 @@ def _condense_lines(blocks: List[NotionBaseBlock]):
                 result_blocks.append(solid_block)
                 solid_block = None
 
-            if not _is_empty_paragraph(b):
+            if not _is_empty_paragraph(b) or is_sparse:
                 result_blocks.append(b)
 
         else:
@@ -143,6 +148,24 @@ def _condense_lines(blocks: List[NotionBaseBlock]):
 
     if solid_block:
         result_blocks.append(solid_block)
+
+    return result_blocks
+
+
+def _join_empty_paragraphs(blocks: List[NotionBaseBlock]):
+    result_blocks = []
+    gap_started = False
+
+    for b in blocks:
+        if _is_empty_paragraph(b):
+            gap_started = True
+
+        else:
+            if gap_started:
+                result_blocks.append(NotionTextBlock())
+                gap_started = False
+
+            result_blocks.append(b)
 
     return result_blocks
 
