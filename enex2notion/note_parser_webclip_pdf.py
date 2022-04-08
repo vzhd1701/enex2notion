@@ -71,9 +71,9 @@ def _get_pdf_preview(pdf_bin: bytes):
 
 def _get_pdf_first_page_png(pdf_bin: bytes):  # pragma: no cover
     doc = fitz.open("pdf", pdf_bin)
-    page = doc.loadPage(0)
-    pix = page.getPixmap()
-    return pix.getImageData()
+    page = doc.load_page(0)
+    pix = page.get_pixmap()
+    return pix.tobytes()
 
 
 def _convert_local_images(note_dom: Tag, note: EvernoteNote):
