@@ -592,6 +592,15 @@ def test_flattened_div_with_strings_at_the_end(parse_html):
     ]
 
 
+def test_flattened_root_empty_divs(parse_html):
+    test_note = parse_html("<div><div>paragraph1</div><div></div><div><br></div></div>")
+
+    assert parse_note_blocks(test_note) == [
+        NotionTextBlock(text_prop=TextProp("paragraph1")),
+        NotionTextBlock(text_prop=TextProp("")),
+    ]
+
+
 def test_extract_embedded(parse_html):
     test_note = parse_html(
         "<div>"

@@ -49,6 +49,7 @@ def flatten_root(root: Tag):
       <div>paragraph1</div> |  <div>paragraph2</div>
       <div>paragraph2</div> |  <div><br /></div>
      </div>                 | </en-note>
+     <div></div>            |
      <div><br /></div>      |
     </en-note>              |
     """
@@ -67,6 +68,10 @@ def flatten_root(root: Tag):
             div.insert_after(*_group_inline_tags(list(div.contents)))
 
             div.extract()
+
+    empty_divs = [d for d in root.find_all("div", recursive=False) if not d.contents]
+    for d in empty_divs:
+        d.extract()
 
 
 def _group_inline_tags(elements: List[Tag]):
