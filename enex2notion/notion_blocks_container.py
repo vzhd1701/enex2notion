@@ -1,6 +1,6 @@
 from notion import block
 
-from enex2notion.notion_blocks import NotionTextBased
+from enex2notion.notion_blocks_text import NotionTextBased
 
 
 class NotionCodeBlock(NotionTextBased):

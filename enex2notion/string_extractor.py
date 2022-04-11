@@ -3,7 +3,7 @@ from typing import List
 
 from bs4 import NavigableString, Tag
 
-from enex2notion.notion_blocks import TextProp
+from enex2notion.notion_blocks_text import TextProp
 from enex2notion.string_extractor_properties import resolve_string_properties
 
 STANDALONES = ("h1", "h2", "h3", "div")

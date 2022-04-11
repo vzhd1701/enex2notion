@@ -3,7 +3,6 @@ import logging
 from bs4 import NavigableString, Tag
 
 from enex2notion.note_parser_e_media import parse_img, parse_media
-from enex2notion.notion_blocks import NotionTextBlock, TextProp
 from enex2notion.notion_blocks_header import (
     NotionHeaderBlock,
     NotionSubheaderBlock,
@@ -14,6 +13,7 @@ from enex2notion.notion_blocks_list import (
     NotionNumberedListBlock,
     NotionTodoBlock,
 )
+from enex2notion.notion_blocks_text import NotionTextBlock, TextProp
 from enex2notion.string_extractor import extract_string
 
 logger = logging.getLogger(__name__)

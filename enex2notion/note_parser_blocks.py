@@ -13,7 +13,8 @@ from enex2notion.note_parser_indented import (
     parse_indented,
     parse_indented_plain,
 )
-from enex2notion.notion_blocks import NotionDividerBlock, NotionTextBlock, TextProp
+from enex2notion.notion_blocks import NotionDividerBlock
+from enex2notion.notion_blocks_text import NotionTextBlock, TextProp
 
 logger = logging.getLogger(__name__)
 

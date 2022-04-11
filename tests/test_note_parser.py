@@ -8,12 +8,7 @@ from dateutil.tz import tzutc
 from enex2notion.enex_types import EvernoteNote, EvernoteResource
 from enex2notion.note_parser import parse_note
 from enex2notion.note_parser_blocks import parse_note_blocks
-from enex2notion.notion_blocks import (
-    NotionBookmarkBlock,
-    NotionDividerBlock,
-    NotionTextBlock,
-    TextProp,
-)
+from enex2notion.notion_blocks import NotionBookmarkBlock, NotionDividerBlock
 from enex2notion.notion_blocks_container import NotionCalloutBlock, NotionCodeBlock
 from enex2notion.notion_blocks_embeddable import NotionImageEmbedBlock
 from enex2notion.notion_blocks_header import (
@@ -26,6 +21,7 @@ from enex2notion.notion_blocks_list import (
     NotionNumberedListBlock,
     NotionTodoBlock,
 )
+from enex2notion.notion_blocks_text import NotionTextBlock, TextProp
 from enex2notion.notion_blocks_uploadable import (
     NotionAudioBlock,
     NotionFileBlock,
@@ -983,3 +979,38 @@ def test_condense_lines_children():
     ]
 
     assert fake_note_blocks == expected_note_blocks
+
+
+def test_text_prop_strip():
+    test_text_prop = TextProp(text="\ntest1\n", properties=[["\ntest1\n"]])
+
+    trimmed_text_prop = test_text_prop.strip()
+
+    assert trimmed_text_prop.text == "test1"
+    assert trimmed_text_prop.properties == [["test1"]]
+
+
+def test_text_prop_strip_empty_ends():
+    test_text_prop = TextProp(text="\ntest1\n", properties=[["\n"], ["test1"], ["\n"]])
+
+    trimmed_text_prop = test_text_prop.strip()
+
+    assert trimmed_text_prop.text == "test1"
+    assert trimmed_text_prop.properties == [["test1"]]
+
+
+def test_text_prop_strip_props():
+    test_text_prop = TextProp(
+        text="\n1\ntest1\ntest2\n\n2\n",
+        properties=[["\n1\n", [["b"]]], ["test1"], ["\ntest2\n"], ["\n2\n", [["b"]]]],
+    )
+
+    trimmed_text_prop = test_text_prop.strip()
+
+    assert trimmed_text_prop.text == "1\ntest1\ntest2\n\n2"
+    assert trimmed_text_prop.properties == [
+        ["1\n", [["b"]]],
+        ["test1"],
+        ["\ntest2\n"],
+        ["\n2", [["b"]]],
+    ]

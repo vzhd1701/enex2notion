@@ -1,22 +1,6 @@
 from notion import block
 
 
-class TextProp(object):
-    def __init__(self, text, properties=None):
-        self.text = text
-
-        self.properties = [[text]] if properties is None else properties
-
-        if properties is None:
-            self.properties = [[text]] if text else []
-
-    def __eq__(self, other):
-        return self.text == other.text and self.properties == other.properties
-
-    def __repr__(self):  # pragma: no cover
-        return "<{0}> {1}".format(self.__class__.__name__, self.text)
-
-
 class NotionBaseBlock(object):
     type = None
 
@@ -42,29 +26,6 @@ class NotionBaseBlock(object):
             c_count=len(self.children),
             attrs=self.attrs,
         )
-
-
-class NotionTextBased(NotionBaseBlock):
-    def __init__(self, text_prop: TextProp = None, **kwargs):
-        super().__init__(**kwargs)
-
-        if text_prop:
-            self.attrs["title_plaintext"] = text_prop.text
-            self.properties["properties.title"] = text_prop.properties
-        else:
-            self.attrs["title_plaintext"] = ""
-            self.properties["properties.title"] = []
-
-    @property
-    def text_prop(self):
-        return TextProp(
-            text=self.attrs["title_plaintext"],
-            properties=self.properties["properties.title"],
-        )
-
-
-class NotionTextBlock(NotionTextBased):
-    type = block.TextBlock
 
 
 class NotionDividerBlock(NotionBaseBlock):

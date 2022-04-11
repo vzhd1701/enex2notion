@@ -1,7 +1,7 @@
 from bs4 import Tag
 
-from enex2notion.notion_blocks import TextProp
 from enex2notion.notion_blocks_table import NotionTableBlock
+from enex2notion.notion_blocks_text import TextProp
 from enex2notion.string_extractor import extract_string
 
 

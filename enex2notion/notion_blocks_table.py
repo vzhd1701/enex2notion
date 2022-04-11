@@ -2,7 +2,8 @@ from typing import Iterable
 
 from notion.block import BasicBlock
 
-from enex2notion.notion_blocks import NotionBaseBlock, NotionTextBased, TextProp
+from enex2notion.notion_blocks import NotionBaseBlock
+from enex2notion.notion_blocks_text import NotionTextBased, TextProp
 from enex2notion.rand_id import rand_id_list
 
 
