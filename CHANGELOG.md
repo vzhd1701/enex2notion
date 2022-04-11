@@ -1,3 +1,9 @@
+### [0.2.9](https://github.com/vzhd1701/enex2notion/compare/v0.2.8...v0.2.9) (2022-04-11)
+
+### Bug Fixes
+
+- trim paragraphs when condense lines option is used ([9403e47](https://github.com/vzhd1701/enex2notion/commit/9403e470363e18719eded106ba61962e01eb6c38))
+
 ### [0.2.8](https://github.com/vzhd1701/enex2notion/compare/v0.2.7...v0.2.8) (2022-04-08)
 
 ### Features
