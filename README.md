@@ -157,4 +157,6 @@ $ enex2notion --token <YOUR_TOKEN_HERE> --done-file done.txt "notebook.enex"
 
 ## Getting help
 
-If you have encountered a bug or have an idea about a new feature, please [open a new issue](https://github.com/vzhd1701/enex2notion/issues/new/choose). If you have a question about the program or have difficulty using it, you are welcome to [the discussions page](https://github.com/vzhd1701/enex2notion/discussions). You can also mail me directly, I'm always happy to help.
+If you found a bug or have a feature request, please [open a new issue](https://github.com/vzhd1701/enex2notion/issues/new/choose).
+
+If you have a question about the program or have difficulty using it, you are welcome to [the discussions page](https://github.com/vzhd1701/enex2notion/discussions). You can also mail me directly, I'm always happy to help.
