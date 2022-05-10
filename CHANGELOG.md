@@ -1,3 +1,9 @@
+### [0.2.10](https://github.com/vzhd1701/enex2notion/compare/v0.2.9...v0.2.10) (2022-05-10)
+
+### Bug Fixes
+
+- update note last edit time after upload ([d5dfa95](https://github.com/vzhd1701/enex2notion/commit/d5dfa95a8ea078f7661b764aba9a1f50e99254c7)), closes [#29](https://github.com/vzhd1701/enex2notion/issues/29)
+
 ### [0.2.9](https://github.com/vzhd1701/enex2notion/compare/v0.2.8...v0.2.9) (2022-04-11)
 
 ### Bug Fixes
