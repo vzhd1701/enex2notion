@@ -15,4 +15,4 @@ def rand_id_list(size, id_length):
     while len(rand_ids) < size:
         rand_ids.add(rand_id(id_length))
 
-    return list(rand_ids)
+    return sorted(rand_ids)

@@ -5,7 +5,7 @@
 
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.4.0
+    rev: v4.2.0
     hooks:
     -   id: check-vcs-permalinks
     -   id: end-of-file-fixer
@@ -15,6 +15,7 @@ repos:
         args: ['--fix=lf']
     -   id: check-toml
     -   id: check-yaml
+        exclude: ^tests/cassettes/
     -   id: no-commit-to-branch
 
 -   repo: local
@@ -39,3 +40,19 @@ repos:
         language: system
         entry: poetry run mdformat
         types: [markdown]
+
+    -   id: pytest
+        name: pytest
+        stages: [commit]
+        language: system
+        entry: poetry run pytest
+        types: [python]
+        pass_filenames: false
+
+    -   id: pytest-cov
+        name: pytest
+        stages: [push]
+        language: system
+        entry: poetry run pytest --cov-fail-under=100 --cov=csv2notion tests/
+        types: [python]
+        pass_filenames: false

@@ -1,19 +1,17 @@
 import os
+import random
 
 import pytest
 from notion.block import FileBlock
 
 from enex2notion.colors import COLORS_BG, COLORS_FG
-from enex2notion.enex_uploader import (
-    BadTokenException,
-    get_import_root,
-    get_notion_client,
-)
+from enex2notion.enex_uploader import BadTokenException, get_notion_client
 from enex2notion.note_parser_blocks import parse_note_blocks
 from enex2notion.note_uploader import _sizeof_fmt, upload_block
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_color_text(parse_html, notion_test_page):
     test_colors = dict(COLORS_FG)
     test_colors.update(COLORS_BG)
@@ -38,7 +36,8 @@ def test_color_text(parse_html, notion_test_page):
         )
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_embedded_link(parse_html, notion_test_page):
     test_note = parse_html(
         '<div style="--en-richlink:true;'
@@ -59,7 +58,8 @@ def test_embedded_link(parse_html, notion_test_page):
         assert child.link == test_block.attrs["link"]
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_resized_image(parse_html, notion_test_page, smallest_gif):
     test_note = parse_html(
         '<en-media type="image/gif"'
@@ -78,7 +78,8 @@ def test_resized_image(parse_html, notion_test_page, smallest_gif):
         assert child.width == test_block.width
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_resized_image_only_width(parse_html, notion_test_page, smallest_gif):
     test_note = parse_html(
         f'<en-media type="{smallest_gif.mime}"'
@@ -97,7 +98,8 @@ def test_resized_image_only_width(parse_html, notion_test_page, smallest_gif):
         assert child.height == test_block.height
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_file_upload(parse_html, notion_test_page, tiny_file):
     test_note = parse_html(
         f'<en-media type="{tiny_file.mime}" hash="{tiny_file.md5}" />'
@@ -115,7 +117,8 @@ def test_file_upload(parse_html, notion_test_page, tiny_file):
         assert child.size == "1B"
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_table(parse_html, notion_test_page):
     test_note = parse_html(
         "<table>"
@@ -124,6 +127,8 @@ def test_table(parse_html, notion_test_page):
         "<tr><td>test7</td><td>test8</td><td>test9</td></tr>"
         "</table>"
     )
+
+    random.seed(42)
 
     test_table = parse_note_blocks(test_note)[0]
 
@@ -149,7 +154,8 @@ def test_table(parse_html, notion_test_page):
     ]
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_indented(parse_html, notion_test_page):
     test_note = parse_html(
         '<div>test1</div><div style="padding-left:40px;">test2</div>'
@@ -166,7 +172,8 @@ def test_indented(parse_html, notion_test_page):
     assert notion_test_page.children[0].children[0].title_plaintext == "test2"
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_bad_token():
     with pytest.raises(BadTokenException):
         get_notion_client("fake_token")

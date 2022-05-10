@@ -1,8 +1,11 @@
 import base64
 import hashlib
+import json
 import os
 import platform
+import uuid
 from hashlib import md5
+from pathlib import Path
 
 import pytest
 from bs4 import BeautifulSoup
@@ -12,11 +15,91 @@ from notion.client import NotionClient
 from enex2notion.enex_types import EvernoteResource
 
 
-@pytest.fixture()
-def notion_test_page(runner_id):
-    client = NotionClient(token_v2=os.environ.get("NOTION_TEST_TOKEN"))
+@pytest.fixture(scope="module")
+def vcr_config():
+    """Remove meta bloat to reduce cassette size"""
 
-    test_page_title = f"TESTING PAGE {runner_id}"
+    def response_cleaner(response):
+        bloat_headers = [
+            "Content-Security-Policy",
+            "Expect-CT",
+            "ETag",
+            "Referrer-Policy",
+            "Strict-Transport-Security",
+            "Vary",
+            "Date",
+            "Server",
+            "Connection",
+            "Set-Cookie",
+        ]
+
+        for h in response["headers"].copy():
+            if h.startswith("X-") or h.startswith("CF-") or h in bloat_headers:
+                response["headers"].pop(h)
+
+        return response
+
+    return {
+        "filter_headers": [
+            ("cookie", "PRIVATE"),
+            "Accept",
+            "Accept-Encoding",
+            "Connection",
+            "User-Agent",
+        ],
+        "before_record_response": response_cleaner,
+        "decode_compressed_response": True,
+    }
+
+
+@pytest.fixture()
+def vcr_uuid4(mocker, vcr_cassette_dir, vcr_cassette_name):
+    uuid_casette_path = Path(vcr_cassette_dir) / f"{vcr_cassette_name}.uuid4.json"
+
+    if uuid_casette_path.exists():
+        with open(uuid_casette_path, "r") as f:
+            uuid_casette = [uuid.UUID(u) for u in json.load(f)]
+
+        mocker.patch("uuid.uuid4", side_effect=uuid_casette)
+    else:
+        uuid_casette = []
+
+        orign_uuid4 = uuid.uuid4
+
+        def uuid4():
+            u = orign_uuid4()
+            uuid_casette.append(u)
+            return u
+
+        mocker.patch("uuid.uuid4", side_effect=uuid4)
+
+    yield
+
+    if not uuid_casette_path.exists() and uuid_casette:
+        uuid_casette_path.parent.mkdir(parents=True, exist_ok=True)
+
+        with open(uuid_casette_path, "w") as f:
+            json.dump([str(u) for u in uuid_casette], f)
+
+
+@pytest.fixture()
+def notion_test_page(vcr_cassette_dir, vcr_cassette_name):
+    casette_path = Path(vcr_cassette_dir) / f"{vcr_cassette_name}.yaml"
+
+    # if cassette exists and no token, probably CI test
+    if casette_path.exists() and not os.environ.get("NOTION_TEST_TOKEN"):
+        token = "fake_token"
+    else:
+        token = os.environ.get("NOTION_TEST_TOKEN")
+
+    if not token:
+        raise RuntimeError(
+            "No token found. Set NOTION_TEST_TOKEN environment variable."
+        )
+
+    client = NotionClient(token_v2=token)
+
+    test_page_title = f"TESTING PAGE"
 
     try:
         top_pages = client.get_top_level_pages()
@@ -24,9 +107,15 @@ def notion_test_page(runner_id):
         # Need empty account to test
         top_pages = []
 
-    for page in top_pages:
-        if isinstance(page, PageBlock) and page.title == test_page_title:
+    for page in top_pages.copy():
+        try:
+            if page.title == test_page_title:
+                page.remove(permanently=True)
+        except AttributeError:
             page.remove(permanently=True)
+
+    if top_pages:
+        raise RuntimeError("Testing requires empty account")
 
     page = client.current_space.add_page(test_page_title)
 
@@ -89,12 +178,6 @@ def tiny_exe_file():
         mime="application/x-msdownload",
         file_name="tiny.exe",
     )
-
-
-@pytest.fixture()
-def runner_id():
-    runner_id = platform.platform() + platform.python_version()
-    return hashlib.md5(runner_id.encode("utf-8")).hexdigest()[:8]
 
 
 @pytest.fixture()

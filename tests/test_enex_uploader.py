@@ -4,7 +4,7 @@ from datetime import datetime
 
 import pytest
 from dateutil.tz import tzutc
-from notion.block import CalloutBlock, CollectionViewPageBlock, FileBlock, PageBlock
+from notion.block import CollectionViewPageBlock, FileBlock, PageBlock, TextBlock
 from requests import HTTPError
 
 from enex2notion.enex_types import EvernoteNote
@@ -17,7 +17,8 @@ from enex2notion.enex_uploader_modes import get_notebook_database, get_notebook_
 from enex2notion.note_parser import parse_note
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_notebook_database(notion_test_page):
     test_database = get_notebook_database(notion_test_page, "test_database")
 
@@ -42,14 +43,16 @@ def test_notebook_database(notion_test_page):
     assert properties[3]["visible"]
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_notebook_database_existing(notion_test_page):
     test_database = get_notebook_database(notion_test_page, "test_database")
 
     assert test_database == get_notebook_database(notion_test_page, "test_database")
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_notebook_database_existing_no_options(notion_test_page):
     test_database = get_notebook_database(notion_test_page, "test_database")
 
@@ -66,7 +69,8 @@ def test_notebook_database_existing_no_options(notion_test_page):
     assert test_database.collection.get(f"schema.{tag_col_id}.options") == []
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_notebook_page(notion_test_page):
     test_page = get_notebook_page(notion_test_page, "test")
 
@@ -74,16 +78,18 @@ def test_notebook_page(notion_test_page):
     assert test_page.title == "test"
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_notebook_page_existing(notion_test_page):
     test_page = get_notebook_page(notion_test_page, "test")
 
     assert test_page == get_notebook_page(notion_test_page, "test")
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
-def test_import_root(notion_test_page, runner_id):
-    test_import_title = f"Evernote ENEX Import (TEST {runner_id})"
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
+def test_import_root(notion_test_page):
+    test_import_title = f"{notion_test_page.title} 2"
 
     root = get_import_root(notion_test_page._client, test_import_title)
 
@@ -92,9 +98,10 @@ def test_import_root(notion_test_page, runner_id):
     root.remove(permanently=True)
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
-def test_import_root_new(notion_test_page, runner_id, caplog):
-    test_import_title = f"Evernote ENEX Import (TEST {runner_id})"
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
+def test_import_root_new(notion_test_page, caplog):
+    test_import_title = f"{notion_test_page.title} 2"
 
     root = get_import_root(notion_test_page._client, test_import_title)
 
@@ -106,9 +113,10 @@ def test_import_root_new(notion_test_page, runner_id, caplog):
     assert f"Creating '{test_import_title}' page..." in caplog.text
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
-def test_empty_database_cleanup(notion_test_page, runner_id):
-    test_import_title = f"Evernote ENEX Import (TEST {runner_id})"
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
+def test_empty_database_cleanup(notion_test_page):
+    test_import_title = f"{notion_test_page.title} 2"
 
     root = get_import_root(notion_test_page._client, test_import_title)
 
@@ -122,7 +130,8 @@ def test_empty_database_cleanup(notion_test_page, runner_id):
     root.remove(permanently=True)
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_upload_note(notion_test_page):
     test_note = EvernoteNote(
         title="test1",
@@ -147,7 +156,8 @@ def test_upload_note(notion_test_page):
     assert uploaded_page.children[0].title == "test"
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_upload_note_fail(notion_test_page, mocker):
     test_note = EvernoteNote(
         title="test1",
@@ -171,7 +181,8 @@ def test_upload_note_fail(notion_test_page, mocker):
     assert len(notion_test_page.children) == 0
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_upload_note_fail_db(notion_test_page, mocker):
     test_note = EvernoteNote(
         title="test1",
@@ -194,10 +205,11 @@ def test_upload_note_fail_db(notion_test_page, mocker):
     with pytest.raises(NoteUploadFailException):
         upload_note(test_database, test_note, note_blocks)
 
-    # make proper test some day
+    assert len(test_database.collection.get_rows()) == 0
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_upload_note_with_file(notion_test_page, tiny_file):
     test_note = EvernoteNote(
         title="test1",
@@ -227,7 +239,8 @@ def test_upload_note_with_file(notion_test_page, tiny_file):
     assert uploaded_page.children[0].title == "tiny.bin"
 
 
-@pytest.mark.skipif(not os.environ.get("NOTION_TEST_TOKEN"), reason="No notion token")
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_upload_note_db(notion_test_page):
     test_note = EvernoteNote(
         title="test1",
@@ -247,4 +260,13 @@ def test_upload_note_db(notion_test_page):
 
     upload_note(test_database, test_note, note_blocks)
 
-    # make proper test some day
+    rows = list(test_database.collection.get_rows())
+    test_row = rows[0]
+
+    assert len(rows) == 1
+
+    assert test_row.title == "test1"
+
+    assert len(test_row.children) == 1
+    assert isinstance(test_row.children[0], TextBlock)
+    assert test_row.children[0].title == "test"
