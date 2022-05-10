@@ -42,7 +42,7 @@ tinycss2 = "^1.1.1"
 pdfkit = "^1.0.0"
 dataclasses = {version = ">=0.6", markers = "python_version < \"3.7\""}
 PyMuPDF = "^1.19.4"
-notion = {git = "https://github.com/vzhd1701/notion-py.git", rev = "ee951e0e4e36edcb8d4020810aeeaa33b9dbb4e6"}
+notion-vzhd1701-fork = "0.0.29"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.3"
