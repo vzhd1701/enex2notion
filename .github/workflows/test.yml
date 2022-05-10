@@ -14,7 +14,7 @@ on:
       - "**/version.py"
 
 env:
-  BUILD_POETRY_VERSION: 1.1.11
+  BUILD_POETRY_VERSION: 1.1.13
   POETRY_VIRTUALENVS_CREATE: false
   PACKAGE_NAME: enex2notion
 
@@ -24,7 +24,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
