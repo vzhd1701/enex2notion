@@ -245,7 +245,7 @@ def test_upload_note_db(notion_test_page):
     test_note = EvernoteNote(
         title="test1",
         created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
-        updated=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        updated=datetime(2021, 11, 19, 0, 0, 0, tzinfo=tzutc()),
         content="<en-note><div>test</div></en-note>",
         tags=[],
         author="",
@@ -266,6 +266,9 @@ def test_upload_note_db(notion_test_page):
     assert len(rows) == 1
 
     assert test_row.title == "test1"
+
+    assert test_row.created == datetime(2021, 11, 18, 0, 0, 0)
+    assert test_row.updated == datetime(2021, 11, 19, 0, 0, 0)
 
     assert len(test_row.children) == 1
     assert isinstance(test_row.children[0], TextBlock)

@@ -3,6 +3,7 @@ import logging
 from notion.block import CollectionViewPageBlock, PageBlock
 from notion.client import NotionClient
 from notion.collection import CollectionRowBlock
+from notion.operations import build_operation
 from progress.bar import Bar
 from requests import HTTPError, codes
 
@@ -64,6 +65,20 @@ def upload_note(root, note: EvernoteNote, note_blocks):
 
     # Set proper name after everything is uploaded
     new_page.title = note.title
+
+    _update_edit_time(new_page, note.updated)
+
+
+def _update_edit_time(page, date):
+    page._client.submit_transaction(  # noqa: WPS437
+        build_operation(
+            id=page.id,
+            path="last_edited_time",
+            args=int(date.timestamp() * 1000),
+            table=page._table,  # noqa: WPS437
+        ),
+        update_last_edited=False,
+    )
 
 
 def _make_page(note, root):
