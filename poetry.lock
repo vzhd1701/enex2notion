@@ -624,7 +624,7 @@ python-versions = "*"
 
 [[package]]
 name = "notion-vzhd1701-fork"
-version = "0.0.29"
+version = "0.0.30"
 description = "Fork of https://github.com/jamalex/notion-py"
 category = "main"
 optional = false
@@ -1218,7 +1218,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6.1"
-content-hash = "8991c4a0c9cf13c7e89eb95d735b69aa03f76bc4b8755d296a1418c8571ab88f"
+content-hash = "8f7418c7c5f9c0098afabcee52ba438a5f53c21ccbff22af610dc09422e9990c"
 
 [metadata.files]
 appdirs = [
@@ -1562,8 +1562,8 @@ nodeenv = [
     {file = "nodeenv-1.6.0.tar.gz", hash = "sha256:3ef13ff90291ba2a4a7a4ff9a979b63ffdd00a464dbe04acf0ea6471517a4c2b"},
 ]
 notion-vzhd1701-fork = [
-    {file = "notion-vzhd1701-fork-0.0.29.tar.gz", hash = "sha256:e99b29b7fb9affa5b2667220c27645345b79d5ab52607565c5abf17c882039d5"},
-    {file = "notion_vzhd1701_fork-0.0.29-py3-none-any.whl", hash = "sha256:70cb8f4af3b26088e93a09bd1b6caeebfc120e35f36093d039557a46be04f3c6"},
+    {file = "notion-vzhd1701-fork-0.0.30.tar.gz", hash = "sha256:78afcf39382c18b74b79bb6be99cc86f72a116368d9877d4a6a3cf56b87ca5e4"},
+    {file = "notion_vzhd1701_fork-0.0.30-py3-none-any.whl", hash = "sha256:71edbf11bd5ff45d533251f9c5476c2eaa3524f97f6e21ff4c68d24ef8a78fa2"},
 ]
 packaging = [
     {file = "packaging-21.3-py3-none-any.whl", hash = "sha256:ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522"},
