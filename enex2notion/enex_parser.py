@@ -69,11 +69,13 @@ def _process_note(note_raw: dict):
         note_tags = [note_tags]
 
     now = datetime.now()
+    date_created = isoparse(note_raw.get("created", now.isoformat()))
+    date_updated = isoparse(note_raw.get("updated", date_created.isoformat()))
 
     return EvernoteNote(
         title=note_raw.get("title", "Untitled"),
-        created=isoparse(note_raw.get("created", now.isoformat())),
-        updated=isoparse(note_raw.get("updated", now.isoformat())),
+        created=date_created,
+        updated=date_updated,
         content=note_raw.get("content", ""),
         tags=note_tags,
         author=note_attrs.get("author", ""),

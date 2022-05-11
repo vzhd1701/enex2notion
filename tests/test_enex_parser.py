@@ -41,6 +41,74 @@ def test_iter_notes_single(fs):
     ]
 
 
+def test_iter_notes_single_no_update_time(fs):
+    test_enex = """<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">
+    <en-export export-date="20211218T085932Z" application="Evernote" version="10.25.6">
+      <note>
+        <title>test1</title>
+        <created>20211118T085332Z</created>
+        <note-attributes>
+        </note-attributes>
+        <content>test</content>
+      </note>
+    </en-export>
+    """
+    fs.create_file("test.enex", contents=test_enex)
+
+    notes = list(iter_notes(Path("test.enex")))
+
+    assert notes == [
+        EvernoteNote(
+            title="test1",
+            created=datetime.datetime(2021, 11, 18, 8, 53, 32, tzinfo=tzutc()),
+            updated=datetime.datetime(2021, 11, 18, 8, 53, 32, tzinfo=tzutc()),
+            content="test",
+            tags=[],
+            author="",
+            url="",
+            is_webclip=False,
+            resources=[],
+        ),
+    ]
+
+
+def test_iter_notes_single_no_time(fs, mocker):
+    test_enex = """<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">
+    <en-export export-date="20211218T085932Z" application="Evernote" version="10.25.6">
+      <note>
+        <title>test1</title>
+        <note-attributes>
+        </note-attributes>
+        <content>test</content>
+      </note>
+    </en-export>
+    """
+    fs.create_file("test.enex", contents=test_enex)
+
+    test_time = datetime.datetime(2021, 11, 18, 8, 53, 32, tzinfo=tzutc())
+
+    mock_dt = mocker.patch("enex2notion.enex_parser.datetime")
+    mock_dt.now.return_value = test_time
+
+    notes = list(iter_notes(Path("test.enex")))
+
+    assert notes == [
+        EvernoteNote(
+            title="test1",
+            created=test_time,
+            updated=test_time,
+            content="test",
+            tags=[],
+            author="",
+            url="",
+            is_webclip=False,
+            resources=[],
+        ),
+    ]
+
+
 def test_iter_notes_single_hash(fs):
     test_enex = """<?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">
