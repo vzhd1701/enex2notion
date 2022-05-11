@@ -299,9 +299,9 @@ def _setup_logging(is_verbose: bool, log_file: Optional[Path]):
     logging.getLogger("urllib3").setLevel(logging.ERROR)
 
     # For latest version of BeautifulSoup
-    try:
+    try:  # pragma: no cover
         from bs4 import XMLParsedAsHTMLWarning
 
         warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
-    except ImportError:
+    except ImportError:  # pragma: no cover
         pass
