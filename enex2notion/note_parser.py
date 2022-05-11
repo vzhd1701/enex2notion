@@ -50,6 +50,7 @@ def parse_note(
 
 
 def _parse_note_dom(note: EvernoteNote):
+    # Using html.parser because Evernote enml2 is basically HTML
     note_dom = BeautifulSoup(note.content, "html.parser").find("en-note")
 
     if not note_dom:

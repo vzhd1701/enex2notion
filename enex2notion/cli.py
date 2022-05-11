@@ -1,6 +1,7 @@
 import argparse
 import logging
 import sys
+import warnings
 from pathlib import Path
 from typing import Optional
 
@@ -296,3 +297,11 @@ def _setup_logging(is_verbose: bool, log_file: Optional[Path]):
         logging.getLogger("enex2notion").addHandler(file_handler)
 
     logging.getLogger("urllib3").setLevel(logging.ERROR)
+
+    # For latest version of BeautifulSoup
+    try:
+        from bs4 import XMLParsedAsHTMLWarning
+
+        warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
+    except ImportError:
+        pass
