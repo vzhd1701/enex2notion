@@ -43,6 +43,7 @@ jobs:
         uses: snok/install-poetry@v1
         with:
           version: ${{ env.BUILD_POETRY_VERSION }}
+          installer-parallel: false
           virtualenvs-create: true
           virtualenvs-in-project: true
 
