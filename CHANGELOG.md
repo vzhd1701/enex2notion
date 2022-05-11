@@ -1,3 +1,9 @@
+### [0.2.11](https://github.com/vzhd1701/enex2notion/compare/v0.2.10...v0.2.11) (2022-05-11)
+
+### Bug Fixes
+
+- set note update time to created time if missing ([8f3f5b1](https://github.com/vzhd1701/enex2notion/commit/8f3f5b15fba91d54748965b6168597337306ac6b))
+
 ### [0.2.10](https://github.com/vzhd1701/enex2notion/compare/v0.2.9...v0.2.10) (2022-05-10)
 
 ### Bug Fixes
