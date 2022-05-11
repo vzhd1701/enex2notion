@@ -32,29 +32,28 @@ classifiers = [
 enex2notion = "enex2notion.cli:main"
 
 [tool.poetry.dependencies]
-python = "^3.6.1"
-beautifulsoup4 = "^4.10.0"
+python = "^3.7"
+beautifulsoup4 = "^4.11.1"
 python-dateutil = "^2.8.2"
 progress = "^1.6"
-requests = "^2.26.0"
+requests = "^2.27.1"
 w3lib = "^1.22.0"
 tinycss2 = "^1.1.1"
 pdfkit = "^1.0.0"
-dataclasses = {version = ">=0.6", markers = "python_version < \"3.7\""}
-PyMuPDF = "^1.19.4"
+PyMuPDF = "^1.19.6"
 notion-vzhd1701-fork = "0.0.30"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.3"
-pytest-cov = "^2.11.1"
-pytest-mock = "^3.5.1"
-black = "^20.8b1"
-isort = "^5.8.0"
-pre-commit = "^2.12.0"
+pytest = "^7.1.2"
+pytest-cov = "^3.0.0"
+pytest-mock = "^3.7.0"
+black = "^22.3.0"
+isort = "^5.10.1"
+pre-commit = "^2.19.0"
 flakehell = "^0.9.0"
-wemake-python-styleguide = "^0.15.2"
+wemake-python-styleguide = "^0.16.1"
 mdformat = "0.7.7"
-pyfakefs = "^4.5.3"
+pyfakefs = "^4.5.6"
 pytest-vcr = "^1.0.2"
 
 [tool.flakehell]

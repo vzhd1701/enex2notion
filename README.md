@@ -40,7 +40,7 @@ You can either use Evernote native export or try out my other tool, [evernote-ba
 $ pip install enex2notion
 ```
 
-**Python 3.6 or later required.**
+**Python 3.7 or later required.**
 
 Or, since **enex2notion** is a standalone tool, it might be more convenient to install it using [**pipx**](https://github.com/pipxproject/pipx):
 
