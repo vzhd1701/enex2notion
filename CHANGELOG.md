@@ -1,3 +1,10 @@
+### [0.2.13](https://github.com/vzhd1701/enex2notion/compare/v0.2.12...v0.2.13) (2022-05-25)
+
+### Bug Fixes
+
+- show better progress bar ([cb7699e](https://github.com/vzhd1701/enex2notion/commit/cb7699ee2da6493ff40260f1c8c2e0f847272ea1))
+- show processed notes count during upload ([0546956](https://github.com/vzhd1701/enex2notion/commit/05469560063be5635cf068ae2d747845977b6a63)), closes [#33](https://github.com/vzhd1701/enex2notion/issues/33)
+
 ### [0.2.12](https://github.com/vzhd1701/enex2notion/compare/v0.2.11...v0.2.12) (2022-05-11)
 
 ### Bug Fixes
