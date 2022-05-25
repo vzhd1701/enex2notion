@@ -34,6 +34,12 @@ You can either use Evernote native export or try out my other tool, [evernote-ba
 
 [**Download the latest binary release**](https://github.com/vzhd1701/enex2notion/releases/latest) for your OS.
 
+### With [Homebrew](https://brew.sh/)
+
+```bash
+$ brew install vzhd1701/tap/enex2notion
+```
+
 ### With PIP
 
 ```bash
@@ -59,36 +65,34 @@ $ poetry install --no-dev
 $ poetry run enex2notion
 ```
 
+**Important notice for Apple M1 MacOS users**. This tool depends on `PyMuPDF`. Pre-compiled binaries of this package are not available for arm64 architecture yet, which means that PIP will have to compile them for you. `PyMuPDF` compilation requires `mupdf`, `freetype` and `swig`. If you install using [Homebrew](https://brew.sh/), it will download all required packages automatically.
+
 ## Usage
 
 ```shell
 $ enex2notion --help
-usage: enex2notion [-h] [--token TOKEN] [--root-page NAME] [--mode {DB,PAGE}] [--mode-webclips {TXT,PDF}] [--add-pdf-preview] [--add-meta] [--tag TAG] [--condense-lines] [--condense-lines-sparse] [--done-file FILE] [--log FILE]
-                   [--verbose] [--version]
-                   FILE/DIR [FILE/DIR ...]
+usage: enex2notion [-h] [--token TOKEN] [OPTION ...] FILE/DIR [FILE/DIR ...]
 
 Uploads ENEX files to Notion
 
 positional arguments:
-  FILE/DIR              ENEX files or directories to upload
+  FILE/DIR                   ENEX files or directories to upload
 
 optional arguments:
-  -h, --help            show this help message and exit
-  --token TOKEN         Notion token, stored in token_v2 cookie for notion.so [NEEDED FOR UPLOAD]
-  --root-page NAME      root page name for the imported notebooks, it will be created if it does not exist (default: "Evernote ENEX Import")
-  --mode {DB,PAGE}      upload each ENEX as database (DB) or page with children (PAGE) (default: DB)
-  --mode-webclips {TXT,PDF}
-                        convert web clips to text (TXT) or pdf (PDF) before upload (default: TXT)
-  --add-pdf-preview     include preview image with PDF webclips for gallery view thumbnail (works only with --mode-webclips=PDF)
-  --add-meta            include metadata (created, tags, etc) in notes, makes sense only with PAGE mode
-  --tag TAG             add custom tag to uploaded notes
-  --condense-lines      condense text lines together into paragraphs to avoid making block per line
-  --condense-lines-sparse
-                        like --condense-lines but leaves gaps between paragraphs
-  --done-file FILE      file for uploaded notes hashes to resume interrupted upload
-  --log FILE            file to store program log
-  --verbose             output debug information
-  --version             show program's version number and exit
+  -h, --help                 show this help message and exit
+  --token TOKEN              Notion token, stored in token_v2 cookie for notion.so [NEEDED FOR UPLOAD]
+  --root-page NAME           root page name for the imported notebooks, it will be created if it does not exist (default: "Evernote ENEX Import")
+  --mode {DB,PAGE}           upload each ENEX as database (DB) or page with children (PAGE) (default: DB)
+  --mode-webclips {TXT,PDF}  convert web clips to text (TXT) or pdf (PDF) before upload (default: TXT)
+  --add-pdf-preview          include preview image with PDF webclips for gallery view thumbnail (works only with --mode-webclips=PDF)
+  --add-meta                 include metadata (created, tags, etc) in notes, makes sense only with PAGE mode
+  --tag TAG                  add custom tag to uploaded notes
+  --condense-lines           condense text lines together into paragraphs to avoid making block per line
+  --condense-lines-sparse    like --condense-lines but leaves gaps between paragraphs
+  --done-file FILE           file for uploaded notes hashes to resume interrupted upload
+  --log FILE                 file to store program log
+  --verbose                  output debug information
+  --version                  show program's version number and exit
 ```
 
 ### Input
