@@ -3,10 +3,17 @@ from pathlib import Path
 
 from enex2notion.version import __version__
 
+HELP_ARGS_WIDTH = 29
+
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(
-        prog="enex2notion", description="Uploads ENEX files to Notion"
+        prog="enex2notion",
+        description="Uploads ENEX files to Notion",
+        usage="%(prog)s [-h] [--token TOKEN] [OPTION ...] FILE/DIR [FILE/DIR ...]",
+        formatter_class=lambda prog: argparse.HelpFormatter(
+            prog, max_help_position=HELP_ARGS_WIDTH
+        ),
     )
 
     schema = {
