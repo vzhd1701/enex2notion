@@ -3,7 +3,7 @@ from typing import List
 
 from bs4 import Tag
 
-from enex2notion.note_parser_e_div import parse_text
+from enex2notion.note_parser.elements.div import parse_text
 
 EVERNOTE_INDENT_MARGIN = 40
 

@@ -1,6 +1,6 @@
 from notion import block
 
-from enex2notion.notion_blocks_embeddable import NotionEmbedBlock
+from enex2notion.notion_blocks.embeddable import NotionEmbedBlock
 
 
 class NotionUploadableBlock(NotionEmbedBlock):

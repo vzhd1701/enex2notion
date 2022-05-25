@@ -1,49 +1,16 @@
 import logging
 
 from notion.block import CollectionViewPageBlock, PageBlock
-from notion.client import NotionClient
 from notion.collection import CollectionRowBlock
 from notion.operations import build_operation
 from progress.bar import Bar
-from requests import HTTPError, codes
+from requests import HTTPError
 
 from enex2notion.enex_types import EvernoteNote
-from enex2notion.note_uploader import upload_block
+from enex2notion.enex_uploader_block import upload_block
+from enex2notion.utils_exceptions import NoteUploadFailException
 
 logger = logging.getLogger(__name__)
-
-
-class NoteUploadFailException(Exception):
-    """Exception for when a note fails to upload"""
-
-
-class BadTokenException(Exception):
-    """Exception for when a token is invalid"""
-
-
-def get_notion_client(token):
-    try:
-        return NotionClient(token_v2=token)
-    except HTTPError as e:  # pragma: no cover
-        if e.response.status_code == codes["unauthorized"]:
-            raise BadTokenException
-        raise
-
-
-def get_import_root(client, title):
-    try:
-        top_pages = client.get_top_level_pages()
-    except KeyError:  # pragma: no cover
-        # Need empty account to test
-        top_pages = []
-
-    for page in top_pages:
-        if isinstance(page, PageBlock) and page.title == title:
-            logger.info(f"'{title}' page found")
-            return page
-
-    logger.info(f"Creating '{title}' page...")
-    return client.current_space.add_page(title)
 
 
 def upload_note(root, note: EvernoteNote, note_blocks):

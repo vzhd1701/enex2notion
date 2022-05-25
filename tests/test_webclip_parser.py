@@ -1,7 +1,7 @@
-from enex2notion.note_parser_webclip import parse_webclip
-from enex2notion.notion_blocks_header import NotionSubsubheaderBlock
-from enex2notion.notion_blocks_list import NotionBulletedListBlock
-from enex2notion.notion_blocks_text import NotionTextBlock, TextProp
+from enex2notion.note_parser.webclip import parse_webclip
+from enex2notion.notion_blocks.header import NotionSubsubheaderBlock
+from enex2notion.notion_blocks.list import NotionBulletedListBlock
+from enex2notion.notion_blocks.text import NotionTextBlock, TextProp
 
 
 def test_empty(parse_html):

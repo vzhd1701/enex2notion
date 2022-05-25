@@ -3,11 +3,11 @@ import re
 
 from bs4 import Tag
 
-from enex2notion.notion_blocks import NotionBookmarkBlock
-from enex2notion.notion_blocks_container import NotionCodeBlock
-from enex2notion.notion_blocks_list import NotionTodoBlock
-from enex2notion.notion_blocks_text import NotionTextBlock
-from enex2notion.string_extractor import extract_string
+from enex2notion.note_parser.string_extractor import extract_string
+from enex2notion.notion_blocks.container import NotionCodeBlock
+from enex2notion.notion_blocks.list import NotionTodoBlock
+from enex2notion.notion_blocks.minor import NotionBookmarkBlock
+from enex2notion.notion_blocks.text import NotionTextBlock
 
 logger = logging.getLogger(__name__)
 

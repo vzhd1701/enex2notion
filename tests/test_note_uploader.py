@@ -1,13 +1,13 @@
-import os
 import random
 
 import pytest
 from notion.block import FileBlock
 
-from enex2notion.colors import COLORS_BG, COLORS_FG
-from enex2notion.enex_uploader import BadTokenException, get_notion_client
-from enex2notion.note_parser_blocks import parse_note_blocks
-from enex2notion.note_uploader import _sizeof_fmt, upload_block
+from enex2notion.cli_notion import get_notion_client
+from enex2notion.enex_uploader_block import _sizeof_fmt, upload_block
+from enex2notion.note_parser.blocks import parse_note_blocks
+from enex2notion.utils_colors import COLORS_BG, COLORS_FG
+from enex2notion.utils_exceptions import BadTokenException
 
 
 @pytest.mark.vcr()

@@ -1,6 +1,3 @@
-from notion import block
-
-
 class NotionBaseBlock(object):
     type = None
 
@@ -26,16 +23,3 @@ class NotionBaseBlock(object):
             c_count=len(self.children),
             attrs=self.attrs,
         )
-
-
-class NotionDividerBlock(NotionBaseBlock):
-    type = block.DividerBlock
-
-
-class NotionBookmarkBlock(NotionBaseBlock):
-    type = block.BookmarkBlock
-
-    def __init__(self, url, **kwargs):
-        super().__init__(**kwargs)
-
-        self.attrs["link"] = url

@@ -8,7 +8,7 @@ import pdfkit
 from bs4 import Tag
 
 from enex2notion.enex_types import EvernoteNote, EvernoteResource
-from enex2notion.notion_blocks_uploadable import NotionImageBlock, NotionPDFBlock
+from enex2notion.notion_blocks.uploadable import NotionImageBlock, NotionPDFBlock
 
 logger = logging.getLogger(__name__)
 

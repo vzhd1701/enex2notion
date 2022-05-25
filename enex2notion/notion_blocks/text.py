@@ -1,6 +1,6 @@
 from notion import block
 
-from enex2notion.notion_blocks import NotionBaseBlock
+from enex2notion.notion_blocks.base import NotionBaseBlock
 
 
 def _lstrip_properties(properties):

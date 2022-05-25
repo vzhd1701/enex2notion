@@ -1,6 +1,6 @@
 from notion.block import CollectionViewPageBlock, PageBlock
 
-from enex2notion.rand_id import rand_id_list
+from enex2notion.utils_rand_id import rand_id_list
 
 
 def get_notebook_page(root, title):

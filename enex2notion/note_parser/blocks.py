@@ -1,25 +1,26 @@
 import logging
+from typing import List
 
 from bs4 import NavigableString, Tag
 
-from enex2notion.note_parser_e_div import parse_div, parse_text
-from enex2notion.note_parser_e_media import parse_img, parse_media
-from enex2notion.note_parser_e_table import parse_table
-from enex2notion.note_parser_elements import parse_encrypt, parse_header, parse_list
-from enex2notion.note_parser_helpers import extract_nested_blocks, flatten_root
-from enex2notion.note_parser_indented import (
+from enex2notion.note_parser.blocks_helpers import extract_nested_blocks, flatten_root
+from enex2notion.note_parser.blocks_indented import (
     group_blocks_by_indent,
     is_indentation_inconsistent,
     parse_indented,
     parse_indented_plain,
 )
-from enex2notion.notion_blocks import NotionDividerBlock
-from enex2notion.notion_blocks_text import NotionTextBlock, TextProp
+from enex2notion.note_parser.elements import div, encrypt, header
+from enex2notion.note_parser.elements import list as el_list
+from enex2notion.note_parser.elements import media, table
+from enex2notion.notion_blocks.base import NotionBaseBlock
+from enex2notion.notion_blocks.minor import NotionDividerBlock
+from enex2notion.notion_blocks.text import NotionTextBlock, TextProp
 
 logger = logging.getLogger(__name__)
 
 
-def parse_note_blocks(note: Tag):
+def parse_note_blocks(note: Tag) -> List[NotionBaseBlock]:
     flatten_root(note)
 
     extract_nested_blocks(note)
@@ -63,14 +64,14 @@ def _parse_indented_group(child):
 
 def _parse_block(element: Tag):
     tag_map = {
-        ("h1", "h2", "h3"): parse_header,
+        ("h1", "h2", "h3"): header.parse_header,
         ("hr",): lambda e: NotionDividerBlock(),
-        ("ol", "ul"): parse_list,
-        ("table",): parse_table,
-        ("en-media",): parse_media,
-        ("img",): parse_img,
-        ("div",): parse_div,
-        ("en-crypt",): parse_encrypt,
+        ("ol", "ul"): el_list.parse_list,
+        ("table",): table.parse_table,
+        ("en-media",): media.parse_media,
+        ("img",): media.parse_img,
+        ("div",): div.parse_div,
+        ("en-crypt",): encrypt.parse_encrypt,
     }
 
     for tags, tag_parser in tag_map.items():
@@ -84,4 +85,4 @@ def _parse_block(element: Tag):
         return None
 
     logger.debug(f"Unknown block: {element.name}, parsing as text")
-    return parse_text(element)
+    return div.parse_text(element)

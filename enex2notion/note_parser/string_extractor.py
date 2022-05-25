@@ -1,12 +1,10 @@
-import copy
-from typing import List
+from bs4 import Tag
 
-from bs4 import NavigableString, Tag
-
-from enex2notion.notion_blocks_text import TextProp
-from enex2notion.string_extractor_properties import resolve_string_properties
-
-STANDALONES = ("h1", "h2", "h3", "div")
+from enex2notion.note_parser.string_extractor_properties import (
+    resolve_string_properties,
+)
+from enex2notion.note_parser.string_extractor_split_tag import split_tag
+from enex2notion.notion_blocks.text import TextProp
 
 
 def extract_string(tag: Tag) -> TextProp:
@@ -17,52 +15,13 @@ def extract_string(tag: Tag) -> TextProp:
          [["some text "], ["bold ", ["b"]], ["bold and italic", ["b", "i"]]]
     """
 
-    # Element is either a single div itself or a collection of div or h1-3 "lines"
-    # it can also contain random inline strings, so we group them in separate lines
-    div_lines = _split_line(copy.copy(tag)) if tag.find_all(STANDALONES) else [tag]
+    div_lines = split_tag(tag)
 
     string_blocks = _extract_blocks(div_lines)
 
     result_properties, result_string = _format_blocks(string_blocks)
 
     return TextProp(result_string, result_properties)
-
-
-def _split_line(element: Tag):
-    blocks = []
-    group = []
-
-    for sub in element.children:
-        is_inline = not isinstance(sub, Tag) or sub.name not in STANDALONES
-
-        if is_inline:
-            # skip mid-tag whitespaces
-            if isinstance(sub, NavigableString) and not sub.text.strip():
-                continue
-
-            group.append(sub)
-        else:
-            if group:
-                blocks.append(_make_block(group))
-                group = []
-
-            blocks.append(sub)
-
-    if group:
-        blocks.append(_make_block(group))
-
-    return blocks
-
-
-def _make_block(elements: List[Tag]):
-    """Make a single block from a list of elements"""
-
-    block = Tag(name="div")
-
-    for element in elements:
-        block.append(copy.copy(element))
-
-    return block
 
 
 def _extract_blocks(div_lines):

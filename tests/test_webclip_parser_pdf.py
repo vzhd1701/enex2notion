@@ -4,8 +4,8 @@ import pytest
 from dateutil.tz import tzutc
 
 from enex2notion.enex_types import EvernoteNote, EvernoteResource
-from enex2notion.note_parser import parse_note
-from enex2notion.notion_blocks_uploadable import NotionImageBlock, NotionPDFBlock
+from enex2notion.note_parser.note import parse_note
+from enex2notion.notion_blocks.uploadable import NotionImageBlock, NotionPDFBlock
 
 
 @pytest.fixture()
@@ -26,13 +26,13 @@ def mock_pdf_block():
 
 @pytest.fixture()
 def mock_pdfkit(mocker):
-    mock_pdfkit = mocker.patch("enex2notion.note_parser_webclip_pdf.pdfkit.from_string")
+    mock_pdfkit = mocker.patch("enex2notion.note_parser.webclip_pdf.pdfkit.from_string")
     mock_pdfkit.return_value = b""
 
     return mock_pdfkit
 
 
-def test_simple(mock_pdfkit, mock_pdf_block):
+def test_simple(mock_pdfkit, mock_pdf_block, parse_rules):
     test_note = EvernoteNote(
         title="test1",
         created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
@@ -45,14 +45,16 @@ def test_simple(mock_pdfkit, mock_pdf_block):
         resources=[],
     )
 
-    result_blocks = parse_note(test_note, mode_webclips="PDF")
+    parse_rules.mode_webclips = "PDF"
+
+    result_blocks = parse_note(test_note, parse_rules)
     result_html = mock_pdfkit.call_args[0][0]
 
     assert result_html == test_note.content
     assert result_blocks == [mock_pdf_block]
 
 
-def test_simple_with_preview(mock_pdfkit, mock_pdf_block, mocker):
+def test_simple_with_preview(mock_pdfkit, mock_pdf_block, mocker, parse_rules):
     test_note = EvernoteNote(
         title="test1",
         created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
@@ -66,10 +68,13 @@ def test_simple_with_preview(mock_pdfkit, mock_pdf_block, mocker):
     )
 
     mocker.patch(
-        "enex2notion.note_parser_webclip_pdf._get_pdf_first_page_png", return_value=b""
+        "enex2notion.note_parser.webclip_pdf._get_pdf_first_page_png", return_value=b""
     )
 
-    result_blocks = parse_note(test_note, mode_webclips="PDF", is_add_pdf_preview=True)
+    parse_rules.mode_webclips = "PDF"
+    parse_rules.add_pdf_preview = True
+
+    result_blocks = parse_note(test_note, parse_rules)
 
     assert result_blocks == [
         NotionImageBlock(
@@ -86,7 +91,7 @@ def test_simple_with_preview(mock_pdfkit, mock_pdf_block, mocker):
     ]
 
 
-def test_local_image(mock_pdfkit, mock_pdf_block, smallest_gif):
+def test_local_image(mock_pdfkit, mock_pdf_block, smallest_gif, parse_rules):
     test_note = EvernoteNote(
         title="test1",
         created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
@@ -108,14 +113,16 @@ def test_local_image(mock_pdfkit, mock_pdf_block, smallest_gif):
         ' width="100"></img></en-note>'
     )
 
-    result_blocks = parse_note(test_note, mode_webclips="PDF")
+    parse_rules.mode_webclips = "PDF"
+
+    result_blocks = parse_note(test_note, parse_rules)
     result_html = mock_pdfkit.call_args[0][0]
 
     assert result_html == expected_html
     assert result_blocks == [mock_pdf_block]
 
 
-def test_local_image_bad(mock_pdfkit, mock_pdf_block):
+def test_local_image_bad(mock_pdfkit, mock_pdf_block, parse_rules):
     test_note = EvernoteNote(
         title="test1",
         created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
@@ -130,14 +137,16 @@ def test_local_image_bad(mock_pdfkit, mock_pdf_block):
 
     expected_html = "<en-note></en-note>"
 
-    result_blocks = parse_note(test_note, mode_webclips="PDF")
+    parse_rules.mode_webclips = "PDF"
+
+    result_blocks = parse_note(test_note, parse_rules)
     result_html = mock_pdfkit.call_args[0][0]
 
     assert result_html == expected_html
     assert result_blocks == [mock_pdf_block]
 
 
-def test_remote_images(mock_pdfkit, mock_pdf_block):
+def test_remote_images(mock_pdfkit, mock_pdf_block, parse_rules):
     test_note = EvernoteNote(
         title="test1",
         created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
@@ -152,14 +161,16 @@ def test_remote_images(mock_pdfkit, mock_pdf_block):
 
     expected_html = "<en-note></en-note>"
 
-    result_blocks = parse_note(test_note, mode_webclips="PDF")
+    parse_rules.mode_webclips = "PDF"
+
+    result_blocks = parse_note(test_note, parse_rules)
     result_html = mock_pdfkit.call_args[0][0]
 
     assert result_html == expected_html
     assert result_blocks == [mock_pdf_block]
 
 
-def test_remote_images_css(mock_pdfkit, mock_pdf_block):
+def test_remote_images_css(mock_pdfkit, mock_pdf_block, parse_rules):
     test_note = EvernoteNote(
         title="test1",
         created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
@@ -178,14 +189,16 @@ def test_remote_images_css(mock_pdfkit, mock_pdf_block):
 
     expected_html = '<en-note><div style="background-image: "></div></en-note>'
 
-    result_blocks = parse_note(test_note, mode_webclips="PDF")
+    parse_rules.mode_webclips = "PDF"
+
+    result_blocks = parse_note(test_note, parse_rules)
     result_html = mock_pdfkit.call_args[0][0]
 
     assert result_html == expected_html
     assert result_blocks == [mock_pdf_block]
 
 
-def test_data_images(mock_pdfkit, mock_pdf_block):
+def test_data_images(mock_pdfkit, mock_pdf_block, parse_rules):
     test_note = EvernoteNote(
         title="test1",
         created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
@@ -200,7 +213,9 @@ def test_data_images(mock_pdfkit, mock_pdf_block):
 
     expected_html = '<en-note><img src="data:image/gif;base64,IA=="/></en-note>'
 
-    result_blocks = parse_note(test_note, mode_webclips="PDF")
+    parse_rules.mode_webclips = "PDF"
+
+    result_blocks = parse_note(test_note, parse_rules)
     result_html = mock_pdfkit.call_args[0][0]
 
     assert result_html == expected_html

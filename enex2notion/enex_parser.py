@@ -4,82 +4,34 @@ import logging
 import mimetypes
 import re
 import uuid
-from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-from xml.etree import ElementTree
+from typing import Iterator
 
 from dateutil.parser import isoparse
 
+from enex2notion.enex_parser_xml import (
+    iter_process_xml_elements,
+    iter_xml_elements_as_dict,
+)
 from enex2notion.enex_types import EvernoteNote, EvernoteResource
 
 logger = logging.getLogger(__name__)
 
 
 def count_notes(enex_file: Path) -> int:
-    total_notes = 0
-
-    with open(enex_file, "rb") as f:
-        context = ElementTree.iterparse(f, events=("start", "end"))
-
-        _, root = next(context)
-
-        for event, elem in context:
-            if event == "end" and elem.tag == "note":
-                total_notes += 1
-
-            root.clear()
-
-    return total_notes
+    return sum(iter_process_xml_elements(enex_file, "note", lambda e: 1))
 
 
-def iter_notes(enex_file: Path):
-    with open(enex_file, "rb") as f:
-        context = ElementTree.iterparse(f, events=("start", "end"))
-
-        _, root = next(context)
-
-        for event, elem in context:
-            if event == "end" and elem.tag == "note":
-                yield _process_note(_etree_to_dict(elem)["note"])
-
-            root.clear()
+def iter_notes(enex_file: Path) -> Iterator[EvernoteNote]:
+    yield from (_process_note(e) for e in iter_xml_elements_as_dict(enex_file, "note"))
 
 
-# https://stackoverflow.com/a/10077069/13100286
-def _etree_to_dict(t):  # noqa: WPS210, WPS231, C901
-    d = {t.tag: {} if t.attrib else None}
-    children = list(t)
-    if children:
-        dd = defaultdict(list)
-        for dc in map(_etree_to_dict, children):
-            for k, v in dc.items():
-                dd[k].append(v)
-        d = {
-            t.tag: {
-                k: v[0] if len(v) == 1 else v  # noqa: WPS441
-                for k, v in dd.items()  # noqa: WPS221
-            }
-        }
-    if t.attrib:
-        d[t.tag].update(
-            (f"@{k}", v) for k, v in t.attrib.items()  # noqa: WPS221, WPS441
-        )
-    if t.text:
-        text = t.text.strip()
-        if children or t.attrib:
-            if text:
-                d[t.tag]["#text"] = text
-        else:
-            d[t.tag] = text
-    return d
-
-
-def _process_note(note_raw: dict):
+def _process_note(note_raw: dict) -> EvernoteNote:
     if not note_raw:
         note_raw = {}
 
-    note_attrs = note_raw.get("note-attributes") or {}
+    note_raw["note-attributes"] = note_raw.get("note-attributes") or {}
 
     note_tags = note_raw.get("tag", [])
     if isinstance(note_tags, str):
@@ -95,8 +47,8 @@ def _process_note(note_raw: dict):
         updated=date_updated,
         content=note_raw.get("content", ""),
         tags=note_tags,
-        author=note_attrs.get("author", ""),
-        url=note_attrs.get("source-url", ""),
+        author=note_raw["note-attributes"].get("author", ""),
+        url=note_raw["note-attributes"].get("source-url", ""),
         is_webclip=_is_webclip(note_raw),
         resources=_parse_resources(note_raw),
     )

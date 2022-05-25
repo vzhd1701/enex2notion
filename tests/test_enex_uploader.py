@@ -1,5 +1,4 @@
 import logging
-import os
 from datetime import datetime
 
 import pytest
@@ -7,14 +6,12 @@ from dateutil.tz import tzutc
 from notion.block import CollectionViewPageBlock, FileBlock, PageBlock, TextBlock
 from requests import HTTPError
 
+from enex2notion.cli_notion import get_import_root
 from enex2notion.enex_types import EvernoteNote
-from enex2notion.enex_uploader import (
-    NoteUploadFailException,
-    get_import_root,
-    upload_note,
-)
+from enex2notion.enex_uploader import upload_note
 from enex2notion.enex_uploader_modes import get_notebook_database, get_notebook_page
-from enex2notion.note_parser import parse_note
+from enex2notion.note_parser.note import parse_note
+from enex2notion.utils_exceptions import NoteUploadFailException
 
 
 @pytest.mark.vcr()
@@ -132,7 +129,7 @@ def test_empty_database_cleanup(notion_test_page):
 
 @pytest.mark.vcr()
 @pytest.mark.usefixtures("vcr_uuid4")
-def test_upload_note(notion_test_page):
+def test_upload_note(notion_test_page, parse_rules):
     test_note = EvernoteNote(
         title="test1",
         created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
@@ -145,7 +142,7 @@ def test_upload_note(notion_test_page):
         resources=[],
     )
 
-    note_blocks = parse_note(test_note)
+    note_blocks = parse_note(test_note, parse_rules)
 
     upload_note(notion_test_page, test_note, note_blocks)
 
@@ -158,7 +155,7 @@ def test_upload_note(notion_test_page):
 
 @pytest.mark.vcr()
 @pytest.mark.usefixtures("vcr_uuid4")
-def test_upload_note_fail(notion_test_page, mocker):
+def test_upload_note_fail(notion_test_page, mocker, parse_rules):
     test_note = EvernoteNote(
         title="test1",
         created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
@@ -171,7 +168,7 @@ def test_upload_note_fail(notion_test_page, mocker):
         resources=[],
     )
 
-    note_blocks = parse_note(test_note)
+    note_blocks = parse_note(test_note, parse_rules)
 
     mocker.patch("enex2notion.enex_uploader.upload_block", side_effect=HTTPError)
 
@@ -183,7 +180,7 @@ def test_upload_note_fail(notion_test_page, mocker):
 
 @pytest.mark.vcr()
 @pytest.mark.usefixtures("vcr_uuid4")
-def test_upload_note_fail_db(notion_test_page, mocker):
+def test_upload_note_fail_db(notion_test_page, mocker, parse_rules):
     test_note = EvernoteNote(
         title="test1",
         created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
@@ -196,7 +193,7 @@ def test_upload_note_fail_db(notion_test_page, mocker):
         resources=[],
     )
 
-    note_blocks = parse_note(test_note)
+    note_blocks = parse_note(test_note, parse_rules)
 
     test_database = get_notebook_database(notion_test_page, "test_database")
 
@@ -210,7 +207,7 @@ def test_upload_note_fail_db(notion_test_page, mocker):
 
 @pytest.mark.vcr()
 @pytest.mark.usefixtures("vcr_uuid4")
-def test_upload_note_with_file(notion_test_page, tiny_file):
+def test_upload_note_with_file(notion_test_page, tiny_file, parse_rules):
     test_note = EvernoteNote(
         title="test1",
         created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
@@ -227,7 +224,7 @@ def test_upload_note_with_file(notion_test_page, tiny_file):
         resources=[tiny_file],
     )
 
-    note_blocks = parse_note(test_note)
+    note_blocks = parse_note(test_note, parse_rules)
 
     upload_note(notion_test_page, test_note, note_blocks)
 
@@ -241,7 +238,7 @@ def test_upload_note_with_file(notion_test_page, tiny_file):
 
 @pytest.mark.vcr()
 @pytest.mark.usefixtures("vcr_uuid4")
-def test_upload_note_db(notion_test_page):
+def test_upload_note_db(notion_test_page, parse_rules):
     test_note = EvernoteNote(
         title="test1",
         created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
@@ -256,7 +253,7 @@ def test_upload_note_db(notion_test_page):
 
     test_database = get_notebook_database(notion_test_page, "test_database")
 
-    note_blocks = parse_note(test_note)
+    note_blocks = parse_note(test_note, parse_rules)
 
     upload_note(test_database, test_note, note_blocks)
 

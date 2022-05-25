@@ -7,15 +7,15 @@ from bs4 import Tag
 from w3lib.url import parse_data_uri
 
 from enex2notion.enex_types import EvernoteResource
-from enex2notion.notion_blocks_embeddable import NotionImageEmbedBlock
-from enex2notion.notion_blocks_uploadable import (
+from enex2notion.notion_blocks.embeddable import NotionImageEmbedBlock
+from enex2notion.notion_blocks.uploadable import (
     NotionAudioBlock,
     NotionFileBlock,
     NotionImageBlock,
     NotionPDFBlock,
     NotionVideoBlock,
 )
-from enex2notion.notion_filetypes import (
+from enex2notion.utils_notion_filetypes import (
     NOTION_AUDIO_MIMES,
     NOTION_IMAGE_MIMES,
     NOTION_VIDEO_MIMES,
