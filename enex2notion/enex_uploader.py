@@ -3,8 +3,8 @@ import logging
 from notion.block import CollectionViewPageBlock, PageBlock
 from notion.collection import CollectionRowBlock
 from notion.operations import build_operation
-from progress.bar import Bar
 from requests import HTTPError
+from tqdm import tqdm
 
 from enex2notion.enex_types import EvernoteNote
 from enex2notion.enex_uploader_block import upload_block
@@ -12,13 +12,19 @@ from enex2notion.utils_exceptions import NoteUploadFailException
 
 logger = logging.getLogger(__name__)
 
+PROGRESS_BAR_WIDTH = 80
+
 
 def upload_note(root, note: EvernoteNote, note_blocks):
     logger.debug(f"Creating new page for note '{note.title}'")
     new_page = _make_page(note, root)
 
+    progress_iter = tqdm(
+        iterable=note_blocks, unit="block", leave=False, ncols=PROGRESS_BAR_WIDTH
+    )
+
     try:
-        for block in Bar().iter(note_blocks):
+        for block in progress_iter:
             upload_block(new_page, block)
     except HTTPError:
         if isinstance(new_page, CollectionRowBlock):
