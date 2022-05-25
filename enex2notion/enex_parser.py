@@ -16,6 +16,23 @@ from enex2notion.enex_types import EvernoteNote, EvernoteResource
 logger = logging.getLogger(__name__)
 
 
+def count_notes(enex_file: Path) -> int:
+    total_notes = 0
+
+    with open(enex_file, "rb") as f:
+        context = ElementTree.iterparse(f, events=("start", "end"))
+
+        _, root = next(context)
+
+        for event, elem in context:
+            if event == "end" and elem.tag == "note":
+                total_notes += 1
+
+            root.clear()
+
+    return total_notes
+
+
 def iter_notes(enex_file: Path):
     with open(enex_file, "rb") as f:
         context = ElementTree.iterparse(f, events=("start", "end"))

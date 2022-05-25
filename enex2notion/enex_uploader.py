@@ -47,14 +47,11 @@ def get_import_root(client, title):
 
 
 def upload_note(root, note: EvernoteNote, note_blocks):
-    logger.info(f"Creating new page for note '{note.title}'")
+    logger.debug(f"Creating new page for note '{note.title}'")
     new_page = _make_page(note, root)
 
-    # Escape % to prevent progress bar crashing
-    note_title = note.title.replace("%", "%%")
-
     try:
-        for block in Bar(f"Uploading '{note_title}'").iter(note_blocks):
+        for block in Bar().iter(note_blocks):
             upload_block(new_page, block)
     except HTTPError:
         if isinstance(new_page, CollectionRowBlock):

@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Optional
 
 from enex2notion.cli_wkhtmltopdf import ensure_wkhtmltopdf
-from enex2notion.enex_parser import iter_notes
+from enex2notion.enex_parser import count_notes, iter_notes
 from enex2notion.enex_uploader import (
     BadTokenException,
     NoteUploadFailException,
@@ -83,7 +83,9 @@ class EnexUploader(object):
 
         notebook_root = self._get_notebook_root(enex_file.stem)
 
-        for note in iter_notes(enex_file):
+        notes_total = count_notes(enex_file)
+
+        for note_idx, note in enumerate(iter_notes(enex_file), 1):
             if note.note_hash in self.done_hashes:
                 logger.debug(f"Skipping note '{note.title}' (already uploaded)")
                 continue
@@ -96,6 +98,9 @@ class EnexUploader(object):
                 continue
 
             if notebook_root is not None:
+                logger.info(
+                    f"Uploading note {note_idx} out of {notes_total} '{note.title}'"
+                )
                 _upload_note(notebook_root, note, note_blocks)
                 self.done_hashes.add(note.note_hash)
 

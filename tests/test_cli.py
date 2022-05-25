@@ -21,8 +21,10 @@ def mock_api(mocker):
 
 @pytest.fixture()
 def fake_note_factory(mocker):
+    mock_count = mocker.patch("enex2notion.cli.count_notes")
     mock_iter = mocker.patch("enex2notion.cli.iter_notes")
     mock_iter.return_value = [mocker.MagicMock(note_hash="fake_hash", is_webclip=False)]
+    mock_count.side_effect = lambda x: len(mock_iter.return_value)
 
     return mock_iter
 
