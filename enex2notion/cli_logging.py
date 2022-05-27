@@ -19,6 +19,7 @@ def setup_logging(is_verbose: bool, log_file: Optional[Path]):
         logging.getLogger("enex2notion").addHandler(file_handler)
 
     logging.getLogger("urllib3").setLevel(logging.ERROR)
+    logging.getLogger("notion").setLevel(logging.WARNING)
 
     _disable_bs4_warning()
 
