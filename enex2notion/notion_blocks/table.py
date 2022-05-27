@@ -3,12 +3,11 @@ from typing import Iterable
 from notion.block import BasicBlock
 
 from enex2notion.notion_blocks.base import NotionBaseBlock
-from enex2notion.notion_blocks.text import NotionTextBased, TextProp
+from enex2notion.notion_blocks.text import TextProp
 from enex2notion.utils_rand_id import rand_id_list
 
 
 class TableBlock(BasicBlock):
-
     _type = "table"
 
 
@@ -41,5 +40,5 @@ class NotionTableBlock(NotionBaseBlock):
         )
 
 
-class NotionTableRowBlock(NotionTextBased):
+class NotionTableRowBlock(NotionBaseBlock):
     type = TableRowBlock
