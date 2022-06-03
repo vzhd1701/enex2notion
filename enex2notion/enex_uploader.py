@@ -26,7 +26,8 @@ def upload_note(root, note: EvernoteNote, note_blocks):
     try:
         for block in progress_iter:
             upload_block(new_page, block)
-    except HTTPError:
+    except HTTPError as e:
+        logger.debug(f"Network error: {e}")
         if isinstance(new_page, CollectionRowBlock):
             new_page.remove()
         else:
