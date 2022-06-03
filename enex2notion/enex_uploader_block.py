@@ -27,9 +27,19 @@ def _upload_file(new_block, resource: EvernoteResource):
         set size and title for FileBlock
     """
 
+    post_data = {
+        "bucket": "secure",
+        "name": resource.file_name,
+        "contentType": resource.mime,
+        "record": {
+            "table": "block",
+            "id": new_block.id,
+            "spaceId": new_block.space_info["spaceId"],
+        },
+    }
+
     upload_data = new_block._client.post(  # noqa: WPS437
-        "getUploadFileUrl",
-        {"bucket": "secure", "name": resource.file_name, "contentType": resource.mime},
+        "getUploadFileUrl", post_data
     ).json()
 
     response = requests.put(

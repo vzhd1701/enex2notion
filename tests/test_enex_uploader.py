@@ -264,8 +264,10 @@ def test_upload_note_db(notion_test_page, parse_rules):
 
     assert test_row.title == "test1"
 
-    assert test_row.created == datetime(2021, 11, 18, 0, 0, 0)
-    assert test_row.updated == datetime(2021, 11, 19, 0, 0, 0)
+    assert test_row.columns.created == datetime(2021, 11, 18, 0, 0, 0)
+    assert test_row.columns.updated == datetime(2021, 11, 19, 0, 0, 0)
+    assert test_row.columns.tags == [""]
+    assert test_row.columns.url == ""
 
     assert len(test_row.children) == 1
     assert isinstance(test_row.children[0], TextBlock)
