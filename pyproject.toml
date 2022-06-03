@@ -40,7 +40,7 @@ w3lib = "^1.22.0"
 tinycss2 = "^1.1.1"
 pdfkit = "^1.0.0"
 PyMuPDF = "^1.19.6"
-notion-vzhd1701-fork = "0.0.30"
+notion-vzhd1701-fork = "0.0.34"
 tqdm = "^4.64.0"
 
 [tool.poetry.dev-dependencies]
