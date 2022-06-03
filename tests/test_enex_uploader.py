@@ -105,7 +105,9 @@ def test_import_root_new(notion_test_page, caplog):
     root.remove(permanently=True)
 
     with caplog.at_level(logging.INFO, logger="enex2notion"):
-        get_import_root(notion_test_page._client, test_import_title)
+        new_root = get_import_root(notion_test_page._client, test_import_title)
+
+    new_root.remove(permanently=True)
 
     assert f"Creating '{test_import_title}' page..." in caplog.text
 
