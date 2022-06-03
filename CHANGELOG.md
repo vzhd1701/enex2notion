@@ -1,3 +1,11 @@
+### [0.2.14](https://github.com/vzhd1701/enex2notion/compare/v0.2.13...v0.2.14) (2022-06-03)
+
+### Bug Fixes
+
+- avoid warning when uploading tables ([d0aa9ea](https://github.com/vzhd1701/enex2notion/commit/d0aa9ead85fb1c073169b05189edaa204fce277f))
+- log only warning messages from notion with --verbose flag ([9b74b15](https://github.com/vzhd1701/enex2notion/commit/9b74b159542b7b6d56987baa0d9cbb92d619c765))
+- prevent network error when uploading files ([c6bacc0](https://github.com/vzhd1701/enex2notion/commit/c6bacc0a9fb5c20f096785bace02b61894f285d9))
+
 ### [0.2.13](https://github.com/vzhd1701/enex2notion/compare/v0.2.12...v0.2.13) (2022-05-25)
 
 ### Bug Fixes
