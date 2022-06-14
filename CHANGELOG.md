@@ -1,3 +1,10 @@
+### [0.2.15](https://github.com/vzhd1701/enex2notion/compare/v0.2.14...v0.2.15) (2022-06-14)
+
+### Bug Fixes
+
+- skip bad data uri images on parsing ([2b6060a](https://github.com/vzhd1701/enex2notion/commit/2b6060a52bfcdd7d2d7404ee94098aa0e251f015)), closes [#36](https://github.com/vzhd1701/enex2notion/issues/36)
+- skip with an error instead of crashing when note parse failed ([e2cd4a7](https://github.com/vzhd1701/enex2notion/commit/e2cd4a755c91acdfa136fe58af33407b3b50cbcf))
+
 ### [0.2.14](https://github.com/vzhd1701/enex2notion/compare/v0.2.13...v0.2.14) (2022-06-03)
 
 ### Bug Fixes
