@@ -349,6 +349,21 @@ def test_embedded_inline_svg_no_size(parse_html, smallest_svg):
     )
 
 
+def test_embedded_inline_bad(parse_html, smallest_svg, caplog):
+    test_note = parse_html(
+        f"<img "
+        'src="data:image/svg+xml;utf8,'
+        "<svg xmlns='http://www.w3.org/2000/svg' width='416' height='377'>"
+        '</svg/>" />'
+    )
+
+    with caplog.at_level(logging.WARNING, logger="enex2notion"):
+        result_block = parse_note_blocks(test_note)
+
+    assert result_block == []
+    assert "Failed to parse image" in caplog.text
+
+
 def test_embedded_inline_img_url(parse_html):
     test_note = parse_html('<img src="https://google.com/image.jpg" />')
 

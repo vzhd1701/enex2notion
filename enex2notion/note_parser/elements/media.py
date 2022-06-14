@@ -50,7 +50,11 @@ def parse_img(element: Tag):
             url=src,
         )
 
-    img_resource = _parse_img_resource(src)
+    try:
+        img_resource = _parse_img_resource(src)
+    except ValueError:
+        logger.warning(f"Failed to parse image: '{src}'")
+        return None
 
     # Make SVG small by default to avoid them spreading too much
     if "svg" in img_resource.mime and not any((w, h)):
