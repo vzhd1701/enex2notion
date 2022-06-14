@@ -63,8 +63,11 @@ class EnexUploader(object):
         if self.rules.tag and self.rules.tag not in note.tags:
             note.tags.append(self.rules.tag)
 
+        logger.debug(f"Parsing note '{note.title}'")
+
         note_blocks = self._parse_note(note)
         if not note_blocks:
+            logger.debug(f"Skipping note '{note.title}' (no blocks)")
             return
 
         if self.notebook_root is not None:
@@ -79,9 +82,10 @@ class EnexUploader(object):
     def _parse_note(self, note):
         try:
             return parse_note(note, self.rules)
-        except Exception:
-            logger.error(f"Unhandled exception while parsing note '{note.title}'!")
-            raise
+        except Exception as e:
+            logger.error(f"Failed to parse note '{note.title}'")
+            logger.debug(e, exc_info=e)
+            return []
 
     def _get_notebook_root(self, notebook_title):
         if self.import_root is None:

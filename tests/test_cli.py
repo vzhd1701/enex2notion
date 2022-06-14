@@ -212,16 +212,14 @@ def test_webclip_pdf_with_preview(mock_api, fake_note_factory, mocker, parse_rul
     mock_api["parse_note"].assert_called_once_with(mocker.ANY, parse_rules)
 
 
-def test_unhandled_exception(mock_api, fake_note_factory, caplog):
+def test_parse_exception(mock_api, fake_note_factory, caplog):
     fake_exception = Exception("fake")
     mock_api["parse_note"].side_effect = fake_exception
 
     with caplog.at_level(logging.ERROR, logger="enex2notion"):
-        with pytest.raises(Exception) as e:
-            cli(["fake.enex"])
+        cli(["fake.enex"])
 
-    assert e.value == fake_exception
-    assert "Unhandled exception while parsing note" in caplog.text
+    assert "Failed to parse note" in caplog.text
 
 
 def test_file_log(mock_api, fake_note_factory, fs):
