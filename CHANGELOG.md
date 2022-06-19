@@ -1,3 +1,9 @@
+### [0.2.16](https://github.com/vzhd1701/enex2notion/compare/v0.2.15...v0.2.16) (2022-06-19)
+
+### Bug Fixes
+
+- update PyMuPDF version ([88f3213](https://github.com/vzhd1701/enex2notion/commit/88f32138771e8347a3f216ae30c1fbe9a7531800))
+
 ### [0.2.15](https://github.com/vzhd1701/enex2notion/compare/v0.2.14...v0.2.15) (2022-06-14)
 
 ### Bug Fixes
