@@ -1,3 +1,9 @@
+### [0.2.17](https://github.com/vzhd1701/enex2notion/compare/v0.2.16...v0.2.17) (2022-07-28)
+
+### Bug Fixes
+
+- update notion SDK to avoid rate limit errors ([c5458da](https://github.com/vzhd1701/enex2notion/commit/c5458da992d3d74d59d7696dd060772bf82e298e))
+
 ### [0.2.16](https://github.com/vzhd1701/enex2notion/compare/v0.2.15...v0.2.16) (2022-06-19)
 
 ### Bug Fixes
