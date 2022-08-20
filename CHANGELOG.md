@@ -1,3 +1,9 @@
+### [0.2.18](https://github.com/vzhd1701/enex2notion/compare/v0.2.17...v0.2.18) (2022-08-20)
+
+### Bug Fixes
+
+- fix crash for notes with empty resource ([844e95c](https://github.com/vzhd1701/enex2notion/commit/844e95c14fa77bdb37bf87f3b4459adb752ed63a)), closes [#48](https://github.com/vzhd1701/enex2notion/issues/48)
+
 ### [0.2.17](https://github.com/vzhd1701/enex2notion/compare/v0.2.16...v0.2.17) (2022-07-28)
 
 ### Bug Fixes
