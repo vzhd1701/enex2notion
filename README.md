@@ -32,7 +32,11 @@ You can either use Evernote native export or try out my other tool, [evernote-ba
 
 ## Installation
 
-If you are not familiar with command line programs, take a look at these step-by-step guides: [for Windows](https://vzhd1701.notion.site/How-to-use-enex2notion-on-Windows-6fa980b489ab4414a5317e631e7f6bc6) and [for macOS](https://vzhd1701.notion.site/How-to-use-enex2notion-on-macOS-a912dd63e3d14da886a413d3f83efb67).
+If you are not familiar with command line programs, take a look at these step-by-step guides:
+
+### [Step-by-step guide for Windows](https://vzhd1701.notion.site/How-to-use-enex2notion-on-Windows-6fa980b489ab4414a5317e631e7f6bc6)
+
+### [Step-by-step guide for macOS](https://vzhd1701.notion.site/How-to-use-enex2notion-on-macOS-a912dd63e3d14da886a413d3f83efb67)
 
 ### Using portable binary
 
