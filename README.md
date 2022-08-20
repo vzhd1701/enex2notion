@@ -32,27 +32,31 @@ You can either use Evernote native export or try out my other tool, [evernote-ba
 
 ## Installation
 
+If you are not familiar with command line programs, take a look at these step-by-step guides: [for Windows](https://vzhd1701.notion.site/How-to-use-enex2notion-on-Windows-6fa980b489ab4414a5317e631e7f6bc6) and [for macOS](https://vzhd1701.notion.site/How-to-use-enex2notion-on-macOS-a912dd63e3d14da886a413d3f83efb67).
+
+### Using portable binary
+
 [**Download the latest binary release**](https://github.com/vzhd1701/enex2notion/releases/latest) for your OS.
 
-### With [Homebrew](https://brew.sh/)
+### With [Homebrew](https://brew.sh/) (Recommended for macOS)
 
 ```bash
-$ brew install vzhd1701/tap/enex2notion
+$ brew install enex2notion
+```
+
+### With [**PIPX**](https://github.com/pipxproject/pipx) (Recommended for Linux & Windows)
+
+```shell
+$ pipx install enex2notion
 ```
 
 ### With PIP
 
 ```bash
-$ pip install enex2notion
+$ pip install --user enex2notion
 ```
 
 **Python 3.7 or later required.**
-
-Or, since **enex2notion** is a standalone tool, it might be more convenient to install it using [**pipx**](https://github.com/pipxproject/pipx):
-
-```shell
-$ pipx install enex2notion
-```
 
 ### From source
 
@@ -64,8 +68,6 @@ $ cd enex2notion/
 $ poetry install --no-dev
 $ poetry run enex2notion
 ```
-
-**Important notice for Apple M1 MacOS users**. This tool depends on `PyMuPDF`. Pre-compiled binaries of this package are not available for arm64 architecture yet, which means that PIP will have to compile them for you. `PyMuPDF` compilation requires `mupdf`, `freetype` and `swig`. If you install using [Homebrew](https://brew.sh/), it will download all required packages automatically.
 
 ## Usage
 
