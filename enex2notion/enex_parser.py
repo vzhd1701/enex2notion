@@ -92,7 +92,7 @@ def _convert_resource(resource_raw):
         ext = mimetypes.guess_extension(resource_raw["mime"]) or ".bin"
         file_name = f"{file_name}{ext}"
 
-    if resource_raw["data"].get("#text"):
+    if resource_raw.get("data", {}).get("#text"):
         data_bin = base64.b64decode(resource_raw["data"]["#text"])
     else:
         logger.debug("Empty resource")
