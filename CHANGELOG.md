@@ -1,3 +1,9 @@
+### [0.2.19](https://github.com/vzhd1701/enex2notion/compare/v0.2.18...v0.2.19) (2022-09-22)
+
+### Bug Fixes
+
+- ignore jar file attachments ([ce066cc](https://github.com/vzhd1701/enex2notion/commit/ce066cceae72e8f27d8ed066e898680e65fb6020)), closes [#50](https://github.com/vzhd1701/enex2notion/issues/50)
+
 ### [0.2.18](https://github.com/vzhd1701/enex2notion/compare/v0.2.17...v0.2.18) (2022-08-20)
 
 ### Bug Fixes
