@@ -1,3 +1,9 @@
+### [0.2.21](https://github.com/vzhd1701/enex2notion/compare/v0.2.20...v0.2.21) (2022-09-24)
+
+### Bug Fixes
+
+- add xpi to banned extensions ([a75b566](https://github.com/vzhd1701/enex2notion/commit/a75b566fd3578a06848f7e3c80bde2282a359a0b))
+
 ### [0.2.20](https://github.com/vzhd1701/enex2notion/compare/v0.2.19...v0.2.20) (2022-09-24)
 
 ### Bug Fixes
