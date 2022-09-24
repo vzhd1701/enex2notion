@@ -1,3 +1,10 @@
+### [0.2.20](https://github.com/vzhd1701/enex2notion/compare/v0.2.19...v0.2.20) (2022-09-24)
+
+### Bug Fixes
+
+- add more banned extensions ([6a8c614](https://github.com/vzhd1701/enex2notion/commit/6a8c614c221b12dcc910af20e8138837eaea13ea))
+- upload attachments with banned extensions as .bin files ([79e0be5](https://github.com/vzhd1701/enex2notion/commit/79e0be598c5c046ebe2e5b29b563cfd274977572))
+
 ### [0.2.19](https://github.com/vzhd1701/enex2notion/compare/v0.2.18...v0.2.19) (2022-09-22)
 
 ### Bug Fixes
