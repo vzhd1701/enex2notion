@@ -17,36 +17,3 @@ def resolve_resources(note_blocks, note: EvernoteNote):
                 note_blocks.remove(block)
         if block.children:
             resolve_resources(block.children, note)
-
-
-def remove_banned_files(note_blocks, note: EvernoteNote):
-    for block in note_blocks.copy():
-        if isinstance(block, NotionUploadableBlock):
-            if _is_banned_extension(block.resource.file_name):
-                logger.warning(
-                    "Cannot upload '{0}' from '{1}',"
-                    " this file extensions is banned by Notion".format(
-                        block.resource.file_name, note.title
-                    )
-                )
-                note_blocks.remove(block)
-        if block.children:
-            remove_banned_files(block.children, note)
-
-
-def _is_banned_extension(filename):
-    file_ext = filename.split(".")[-1].lower()
-    return file_ext in {
-        "apk",
-        "app",
-        "com",
-        "ear",
-        "elf",
-        "exe",
-        "ipa",
-        "jar",
-        "js",
-        "xap",
-        "xbe",
-        "xex",
-    }

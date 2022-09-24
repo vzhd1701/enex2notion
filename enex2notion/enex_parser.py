@@ -84,13 +84,23 @@ def _convert_resource(resource_raw):
         res_attr = {}
 
     file_name = res_attr.get("file-name")
+    file_mime = resource_raw.get("mime", "application/octet-stream")
 
     if not file_name:
-        ext = mimetypes.guess_extension(resource_raw["mime"]) or ".bin"
+        ext = mimetypes.guess_extension(file_mime) or ".bin"
         file_name = f"{uuid.uuid4()}{ext}"
     elif "." not in file_name:
-        ext = mimetypes.guess_extension(resource_raw["mime"]) or ".bin"
+        ext = mimetypes.guess_extension(file_mime) or ".bin"
         file_name = f"{file_name}{ext}"
+
+    if _is_banned_extension(file_name):
+        logger.warning(
+            f"'{file_name}' attachment extension is banned,"
+            f" will be uploaded as '{file_name}.bin'"
+        )
+
+        file_name = f"{file_name}.bin"
+        file_mime = "application/octet-stream"
 
     if resource_raw.get("data", {}).get("#text"):
         data_bin = base64.b64decode(resource_raw["data"]["#text"])
@@ -103,6 +113,24 @@ def _convert_resource(resource_raw):
         data_bin=data_bin,
         size=len(data_bin),
         md5=data_md5,
-        mime=resource_raw["mime"],
+        mime=file_mime,
         file_name=file_name,
     )
+
+
+def _is_banned_extension(filename):
+    file_ext = filename.split(".")[-1].lower()
+    return file_ext in {
+        "apk",
+        "app",
+        "com",
+        "ear",
+        "elf",
+        "exe",
+        "ipa",
+        "jar",
+        "js",
+        "xap",
+        "xbe",
+        "xex",
+    }

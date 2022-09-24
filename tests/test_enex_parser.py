@@ -715,6 +715,58 @@ def test_iter_notes_single_with_empty_resource_no_data(fs, caplog):
     )
 
 
+def test_iter_notes_single_with_badext_resource(fs, caplog):
+    test_enex = """<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">
+    <en-export export-date="20211218T085932Z" application="Evernote" version="10.25.6">
+      <note>
+        <title>test1</title>
+        <created>20211118T085332Z</created>
+        <updated>20211118T085920Z</updated>
+        <note-attributes>
+        </note-attributes>
+        <content>test</content>
+        <resource>
+          <mime>application/x-msdownload</mime>
+          <resource-attributes>
+            <file-name>test.exe</file-name>
+          </resource-attributes>
+        </resource>
+      </note>
+    </en-export>
+    """
+    fs.create_file("test.enex", contents=test_enex)
+
+    with caplog.at_level(logging.WARNING, logger="enex2notion"):
+        notes = list(iter_notes(Path("test.enex")))
+
+    assert (
+        "'test.exe' attachment extension is banned, will be uploaded as 'test.exe.bin'"
+        in caplog.text
+    )
+    assert notes == [
+        EvernoteNote(
+            title="test1",
+            created=datetime.datetime(2021, 11, 18, 8, 53, 32, tzinfo=tzutc()),
+            updated=datetime.datetime(2021, 11, 18, 8, 59, 20, tzinfo=tzutc()),
+            content="test",
+            tags=[],
+            author="",
+            url="",
+            is_webclip=False,
+            resources=[
+                EvernoteResource(
+                    data_bin=b"",
+                    size=0,
+                    md5="d41d8cd98f00b204e9800998ecf8427e",
+                    mime="application/octet-stream",
+                    file_name="test.exe.bin",
+                )
+            ],
+        ),
+    ]
+
+
 def test_iter_notes_single_empty(fs, mocker):
     test_enex = """<?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">
