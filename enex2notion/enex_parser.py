@@ -133,4 +133,5 @@ def _is_banned_extension(filename):
         "xap",
         "xbe",
         "xex",
+        "xpi",
     }
