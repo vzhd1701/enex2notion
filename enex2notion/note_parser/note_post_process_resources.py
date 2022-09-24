@@ -35,5 +35,18 @@ def remove_banned_files(note_blocks, note: EvernoteNote):
 
 
 def _is_banned_extension(filename):
-    file_ext = filename.split(".")[-1]
-    return file_ext in {"exe", "com", "js", "jar"}
+    file_ext = filename.split(".")[-1].lower()
+    return file_ext in {
+        "apk",
+        "app",
+        "com",
+        "ear",
+        "elf",
+        "exe",
+        "ipa",
+        "jar",
+        "js",
+        "xap",
+        "xbe",
+        "xex",
+    }
