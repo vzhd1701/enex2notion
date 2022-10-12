@@ -57,11 +57,12 @@ jobs:
 
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        shell: bash
         run: poetry install --no-interaction --no-root
 
       - name: Run tests
-        run: |
-            poetry run pytest --cov-report=xml --cov=${{ env.PACKAGE_NAME }} tests/
+        shell: bash
+        run: poetry run pytest --cov-report=xml --cov=${{ env.PACKAGE_NAME }} tests/
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
