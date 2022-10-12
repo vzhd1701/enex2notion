@@ -680,6 +680,32 @@ def test_resource_recursive(smallest_gif, parse_rules):
     )
 
 
+def test_resource_hash_case(smallest_gif, parse_rules):
+    test_note = EvernoteNote(
+        title="test1",
+        created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        updated=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        content=(
+            "<en-note>"
+            "<ul><li>"
+            f'<en-media type="{smallest_gif.mime}" hash="{smallest_gif.md5.upper()}" />'
+            "</li></ul>"
+            "</en-note>"
+        ),
+        tags=[],
+        author="",
+        url="",
+        is_webclip=False,
+        resources=[smallest_gif],
+    )
+
+    test_embedded_image = parse_note(test_note, parse_rules)[0].children[0]
+
+    assert test_embedded_image == NotionImageBlock(
+        md5_hash=smallest_gif.md5, resource=smallest_gif
+    )
+
+
 def test_bad_resource(caplog, parse_rules):
     test_note = EvernoteNote(
         title="test1",

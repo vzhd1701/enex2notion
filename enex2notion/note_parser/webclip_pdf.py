@@ -80,7 +80,7 @@ def _convert_local_images(note_dom: Tag, note: EvernoteNote):
     images = note_dom.find_all("en-media")
 
     for image in images:
-        resource = note.resource_by_md5(image.get("hash", ""))
+        resource = note.resource_by_md5(image.get("hash", "").lower())
         if resource is None:
             image.decompose()
             continue

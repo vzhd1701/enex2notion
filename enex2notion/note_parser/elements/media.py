@@ -36,7 +36,7 @@ def parse_media(element: Tag):
         if element["type"] in types:
             return _parse_media(block_type, element)
 
-    return NotionFileBlock(md5_hash=element["hash"])
+    return NotionFileBlock(md5_hash=element["hash"].lower())
 
 
 def parse_img(element: Tag):
@@ -83,7 +83,7 @@ def _parse_img_resource(bin_src: str):
 
 
 def _parse_media(block_type, element):
-    block = block_type(md5_hash=element["hash"])
+    block = block_type(md5_hash=element["hash"].lower())
 
     w, h = _parse_dimensions(element)
 
