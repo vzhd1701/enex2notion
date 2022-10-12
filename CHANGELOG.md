@@ -1,3 +1,9 @@
+### [0.2.22](https://github.com/vzhd1701/enex2notion/compare/v0.2.21...v0.2.22) (2022-10-12)
+
+### Bug Fixes
+
+- parse media ignoring hash case ([b1744ce](https://github.com/vzhd1701/enex2notion/commit/b1744ced7c5134efab93f56cfea195fe6fedde70)), closes [#53](https://github.com/vzhd1701/enex2notion/issues/53)
+
 ### [0.2.21](https://github.com/vzhd1701/enex2notion/compare/v0.2.20...v0.2.21) (2022-09-24)
 
 ### Bug Fixes
