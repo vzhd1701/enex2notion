@@ -44,6 +44,15 @@ def _parse_note_dom(note: EvernoteNote) -> Optional[Tag]:
         logger.error(f"Failed to extract DOM from note '{note.title}'")
         return None
 
+    return _filter_yinxiang_markdown(note_dom)
+
+
+def _filter_yinxiang_markdown(note_dom: Tag) -> Tag:
+    last_block = note_dom.contents[-1]
+
+    if last_block and "display:none" in last_block.attrs.get("style", ""):
+        last_block.extract()
+
     return note_dom
 
 
