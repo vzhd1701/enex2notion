@@ -1,3 +1,9 @@
+### [0.2.23](https://github.com/vzhd1701/enex2notion/compare/v0.2.22...v0.2.23) (2022-10-15)
+
+### Bug Fixes
+
+- skip Yinxiang hidden markdown appendix ([aa5989e](https://github.com/vzhd1701/enex2notion/commit/aa5989eb4b7d15da78d1460a3f394304d40072df))
+
 ### [0.2.22](https://github.com/vzhd1701/enex2notion/compare/v0.2.21...v0.2.22) (2022-10-12)
 
 ### Bug Fixes
