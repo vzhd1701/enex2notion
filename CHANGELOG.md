@@ -1,3 +1,9 @@
+### [0.2.24](https://github.com/vzhd1701/enex2notion/compare/v0.2.23...v0.2.24) (2022-10-18)
+
+### Bug Fixes
+
+- improve yinxiang markdown block filtering ([497940b](https://github.com/vzhd1701/enex2notion/commit/497940b01a1a47fd2241550960ceda851eedd9af))
+
 ### [0.2.23](https://github.com/vzhd1701/enex2notion/compare/v0.2.22...v0.2.23) (2022-10-15)
 
 ### Bug Fixes
