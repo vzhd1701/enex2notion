@@ -677,6 +677,24 @@ def test_yinxiang_markdown(parse_rules):
     ]
 
 
+def test_yinxiang_markdown_bad_end(parse_rules):
+    test_note = EvernoteNote(
+        title="test1",
+        created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        updated=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        content=("<en-note><div>test1</div>\n</en-note>"),
+        tags=[],
+        author="",
+        url="",
+        is_webclip=False,
+        resources=[],
+    )
+
+    assert parse_note(test_note, parse_rules) == [
+        NotionTextBlock(text_prop=TextProp("test1")),
+    ]
+
+
 def test_resource_recursive(smallest_gif, parse_rules):
     test_note = EvernoteNote(
         title="test1",
