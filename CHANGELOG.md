@@ -1,3 +1,9 @@
+### [0.2.25](https://github.com/vzhd1701/enex2notion/compare/v0.2.24...v0.2.25) (2022-12-06)
+
+### Bug Fixes
+
+- update notion SDK ([3e46fda](https://github.com/vzhd1701/enex2notion/commit/3e46fda66c416d720d7c3e09efb5496c70fd2bb7))
+
 ### [0.2.24](https://github.com/vzhd1701/enex2notion/compare/v0.2.23...v0.2.24) (2022-10-18)
 
 ### Bug Fixes
