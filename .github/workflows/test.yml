@@ -70,7 +70,7 @@ jobs:
         run: poetry run pytest --cov-report=xml --cov=${{ env.PACKAGE_NAME }} tests/
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
