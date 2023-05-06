@@ -1,3 +1,10 @@
+### [0.2.26](https://github.com/vzhd1701/enex2notion/compare/v0.2.25...v0.2.26) (2023-05-06)
+
+### Bug Fixes
+
+- update dependencies to prevent 403 error ([78d9339](https://github.com/vzhd1701/enex2notion/commit/78d93398d5052c5a29125f9f5c246705ff7464da))
+- update Notion SDK ([d688a95](https://github.com/vzhd1701/enex2notion/commit/d688a95e092dbe5b64214dabe79e53c3ad10c593))
+
 ### [0.2.25](https://github.com/vzhd1701/enex2notion/compare/v0.2.24...v0.2.25) (2022-12-06)
 
 ### Bug Fixes

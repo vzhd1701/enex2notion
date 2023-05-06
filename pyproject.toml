@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "enex2notion"
-version = "0.2.25"
+version = "0.2.26"
 description = "Import Evernote ENEX files to Notion"
 authors = ["vzhd1701 <vzhd1701@gmail.com>"]
 readme = "README.md"
