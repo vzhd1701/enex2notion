@@ -41,13 +41,17 @@ jobs:
           path: ~/.local
           key: dotlocal-${{ matrix.os }}-${{ matrix.python-version }}-${{ env.BUILD_POETRY_VERSION }}
 
-      - name: Install Poetry ${{ env.BUILD_POETRY_VERSION }}
-        uses: snok/install-poetry@v1
+      - name: Set up Poetry ${{ env.BUILD_POETRY_VERSION }}
+        uses: abatilo/actions-poetry@v2.0.0
         with:
-          version: ${{ env.BUILD_POETRY_VERSION }}
-          installer-parallel: false
-          virtualenvs-create: true
-          virtualenvs-in-project: true
+          poetry-version: ${{ env.BUILD_POETRY_VERSION }}
+
+      - name: Config Poetry
+        shell: bash
+        run: |
+          poetry config installer.parallel false
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
 
       - name: Load cached venv
         id: cached-poetry-dependencies
