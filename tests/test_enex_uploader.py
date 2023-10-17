@@ -157,6 +157,32 @@ def test_upload_note(notion_test_page, parse_rules):
 
 @pytest.mark.vcr()
 @pytest.mark.usefixtures("vcr_uuid4")
+def test_upload_note_with_number(notion_test_page, parse_rules):
+    test_note = EvernoteNote(
+        title="123. test1",
+        created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        updated=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        content="<en-note><div>test</div></en-note>",
+        tags=[],
+        author="",
+        url="",
+        is_webclip=False,
+        resources=[],
+    )
+
+    note_blocks = parse_note(test_note, parse_rules)
+
+    upload_note(notion_test_page, test_note, note_blocks)
+
+    uploaded_page = notion_test_page.children[0]
+
+    assert isinstance(uploaded_page, PageBlock)
+    assert uploaded_page.title == "123. test1"
+    assert uploaded_page.children[0].title == "test"
+
+
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_upload_note_fail(notion_test_page, mocker, parse_rules):
     test_note = EvernoteNote(
         title="test1",

@@ -35,7 +35,7 @@ def upload_note(root, note: EvernoteNote, note_blocks):
         raise NoteUploadFailException
 
     # Set proper name after everything is uploaded
-    new_page.title = note.title
+    new_page.title_plaintext = note.title
 
     _update_edit_time(new_page, note.updated)
 
@@ -63,5 +63,5 @@ def _make_page(note, root):
             created=note.created,
         )
         if isinstance(root, CollectionViewPageBlock)
-        else root.children.add_new(PageBlock, title=tmp_name)
+        else root.children.add_new(PageBlock, title_plaintext=tmp_name)
     )
