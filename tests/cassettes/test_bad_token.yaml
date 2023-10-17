@@ -4,7 +4,7 @@ interactions:
     headers:
       Content-Length:
       - '2'
-      content-type:
+      Content-Type:
       - application/json
       cookie:
       - PRIVATE
@@ -12,13 +12,15 @@ interactions:
     uri: https://www.notion.so/api/v3/loadUserContent
   response:
     body:
-      string: '{"errorId":"2af3d8b5-434f-4568-a5ae-6f07214b9bca","name":"UnauthorizedError","message":"Could
-        not decrypt token."}'
+      string: '{"errorId":"b06f2844-f72e-4cfb-8e78-c81c7f561cb4","name":"UnauthorizedError","debugMessage":"Could
+        not decrypt token.","message":"Something went wrong. (401)"}'
     headers:
       Content-Length:
-      - '114'
+      - '159'
       Content-Type:
       - application/json; charset=utf-8
+      alt-svc:
+      - h3=":443"; ma=86400
     status:
       code: 401
       message: Unauthorized
