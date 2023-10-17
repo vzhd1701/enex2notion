@@ -1,3 +1,10 @@
+### [0.2.27](https://github.com/vzhd1701/enex2notion/compare/v0.2.26...v0.2.27) (2023-10-17)
+
+### Bug Fixes
+
+- fix upload result URL parser ([2c35356](https://github.com/vzhd1701/enex2notion/commit/2c353566e6da8306f9c409d84b14f2619e67c003)), closes [#100](https://github.com/vzhd1701/enex2notion/issues/100) [#99](https://github.com/vzhd1701/enex2notion/issues/99)
+- use plaintext when setting note title ([0be6f7d](https://github.com/vzhd1701/enex2notion/commit/0be6f7dc8568188fdd1dca752b98a1f147ef32de)), closes [#95](https://github.com/vzhd1701/enex2notion/issues/95)
+
 ### [0.2.26](https://github.com/vzhd1701/enex2notion/compare/v0.2.25...v0.2.26) (2023-05-06)
 
 ### Bug Fixes
