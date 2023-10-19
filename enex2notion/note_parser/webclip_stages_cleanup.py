@@ -22,6 +22,12 @@ def wrap_orphans(root: Tag):
         _convert_to_paragraph(element)
 
 
+def fix_redundant_img_src_quotes(root: Tag):
+    for e in root.find_all("img"):
+        if e.get("src"):
+            e["src"] = e["src"].strip("\"'")
+
+
 def _convert_to_paragraph(element):
     div = Tag(name="div")
 
