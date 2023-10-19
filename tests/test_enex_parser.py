@@ -299,11 +299,11 @@ def test_iter_notes_bad_entities(fs, caplog):
 
 
 def test_iter_notes_bad_entities_no_unicode(fs, caplog):
-    test_enex = """<?xml version="1.0" encoding="UTF-8"?>
+    test_enex = b"""<?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">
     <en-export export-date="20211218T085932Z" application="Evernote" version="10.25.6">
       <note>
-        <title>&nbsp;test11 &nbsp;–test12</title>
+        <title>&nbsp;test11 &nbsp;\x96test12</title>
         <created>20211118T085332Z</created>
         <updated>20211118T085920Z</updated>
         <content>test1</content>
