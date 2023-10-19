@@ -58,6 +58,10 @@ class EnexUploader(object):
 
         self.notebook_notes_count = count_notes(enex_file)
 
+        logger.debug(
+            f"'{enex_file.stem}' notebook contains {self.notebook_notes_count} note(s)"
+        )
+
         for note_idx, note in enumerate(iter_notes(enex_file), 1):
             self.upload_note(note, note_idx)
 

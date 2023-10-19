@@ -42,6 +42,7 @@ pdfkit = "^1.0.0"
 PyMuPDF = "^1.23.5"
 notion-vzhd1701-fork = "0.0.37"
 tqdm = "^4.66.1"
+lxml = "^4.9.3"
 
 [tool.poetry.group.test]
 optional = true
