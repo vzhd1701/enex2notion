@@ -101,11 +101,88 @@ def test_upload_fail_retry(mock_api, fake_note_factory, mocker, caplog):
     assert "Failed to upload note" in caplog.text
 
 
+def test_upload_fail_retry_custom(mock_api, fake_note_factory, mocker, caplog):
+    retries = 10
+
+    mock_api["upload_note"].side_effect = [NoteUploadFailException] * (retries * 2)
+
+    with caplog.at_level(logging.ERROR, logger="enex2notion"):
+        with pytest.raises(NoteUploadFailException):
+            cli(
+                [
+                    "--token",
+                    "fake_token",
+                    "--retry",
+                    str(retries),
+                    "fake.enex",
+                ]
+            )
+
+    assert mock_api["upload_note"].call_count == retries
+    assert "Failed to upload note" in caplog.text
+
+
+def test_upload_fail_retry_infinite(mock_api, fake_note_factory, mocker, caplog):
+    retries = 0
+    exceptions = [NoteUploadFailException] * 10
+
+    mock_api["upload_note"].side_effect = exceptions + [None]
+
+    with caplog.at_level(logging.WARNING, logger="enex2notion"):
+        cli(["--token", "fake_token", "--retry", str(retries), "fake.enex"])
+
+    assert mock_api["upload_note"].call_count == len(exceptions) + 1
+    assert "Failed to upload note" in caplog.text
+
+
 def test_upload_fail(mock_api, fake_note_factory, mocker, caplog):
     mock_api["upload_note"].side_effect = [NoteUploadFailException] * 5
 
     with pytest.raises(NoteUploadFailException):
         cli(["--token", "fake_token", "fake.enex"])
+
+
+def test_upload_skip(mock_api, fake_note_factory, mocker, caplog):
+    mock_api["upload_note"].side_effect = [NoteUploadFailException] * 5
+
+    with caplog.at_level(logging.ERROR, logger="enex2notion"):
+        cli(["--token", "fake_token", "--skip-failed", "fake.enex"])
+
+    assert mock_api["upload_note"].call_count == 5
+    assert "Failed to upload note" in caplog.text
+
+
+def test_upload_notebook_fail(mock_api, fake_note_factory, mocker, caplog):
+    mock_api["get_notebook_database"].side_effect = [NoteUploadFailException] * 5
+
+    with pytest.raises(NoteUploadFailException):
+        cli(["--token", "fake_token", "fake.enex"])
+
+
+def test_upload_notebook_skip(mock_api, fake_note_factory, mocker, caplog):
+    mock_api["get_notebook_database"].side_effect = [NoteUploadFailException] * 5
+
+    with caplog.at_level(logging.ERROR, logger="enex2notion"):
+        cli(["--token", "fake_token", "--skip-failed", "fake.enex"])
+
+    assert mock_api["get_notebook_database"].call_count == 5
+    assert "Failed to get notebook root for" in caplog.text
+
+
+def test_no_keep_failed(mock_api, fake_note_factory, mocker):
+    cli(["--token", "fake_token", "fake.enex"])
+
+    mock_api["upload_note"].assert_called_once_with(
+        mocker.ANY, mocker.ANY, mocker.ANY, False
+    )
+
+
+def test_keep_failed(mock_api, fake_note_factory, mocker):
+    cli(["--token", "fake_token", "--keep-failed", "fake.enex"])
+
+    mock_api["upload_note"].assert_called_once_with(
+        mocker.ANY, mocker.ANY, mocker.ANY, True
+    )
 
 
 def test_add_meta(mock_api, fake_note_factory, mocker, parse_rules):

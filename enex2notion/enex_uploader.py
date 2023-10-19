@@ -3,7 +3,7 @@ import logging
 from notion.block import CollectionViewPageBlock, PageBlock
 from notion.collection import CollectionRowBlock
 from notion.operations import build_operation
-from requests import HTTPError
+from requests import RequestException
 from tqdm import tqdm
 
 from enex2notion.enex_types import EvernoteNote
@@ -15,7 +15,14 @@ logger = logging.getLogger(__name__)
 PROGRESS_BAR_WIDTH = 80
 
 
-def upload_note(root, note: EvernoteNote, note_blocks):
+def upload_note(root, note: EvernoteNote, note_blocks, keep_failed):
+    try:
+        _upload_note(root, note, note_blocks, keep_failed)
+    except Exception as e:
+        raise NoteUploadFailException from e
+
+
+def _upload_note(root, note: EvernoteNote, note_blocks, keep_failed):
     logger.debug(f"Creating new page for note '{note.title}'")
     new_page = _make_page(note, root)
 
@@ -26,13 +33,14 @@ def upload_note(root, note: EvernoteNote, note_blocks):
     try:
         for block in progress_iter:
             upload_block(new_page, block)
-    except HTTPError as e:
-        logger.debug(f"Network error: {e}")
-        if isinstance(new_page, CollectionRowBlock):
-            new_page.remove()
-        else:
-            new_page.remove(permanently=True)
-        raise NoteUploadFailException
+    except RequestException:
+        if not keep_failed:
+            if isinstance(new_page, CollectionRowBlock):
+                new_page.remove()
+            else:
+                new_page.remove(permanently=True)
+
+        raise
 
     # Set proper name after everything is uploaded
     new_page.title_plaintext = note.title

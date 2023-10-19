@@ -90,6 +90,9 @@ optional arguments:
   --root-page NAME           root page name for the imported notebooks, it will be created if it does not exist (default: "Evernote ENEX Import")
   --mode {DB,PAGE}           upload each ENEX as database (DB) or page with children (PAGE) (default: DB)
   --mode-webclips {TXT,PDF}  convert web clips to text (TXT) or pdf (PDF) before upload (default: TXT)
+  --retry N                  retry N times on note upload error before giving up, 0 for infinite retries (default: 5)
+  --skip-failed              skip notes that failed to upload (after exhausting --retry attempts), by default the program will crash on upload error
+  --keep-failed              keep partial pages at Notion with '[UNFINISHED UPLOAD]' in title if they fail to upload completely, by default the program will try to delete them on upload fail
   --add-pdf-preview          include preview image with PDF webclips for gallery view thumbnail (works only with --mode-webclips=PDF)
   --add-meta                 include metadata (created, tags, etc) in notes, makes sense only with PAGE mode
   --tag TAG                  add custom tag to uploaded notes

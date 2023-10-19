@@ -4,7 +4,7 @@ import pytest
 from notion.block import FileBlock
 
 from enex2notion.cli_notion import get_notion_client
-from enex2notion.enex_uploader_block import _sizeof_fmt, upload_block
+from enex2notion.enex_uploader_block import _extract_file_id, _sizeof_fmt, upload_block
 from enex2notion.note_parser.blocks import parse_note_blocks
 from enex2notion.utils_colors import COLORS_BG, COLORS_FG
 from enex2notion.utils_exceptions import BadTokenException
@@ -177,6 +177,26 @@ def test_indented(parse_html, notion_test_page):
 def test_bad_token():
     with pytest.raises(BadTokenException):
         get_notion_client("fake_token")
+
+
+def test_upload_url_parser():
+    good_url = (
+        "https://prod-files-secure.s3.us-west-2.amazonaws.com/"
+        "5ec22cfd-7fac-4992-a967-49fd469af9f9/"
+        "5ef8c8e1-e388-4cd7-a2f3-535606b74136/test.bin"
+    )
+
+    assert _extract_file_id(good_url) == "5ef8c8e1-e388-4cd7-a2f3-535606b74136"
+
+
+def test_upload_url_parser_fail():
+    bad_url = "https://google.com"
+
+    with pytest.raises(ValueError) as e:
+        _extract_file_id(bad_url)
+
+    assert e.type == ValueError
+    assert str(e.value) == "Uploaded file URL format changed: https://google.com"
 
 
 @pytest.mark.parametrize(

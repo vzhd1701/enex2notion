@@ -66,7 +66,7 @@ def _extract_file_id(url):
     aws_match = re.search(aws_re, url)
 
     if not aws_match:
-        raise ValueError("Uploaded file URL format changed")
+        raise ValueError(f"Uploaded file URL format changed: {url}")
 
     return aws_match.group(3)
 

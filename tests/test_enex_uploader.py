@@ -50,6 +50,17 @@ def test_notebook_database_existing(notion_test_page):
 
 @pytest.mark.vcr()
 @pytest.mark.usefixtures("vcr_uuid4")
+def test_notebook_database_fail(notion_test_page, mocker):
+    mocker.patch(
+        "enex2notion.enex_uploader_modes._get_notebook_database", side_effect=Exception
+    )
+
+    with pytest.raises(NoteUploadFailException):
+        get_notebook_database(notion_test_page, "test_database")
+
+
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
 def test_notebook_database_existing_no_options(notion_test_page):
     test_database = get_notebook_database(notion_test_page, "test_database")
 
@@ -81,6 +92,17 @@ def test_notebook_page_existing(notion_test_page):
     test_page = get_notebook_page(notion_test_page, "test")
 
     assert test_page == get_notebook_page(notion_test_page, "test")
+
+
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
+def test_notebook_page_fail(notion_test_page, mocker):
+    mocker.patch(
+        "enex2notion.enex_uploader_modes._get_notebook_page", side_effect=Exception
+    )
+
+    with pytest.raises(NoteUploadFailException):
+        get_notebook_page(notion_test_page, "test")
 
 
 @pytest.mark.vcr()
@@ -146,7 +168,7 @@ def test_upload_note(notion_test_page, parse_rules):
 
     note_blocks = parse_note(test_note, parse_rules)
 
-    upload_note(notion_test_page, test_note, note_blocks)
+    upload_note(notion_test_page, test_note, note_blocks, False)
 
     uploaded_page = notion_test_page.children[0]
 
@@ -172,7 +194,7 @@ def test_upload_note_with_number(notion_test_page, parse_rules):
 
     note_blocks = parse_note(test_note, parse_rules)
 
-    upload_note(notion_test_page, test_note, note_blocks)
+    upload_note(notion_test_page, test_note, note_blocks, False)
 
     uploaded_page = notion_test_page.children[0]
 
@@ -201,9 +223,35 @@ def test_upload_note_fail(notion_test_page, mocker, parse_rules):
     mocker.patch("enex2notion.enex_uploader.upload_block", side_effect=HTTPError)
 
     with pytest.raises(NoteUploadFailException):
-        upload_note(notion_test_page, test_note, note_blocks)
+        upload_note(notion_test_page, test_note, note_blocks, False)
 
     assert len(notion_test_page.children) == 0
+
+
+@pytest.mark.vcr()
+@pytest.mark.usefixtures("vcr_uuid4")
+def test_upload_note_fail_keep(notion_test_page, mocker, parse_rules):
+    test_note = EvernoteNote(
+        title="test1",
+        created=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        updated=datetime(2021, 11, 18, 0, 0, 0, tzinfo=tzutc()),
+        content="<en-note><div>test</div></en-note>",
+        tags=[],
+        author="",
+        url="",
+        is_webclip=False,
+        resources=[],
+    )
+
+    note_blocks = parse_note(test_note, parse_rules)
+
+    mocker.patch("enex2notion.enex_uploader.upload_block", side_effect=HTTPError)
+
+    with pytest.raises(NoteUploadFailException):
+        upload_note(notion_test_page, test_note, note_blocks, True)
+
+    assert len(notion_test_page.children) == 1
+    assert notion_test_page.children[0].title == "test1 [UNFINISHED UPLOAD]"
 
 
 @pytest.mark.vcr()
@@ -228,7 +276,7 @@ def test_upload_note_fail_db(notion_test_page, mocker, parse_rules):
     mocker.patch("enex2notion.enex_uploader.upload_block", side_effect=HTTPError)
 
     with pytest.raises(NoteUploadFailException):
-        upload_note(test_database, test_note, note_blocks)
+        upload_note(test_database, test_note, note_blocks, False)
 
     assert len(test_database.collection.get_rows()) == 0
 
@@ -254,7 +302,7 @@ def test_upload_note_with_file(notion_test_page, tiny_file, parse_rules):
 
     note_blocks = parse_note(test_note, parse_rules)
 
-    upload_note(notion_test_page, test_note, note_blocks)
+    upload_note(notion_test_page, test_note, note_blocks, False)
 
     uploaded_page = notion_test_page.children[0]
 
@@ -283,7 +331,7 @@ def test_upload_note_db(notion_test_page, parse_rules):
 
     note_blocks = parse_note(test_note, parse_rules)
 
-    upload_note(test_database, test_note, note_blocks)
+    upload_note(test_database, test_note, note_blocks, False)
 
     rows = list(test_database.collection.get_rows())
     test_row = rows[0]

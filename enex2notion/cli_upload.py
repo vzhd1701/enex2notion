@@ -1,3 +1,4 @@
+import itertools
 import logging
 from pathlib import Path
 from typing import Optional
@@ -48,7 +49,12 @@ class EnexUploader(object):
     def upload_notebook(self, enex_file: Path):
         logger.info(f"Processing notebook '{enex_file.stem}'...")
 
-        self.notebook_root = self._get_notebook_root(enex_file.stem)
+        try:
+            self.notebook_root = self._get_notebook_root(enex_file.stem)
+        except NoteUploadFailException:
+            if not self.rules.skip_failed:
+                raise
+            return
 
         self.notebook_notes_count = count_notes(enex_file)
 
@@ -76,7 +82,13 @@ class EnexUploader(object):
                 f" out of {self.notebook_notes_count} '{note.title}'"
             )
 
-            _upload_note(self.notebook_root, note, note_blocks)
+            try:
+                self._upload_note(self.notebook_root, note, note_blocks)
+            except NoteUploadFailException:
+                if not self.rules.skip_failed:
+                    raise
+                return
+
             self.done_hashes.add(note.note_hash)
 
     def _parse_note(self, note):
@@ -91,21 +103,32 @@ class EnexUploader(object):
         if self.import_root is None:
             return None
 
-        if self.mode == "DB":
-            return get_notebook_database(self.import_root, notebook_title)
+        error_message = f"Failed to get notebook root for '{notebook_title}'"
+        get_func = get_notebook_database if self.mode == "DB" else get_notebook_page
 
-        return get_notebook_page(self.import_root, notebook_title)
+        return self._attempt_upload(
+            get_func, error_message, self.import_root, notebook_title
+        )
 
+    def _upload_note(self, notebook_root, note, note_blocks):
+        self._attempt_upload(
+            upload_note,
+            f"Failed to upload note '{note.title}' to Notion",
+            notebook_root,
+            note,
+            note_blocks,
+            self.rules.keep_failed,
+        )
 
-def _upload_note(notebook_root, note, note_blocks):
-    for attempt in range(5):
-        try:
-            upload_note(notebook_root, note, note_blocks)
-        except NoteUploadFailException:
-            if attempt == 4:
-                raise
-            logger.warning(
-                f"Failed to upload note '{note.title}' to Notion! Retrying..."
-            )
-            continue
-        break
+    def _attempt_upload(self, upload_func, error_message, *args, **kwargs):
+        for attempt in itertools.count(1):
+            try:
+                return upload_func(*args, **kwargs)
+            except NoteUploadFailException as e:
+                logger.debug(f"Upload error: {e}", exc_info=e)
+
+                if attempt == self.rules.retry:
+                    logger.error(f"{error_message}!")
+                    raise
+
+                logger.warning(f"{error_message}! Retrying...")
