@@ -42,7 +42,7 @@ jobs:
           key: dotlocal-${{ matrix.os }}-${{ matrix.python-version }}-${{ env.BUILD_POETRY_VERSION }}
 
       - name: Set up Poetry ${{ env.BUILD_POETRY_VERSION }}
-        uses: abatilo/actions-poetry@v2.0.0
+        uses: abatilo/actions-poetry@v2
         with:
           poetry-version: ${{ env.BUILD_POETRY_VERSION }}
 
@@ -63,7 +63,7 @@ jobs:
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         shell: bash
-        run: poetry install --no-interaction --no-root
+        run: poetry install --with test --no-interaction --no-root
 
       - name: Run tests
         shell: bash
