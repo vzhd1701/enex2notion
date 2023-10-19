@@ -1,3 +1,14 @@
+## [0.3.0](https://github.com/vzhd1701/enex2notion/compare/v0.2.27...v0.3.0) (2023-10-19)
+
+### Features
+
+- add --retry, --skip-failed and --keep-failed options ([7f3969b](https://github.com/vzhd1701/enex2notion/commit/7f3969b2751d22a97522484a86cafa8485416d3d))
+
+### Bug Fixes
+
+- avoid parsing crashes by using lxml ([26d9b8a](https://github.com/vzhd1701/enex2notion/commit/26d9b8a415205959b0452b40040051968b91468f))
+- convert bad img src quotes when parsing weblicp ([080d7e3](https://github.com/vzhd1701/enex2notion/commit/080d7e385589cf330e6747d52a693efdf579ca5e)), closes [#79](https://github.com/vzhd1701/enex2notion/issues/79)
+
 ### [0.2.27](https://github.com/vzhd1701/enex2notion/compare/v0.2.26...v0.2.27) (2023-10-17)
 
 ### Bug Fixes
