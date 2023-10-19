@@ -60,7 +60,7 @@ $ pipx install enex2notion
 $ pip install --user enex2notion
 ```
 
-**Python 3.7 or later required.**
+**Python 3.8 or later required.**
 
 ### From source
 
