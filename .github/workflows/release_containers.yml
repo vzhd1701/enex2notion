@@ -26,7 +26,7 @@ jobs:
       run: |
         LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
         echo "TAG_VERSION=$LATEST_TAG" >> $GITHUB_ENV
-        [[ "${{ inputs.checkout_latest }}" == "true" ]] && git checkout $LATEST_TAG
+        #[[ "${{ inputs.checkout_latest }}" == "true" ]] && git checkout $LATEST_TAG
 
     - name: Get push tag version
       if: github.event_name == 'push'
@@ -58,7 +58,7 @@ jobs:
       run: |
         LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
         echo "TAG_VERSION=$LATEST_TAG" >> $GITHUB_ENV
-        [[ "${{ inputs.checkout_latest }}" == "true" ]] && git checkout $LATEST_TAG
+        #[[ "${{ inputs.checkout_latest }}" == "true" ]] && git checkout $LATEST_TAG
 
     - name: Get push tag version
       if: github.event_name == 'push'
