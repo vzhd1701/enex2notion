@@ -73,14 +73,14 @@ $ poetry install --no-dev
 $ poetry run enex2notion
 ```
 
-### With [**Docker**](https://docs.docker.com/) 
-Last command (docker run) maps current directory ($PWD) to the data directory in  the container. You can replace $PWD with a directory that contains your *.enex files. When running commands like "enex2notion /data" refer to your local mapped directory as /data.
+### With [**Docker**](https://docs.docker.com/)
+
+This command maps current directory `$PWD` to the `/input` directory in the container. You can replace `$PWD` with a directory that contains your `*.enex` files. When running commands like `enex2notion /input` refer to your local mapped directory as `/input`.
 
 ```shell
-$ git clone https://github.com/vzhd1701/enex2notion.git
-$ docker build -t enex2notion:latest .
-$ docker run --rm -t -v "$PWD":/data enex2notion
+$ docker run --rm -t -v "$PWD":/input vzhd1701/enex2notion:latest
 ```
+
 ## Usage
 
 ```shell
