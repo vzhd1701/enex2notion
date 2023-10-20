@@ -1,9 +1,0 @@
-.github/
-.git
-.gitignore
-tests/
-.pre-commit-config.yaml
-.versionrc.js
-CHANGELOG.md
-LICENSE
-README.md

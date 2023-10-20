@@ -1,25 +1,37 @@
-FROM python:3.10.6-slim
+FROM debian:12-slim AS build
 
-# Map host volume here from where you can read the *.enex files
-VOLUME data
+ENV BUILD_POETRY_VERSION=1.6.1
 
-# Lock version
-ENV POETRY_VERSION=1.3.2
+RUN apt-get update && \
+    apt-get install --no-install-suggests --no-install-recommends --yes python3-venv python3-pip && \
+    python3 -m venv /venv && \
+    /venv/bin/pip install --upgrade pip
 
-# Install poetry build and dependency management system for python
-RUN pip3 install "poetry==$POETRY_VERSION"
+RUN pip3 install --break-system-packages poetry==$BUILD_POETRY_VERSION
 
-# Cache the dependencies, they are less volatile.
-COPY poetry.lock pyproject.toml /code/
+FROM build AS build-venv
 
-WORKDIR /code
+COPY . /app
+WORKDIR /app
 
-# Disabling creation of virtual environment since docker container is isolated by design.
-RUN poetry config virtualenvs.create false
-RUN poetry install --no-dev --no-interaction --no-ansi
+RUN poetry build --no-interaction -f wheel
+RUN /venv/bin/pip install --disable-pip-version-check dist/*.whl
 
-# Copy rest of the files (code) which are more likely to change.
-COPY . ./
+FROM gcr.io/distroless/python3-debian12
 
-# Setting entry point that cannot be overriden, we will just need to prepend the CLI args when using docker run
-ENTRYPOINT [ "poetry", "run", "enex2notion" ]
+ENV INSIDE_DOCKER_CONTAINER=1
+
+LABEL   maintainer="vzhd1701 <vzhd1701@gmail.com>" \
+        org.opencontainers.image.title="enex2notion" \
+        org.opencontainers.image.description="Import Evernote ENEX files to Notion " \
+        org.opencontainers.image.authors="vzhd1701 <vzhd1701@gmail.com>" \
+        org.opencontainers.image.licenses="MIT" \
+        org.opencontainers.image.documentation="https://github.com/vzhd1701/enex2notion" \
+        org.opencontainers.image.url="https://github.com/vzhd1701/enex2notion" \
+        org.opencontainers.image.source="https://github.com/vzhd1701/enex2notion.git"
+
+COPY --from=build-venv /venv /venv
+
+WORKDIR /input
+
+ENTRYPOINT ["/venv/bin/enex2notion"]
