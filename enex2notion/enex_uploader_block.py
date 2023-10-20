@@ -1,6 +1,7 @@
+import re
+
 import requests
 from notion.block import FileBlock
-from notion.settings import S3_URL_PREFIX
 
 from enex2notion.enex_types import EvernoteResource
 from enex2notion.notion_blocks.uploadable import NotionUploadableBlock
@@ -59,7 +60,15 @@ def _upload_file(new_block, resource: EvernoteResource):
 
 
 def _extract_file_id(url):
-    return url[len(S3_URL_PREFIX) :].split("/")[0]
+    # aws_host/space_id/file_id/filename
+    aws_re = r"^https://(.*?\.amazonaws\.com)/([a-f0-9\-]+)/([a-f0-9\-]+)/(.*?)$"
+
+    aws_match = re.search(aws_re, url)
+
+    if not aws_match:
+        raise ValueError(f"Uploaded file URL format changed: {url}")
+
+    return aws_match.group(3)
 
 
 def _sizeof_fmt(num):

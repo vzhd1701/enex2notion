@@ -198,4 +198,7 @@ def parse_rules():
         condense_lines=False,
         condense_lines_sparse=False,
         tag=None,
+        retry=5,
+        skip_failed=False,
+        keep_failed=False,
     )

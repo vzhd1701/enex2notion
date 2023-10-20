@@ -20,7 +20,14 @@ logger = logging.getLogger(__name__)
 
 
 def count_notes(enex_file: Path) -> int:
-    return sum(iter_process_xml_elements(enex_file, "note", lambda e: 1))
+    return sum(
+        iter_process_xml_elements(enex_file, "note", lambda e: 1, _log_xml_errors)
+    )
+
+
+def _log_xml_errors(xml_file: Path, errors):
+    logger.warning(f"'{xml_file.name}' file parsed with errors")
+    logger.debug("".join(errors))
 
 
 def iter_notes(enex_file: Path) -> Iterator[EvernoteNote]:

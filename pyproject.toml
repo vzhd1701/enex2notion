@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "enex2notion"
-version = "0.2.25"
+version = "0.3.0"
 description = "Import Evernote ENEX files to Notion"
 authors = ["vzhd1701 <vzhd1701@gmail.com>"]
 readme = "README.md"
@@ -32,40 +32,50 @@ classifiers = [
 enex2notion = "enex2notion.cli:main"
 
 [tool.poetry.dependencies]
-python = "^3.7"
-beautifulsoup4 = "^4.11.1"
+python = "^3.8"
+beautifulsoup4 = "^4.12.2"
 python-dateutil = "^2.8.2"
-requests = "^2.27.1"
-w3lib = "^1.22.0"
-tinycss2 = "^1.1.1"
+requests = "^2.31.0"
+w3lib = "^2.1.2"
+tinycss2 = "^1.2.1"
 pdfkit = "^1.0.0"
-PyMuPDF = "^1.20.0"
-notion-vzhd1701-fork = "0.0.36"
-tqdm = "^4.64.0"
+PyMuPDF = "^1.23.5"
+notion-vzhd1701-fork = "0.0.37"
+tqdm = "^4.66.1"
+lxml = "^4.9.3"
 
-[tool.poetry.dev-dependencies]
-pytest = "^7.1.2"
-pytest-cov = "^3.0.0"
-pytest-mock = "^3.7.0"
-black = "^22.3.0"
-isort = "^5.10.1"
-pre-commit = "^2.19.0"
-flakehell = "^0.9.0"
-wemake-python-styleguide = "^0.16.1"
-mdformat = "0.7.7"
-pyfakefs = "^4.5.6"
+[tool.poetry.group.test]
+optional = true
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.2"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.11.1"
+pyfakefs = "^5.3.0"
 pytest-vcr = "^1.0.2"
-flake8 = "3.9.0"
 
-[tool.flakehell]
-base = "https://raw.githubusercontent.com/wemake-services/wemake-python-styleguide/master/styles/flakehell.toml"
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.5.0"
+black = "^23.10.0"
+isort = "^5.12.0"
+mdformat = "0.7.17"
+flakeheaven = "^3.3.0"
+wemake-python-styleguide = "^0.17.0"
+flake8 = "^4.0.1"
+mypy = "^1.6.1"
+
+[tool.flakeheaven]
+base = "https://raw.githubusercontent.com/wemake-services/wemake-python-styleguide/master/styles/flakeheaven.toml"
 extended_default_ignore=[]
 max_line_length = 88
 exclude = [
     "tests/*.py",
 ]
 
-[tool.flakehell.plugins]
+[tool.flakeheaven.plugins]
 # Disabled [personal preference]
 # WPS111 short names
 # WPS305 forbids f-strings
@@ -93,7 +103,7 @@ flake8-docstrings = ["-*"]
 flake8-darglint = ["-*"]
 wemake-python-styleguide = ["+*", "-WPS111", "-WPS226", "-WPS305", "-WPS317", "-WPS323", "-WPS326"]
 
-[tool.flakehell.exceptions."enex2notion/version.py"]
+[tool.flakeheaven.exceptions."enex2notion/version.py"]
 # I like it this way
 wemake-python-styleguide = ["-WPS410"]
 

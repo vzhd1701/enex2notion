@@ -1,3 +1,28 @@
+## [0.3.0](https://github.com/vzhd1701/enex2notion/compare/v0.2.27...v0.3.0) (2023-10-19)
+
+### Features
+
+- add --retry, --skip-failed and --keep-failed options ([7f3969b](https://github.com/vzhd1701/enex2notion/commit/7f3969b2751d22a97522484a86cafa8485416d3d))
+
+### Bug Fixes
+
+- avoid parsing crashes by using lxml ([26d9b8a](https://github.com/vzhd1701/enex2notion/commit/26d9b8a415205959b0452b40040051968b91468f))
+- convert bad img src quotes when parsing weblicp ([080d7e3](https://github.com/vzhd1701/enex2notion/commit/080d7e385589cf330e6747d52a693efdf579ca5e)), closes [#79](https://github.com/vzhd1701/enex2notion/issues/79)
+
+### [0.2.27](https://github.com/vzhd1701/enex2notion/compare/v0.2.26...v0.2.27) (2023-10-17)
+
+### Bug Fixes
+
+- fix upload result URL parser ([2c35356](https://github.com/vzhd1701/enex2notion/commit/2c353566e6da8306f9c409d84b14f2619e67c003)), closes [#100](https://github.com/vzhd1701/enex2notion/issues/100) [#99](https://github.com/vzhd1701/enex2notion/issues/99)
+- use plaintext when setting note title ([0be6f7d](https://github.com/vzhd1701/enex2notion/commit/0be6f7dc8568188fdd1dca752b98a1f147ef32de)), closes [#95](https://github.com/vzhd1701/enex2notion/issues/95)
+
+### [0.2.26](https://github.com/vzhd1701/enex2notion/compare/v0.2.25...v0.2.26) (2023-05-06)
+
+### Bug Fixes
+
+- update dependencies to prevent 403 error ([78d9339](https://github.com/vzhd1701/enex2notion/commit/78d93398d5052c5a29125f9f5c246705ff7464da))
+- update Notion SDK ([d688a95](https://github.com/vzhd1701/enex2notion/commit/d688a95e092dbe5b64214dabe79e53c3ad10c593))
+
 ### [0.2.25](https://github.com/vzhd1701/enex2notion/compare/v0.2.24...v0.2.25) (2022-12-06)
 
 ### Bug Fixes

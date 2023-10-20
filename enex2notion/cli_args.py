@@ -54,6 +54,31 @@ def parse_args(argv):
                 " (default: TXT)"
             ),
         },
+        "--retry": {
+            "type": int,
+            "default": 5,
+            "metavar": "N",
+            "help": (
+                "retry N times on note upload error before giving up,"
+                " 0 for infinite retries"
+                " (default: 5)"
+            ),
+        },
+        "--skip-failed": {
+            "action": "store_true",
+            "help": (
+                "skip notes that failed to upload (after exhausting --retry attempts),"
+                " by default the program will crash on upload error"
+            ),
+        },
+        "--keep-failed": {
+            "action": "store_true",
+            "help": (
+                "keep partial pages at Notion with '[UNFINISHED UPLOAD]' in title"
+                " if they fail to upload completely,"
+                " by default the program will try to delete them on upload fail"
+            ),
+        },
         "--add-pdf-preview": {
             "action": "store_true",
             "help": (

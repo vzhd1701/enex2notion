@@ -4,6 +4,7 @@ from bs4 import Tag
 
 from enex2notion.note_parser.blocks import parse_note_blocks
 from enex2notion.note_parser.webclip_stages_cleanup import (
+    fix_redundant_img_src_quotes,
     remove_empty_blocks,
     strip_paragraphs,
     wrap_orphans,
@@ -74,6 +75,7 @@ def parse_webclip(note_dom: Tag):
         remove_empty_blocks,
         wrap_orphans,
         strip_paragraphs,
+        fix_redundant_img_src_quotes,
     )
 
     for processor in processors:

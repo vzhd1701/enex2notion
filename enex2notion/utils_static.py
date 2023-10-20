@@ -14,6 +14,10 @@ class Rules(object):
 
     tag: Optional[str]
 
+    retry: int
+    skip_failed: bool
+    keep_failed: bool
+
     @classmethod
     def from_args(cls, args: Namespace) -> "Rules":
         args_map = {

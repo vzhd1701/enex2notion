@@ -1,7 +1,11 @@
+import base64
+
+from enex2notion.enex_types import EvernoteResource
 from enex2notion.note_parser.webclip import parse_webclip
 from enex2notion.notion_blocks.header import NotionSubsubheaderBlock
 from enex2notion.notion_blocks.list import NotionBulletedListBlock
 from enex2notion.notion_blocks.text import NotionTextBlock, TextProp
+from enex2notion.notion_blocks.uploadable import NotionImageBlock
 
 
 def test_empty(parse_html):
@@ -208,3 +212,23 @@ def test_flatten_bad_inline(parse_html):
     assert parse_webclip(test_note) == [
         NotionTextBlock(text_prop=TextProp("test")),
     ]
+
+
+def test_embedded_inline_img_bin_bad_quotes(parse_html, smallest_gif):
+    test_note = parse_html(
+        f"<img src=\"'data:{smallest_gif.mime};"
+        f'base64,{base64.b64encode(smallest_gif.data_bin).decode("utf-8")}\'" />'
+    )
+
+    result_block = parse_webclip(test_note)[0]
+
+    assert result_block == NotionImageBlock(
+        md5_hash=smallest_gif.md5,
+        resource=EvernoteResource(
+            data_bin=smallest_gif.data_bin,
+            size=smallest_gif.size,
+            md5=smallest_gif.md5,
+            mime=smallest_gif.mime,
+            file_name=f"{smallest_gif.md5}.gif",
+        ),
+    )

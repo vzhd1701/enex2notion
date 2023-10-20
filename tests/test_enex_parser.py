@@ -2,10 +2,21 @@ import datetime
 import logging
 from pathlib import Path
 
+import pytest
 from dateutil.tz import tzutc
 
 from enex2notion.enex_parser import count_notes, iter_notes
 from enex2notion.enex_types import EvernoteNote, EvernoteResource
+
+
+def test_iter_non_xml(fs):
+    test_enex = """this is not xml"""
+    fs.create_file("test.enex", contents=test_enex)
+
+    with pytest.raises(RuntimeError) as e:
+        list(iter_notes(Path("test.enex")))
+
+    assert "Failed to parse" in str(e.value)
 
 
 def test_iter_notes_single(fs):
@@ -232,6 +243,95 @@ def test_iter_notes_single_attrs(fs):
             resources=[],
         ),
     ]
+
+
+def test_iter_notes_bad_entities(fs, caplog):
+    test_enex = """<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">
+    <en-export export-date="20211218T085932Z" application="Evernote" version="10.25.6">
+      <note>
+        <title>&nbsp;test11 &nbsp;–test12</title>
+        <created>20211118T085332Z</created>
+        <updated>20211118T085920Z</updated>
+        <content>test1</content>
+      </note>
+      <note>
+        <title>test21 &nbsp;–test22</title>
+        <created>20211118T085332Z</created>
+        <updated>20211118T085920Z</updated>
+        <content>test2</content>
+      </note>
+    </en-export>
+    """
+    fs.create_file("test.enex", contents=test_enex, encoding="utf-8")
+
+    with caplog.at_level(logging.WARNING, logger="enex2notion"):
+        notes_count = count_notes(Path("test.enex"))
+
+    notes = list(iter_notes(Path("test.enex")))
+
+    assert notes_count == 2
+    assert notes == [
+        EvernoteNote(
+            title="&nbsp;test11 &nbsp;–test12",
+            created=datetime.datetime(2021, 11, 18, 8, 53, 32, tzinfo=tzutc()),
+            updated=datetime.datetime(2021, 11, 18, 8, 59, 20, tzinfo=tzutc()),
+            content="test1",
+            tags=[],
+            author="",
+            url="",
+            is_webclip=False,
+            resources=[],
+        ),
+        EvernoteNote(
+            title="test21 &nbsp;–test22",
+            created=datetime.datetime(2021, 11, 18, 8, 53, 32, tzinfo=tzutc()),
+            updated=datetime.datetime(2021, 11, 18, 8, 59, 20, tzinfo=tzutc()),
+            content="test2",
+            tags=[],
+            author="",
+            url="",
+            is_webclip=False,
+            resources=[],
+        ),
+    ]
+    assert "file parsed with errors" in caplog.text
+
+
+def test_iter_notes_bad_entities_no_unicode(fs, caplog):
+    test_enex = b"""<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">
+    <en-export export-date="20211218T085932Z" application="Evernote" version="10.25.6">
+      <note>
+        <title>&nbsp;test11 &nbsp;\x96test12</title>
+        <created>20211118T085332Z</created>
+        <updated>20211118T085920Z</updated>
+        <content>test1</content>
+      </note>
+    </en-export>
+    """
+    fs.create_file("test.enex", contents=test_enex)
+
+    with caplog.at_level(logging.WARNING, logger="enex2notion"):
+        notes_count = count_notes(Path("test.enex"))
+
+    notes = list(iter_notes(Path("test.enex")))
+
+    assert notes_count == 1
+    assert notes == [
+        EvernoteNote(
+            title="&nbsp;test11 &nbsp;test12",
+            created=datetime.datetime(2021, 11, 18, 8, 53, 32, tzinfo=tzutc()),
+            updated=datetime.datetime(2021, 11, 18, 8, 59, 20, tzinfo=tzutc()),
+            content="test1",
+            tags=[],
+            author="",
+            url="",
+            is_webclip=False,
+            resources=[],
+        )
+    ]
+    assert "file parsed with errors" in caplog.text
 
 
 def test_iter_notes_webclip1(fs):
