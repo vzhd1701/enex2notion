@@ -56,6 +56,9 @@ $ pipx install enex2notion
 
 ### With [**Docker**](https://docs.docker.com/)
 
+[![Docker Image Size (amd64)](<https://img.shields.io/docker/image-size/vzhd1701/enex2notion?arch=amd64&label=image%20size%20(amd64)>)](https://hub.docker.com/r/vzhd1701/enex2notion)
+[![Docker Image Size (arm64)](<https://img.shields.io/docker/image-size/vzhd1701/enex2notion?arch=arm64&label=image%20size%20(arm64)>)](https://hub.docker.com/r/vzhd1701/enex2notion)
+
 This command maps current directory `$PWD` to the `/input` directory in the container. You can replace `$PWD` with a directory that contains your `*.enex` files. When running commands like `enex2notion /input` refer to your local mapped directory as `/input`.
 
 ```shell
@@ -77,7 +80,7 @@ This project uses [poetry](https://python-poetry.org/) for dependency management
 ```shell
 $ git clone https://github.com/vzhd1701/enex2notion.git
 $ cd enex2notion/
-$ poetry install --no-dev
+$ poetry install
 $ poetry run enex2notion
 ```
 
