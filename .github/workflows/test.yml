@@ -13,6 +13,9 @@ on:
       - ".pre-commit-config.yaml"
       - "pyproject.toml"
       - "**/version.py"
+      - "Dockerfile"
+      - ".github/workflows/*.yml"
+      - "!.github/workflows/test.yml"
 
 env:
   BUILD_POETRY_VERSION: 1.6.1
