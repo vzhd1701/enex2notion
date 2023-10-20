@@ -54,6 +54,14 @@ $ brew install enex2notion
 $ pipx install enex2notion
 ```
 
+### With [**Docker**](https://docs.docker.com/)
+
+This command maps current directory `$PWD` to the `/input` directory in the container. You can replace `$PWD` with a directory that contains your `*.enex` files. When running commands like `enex2notion /input` refer to your local mapped directory as `/input`.
+
+```shell
+$ docker run --rm -t -v "$PWD":/input vzhd1701/enex2notion:latest
+```
+
 ### With PIP
 
 ```bash
