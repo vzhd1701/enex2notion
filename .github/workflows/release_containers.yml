@@ -2,6 +2,11 @@ name: release_containers
 
 on:
   workflow_dispatch:
+    inputs:
+      checkout_latest:
+        description: 'Checkout latest tag'
+        required: true
+        default: 'yes'
   push:
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
@@ -19,8 +24,8 @@ jobs:
       if: github.event_name == 'workflow_dispatch'
       run: |
         LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-        git checkout $LATEST_TAG
         echo "TAG_VERSION=$LATEST_TAG" >> $GITHUB_ENV
+        [ "${{ github.event.inputs.checkout_latest }}" = "yes" ] && git checkout $LATEST_TAG
 
     - name: Get push tag version
       if: github.event_name == 'push'
@@ -51,8 +56,8 @@ jobs:
       if: github.event_name == 'workflow_dispatch'
       run: |
         LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-        git checkout $LATEST_TAG
         echo "TAG_VERSION=$LATEST_TAG" >> $GITHUB_ENV
+        [ "${{ github.event.inputs.checkout_latest }}" = "yes" ] && git checkout $LATEST_TAG
 
     - name: Get push tag version
       if: github.event_name == 'push'
