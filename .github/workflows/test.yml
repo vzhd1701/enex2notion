@@ -7,15 +7,13 @@ on:
     branches:
       - '**'
     tags-ignore:
-      - '*.*'
-    paths-ignore:
-      - "*.md"
-      - ".pre-commit-config.yaml"
-      - "pyproject.toml"
-      - "**/version.py"
-      - "Dockerfile"
-      - ".github/workflows/*.yml"
-      - "!.github/workflows/test.yml"
+      - '**'
+    paths:
+      - '**.py'
+      - 'tests/**'
+      - 'poetry.lock'
+      - '.github/workflows/test.yml'
+      - '!**/version.py'
 
 env:
   BUILD_POETRY_VERSION: 1.6.1
