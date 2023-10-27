@@ -44,6 +44,9 @@ def _parse_note_dom(note: EvernoteNote) -> Optional[Tag]:
         logger.error(f"Failed to extract DOM from note '{note.title}'")
         return None
 
+    if len(note_dom.contents) == 0:
+        return None
+
     return _filter_yinxiang_markdown(note_dom)
 
 
