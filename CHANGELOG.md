@@ -1,3 +1,10 @@
+## [0.3.1](https://github.com/vzhd1701/enex2notion/compare/v0.3.0...v0.3.1) (2023-10-27)
+
+### Bug Fixes
+
+- fix parse errors for huge and empty nodes ([#102](https://github.com/vzhd1701/enex2notion/issues/102)) ([0520e93](https://github.com/vzhd1701/enex2notion/commit/0520e93141297996977fbc7ea235e60291ea367f)), closes [#101](https://github.com/vzhd1701/enex2notion/issues/101)
+- improve handling notes with empty content ([87593b2](https://github.com/vzhd1701/enex2notion/commit/87593b2bdeba2096d302d325cf4a3a1c48754cc4))
+
 ## [0.3.0](https://github.com/vzhd1701/enex2notion/compare/v0.2.27...v0.3.0) (2023-10-19)
 
 ### Features
