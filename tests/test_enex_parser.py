@@ -1,3 +1,4 @@
+import base64
 import datetime
 import logging
 from pathlib import Path
@@ -544,6 +545,72 @@ def test_iter_notes_single_with_resource(fs):
         notes[0].resource_by_md5("bc32ed98d624acb4008f986349a20d26")
         == expected_resource
     )
+    assert notes[0].resource_by_md5("000") is None
+
+
+def test_iter_notes_single_with_huge_resource(fs, caplog):
+    test_enex_head = b"""<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">
+    <en-export export-date="20211218T085932Z" application="Evernote" version="10.25.6">
+      <note>
+        <title>test1</title>
+        <created>20211118T085332Z</created>
+        <updated>20211118T085920Z</updated>
+        <note-attributes>
+        </note-attributes>
+        <content>test</content>
+        <resource>
+          <data encoding="base64">
+    """
+    test_enex_tail = b"""
+          </data>
+          <mime>image/gif</mime>
+          <resource-attributes>
+            <file-name>smallest.gif</file-name>
+          </resource-attributes>
+        </resource>
+      </note>
+    </en-export>
+    """
+    test_enex_file = fs.create_file("test.enex", contents=test_enex_head)
+
+    # 10 MB
+    big_binary = b"\x00" * 10 * 1024 * 1024
+    big_binary_hash = "f1c9645dbc14efddc7d8a322685f26eb"
+
+    with Path("test.enex").open("ab+") as f:
+        f.write(base64.b64encode(big_binary))
+        f.write(test_enex_tail)
+
+    with caplog.at_level(logging.WARNING, logger="enex2notion"):
+        notes_count = count_notes(Path("test.enex"))
+
+    notes = list(iter_notes(Path("test.enex")))
+
+    expected_resource = EvernoteResource(
+        data_bin=big_binary,
+        size=len(big_binary),
+        md5=big_binary_hash,
+        mime="image/gif",
+        file_name="smallest.gif",
+    )
+
+    assert caplog.text == ""
+    assert notes_count == 1
+    assert notes == [
+        EvernoteNote(
+            title="test1",
+            created=datetime.datetime(2021, 11, 18, 8, 53, 32, tzinfo=tzutc()),
+            updated=datetime.datetime(2021, 11, 18, 8, 59, 20, tzinfo=tzutc()),
+            content="test",
+            tags=[],
+            author="",
+            url="",
+            is_webclip=False,
+            resources=[expected_resource],
+        ),
+    ]
+    assert notes[0].resource_by_md5(big_binary_hash) == expected_resource
     assert notes[0].resource_by_md5("000") is None
 
 
