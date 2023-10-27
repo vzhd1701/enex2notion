@@ -40,22 +40,22 @@ def _process_note(note_raw: dict) -> EvernoteNote:
 
     note_raw["note-attributes"] = note_raw.get("note-attributes") or {}
 
-    note_tags = note_raw.get("tag", [])
+    note_tags = note_raw.get("tag") or []
     if isinstance(note_tags, str):
         note_tags = [note_tags]
 
     now = datetime.now()
-    date_created = isoparse(note_raw.get("created", now.isoformat()))
-    date_updated = isoparse(note_raw.get("updated", date_created.isoformat()))
+    date_created = isoparse(note_raw.get("created") or now.isoformat())
+    date_updated = isoparse(note_raw.get("updated") or date_created.isoformat())
 
     return EvernoteNote(
-        title=note_raw.get("title", "Untitled"),
+        title=note_raw.get("title") or "Untitled",
         created=date_created,
         updated=date_updated,
-        content=note_raw.get("content", ""),
+        content=note_raw.get("content") or "",
         tags=note_tags,
-        author=note_raw["note-attributes"].get("author", ""),
-        url=note_raw["note-attributes"].get("source-url", ""),
+        author=note_raw["note-attributes"].get("author") or "",
+        url=note_raw["note-attributes"].get("source-url") or "",
         is_webclip=_is_webclip(note_raw),
         resources=_parse_resources(note_raw),
     )
@@ -77,6 +77,9 @@ def _is_webclip(note_raw: dict):
         return True
     if "webclipper" in note_attrs.get("source-application", ""):
         return True
+
+    if not note_raw.get("content", ""):
+        return False
 
     return bool(
         re.search(
