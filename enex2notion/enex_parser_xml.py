@@ -27,6 +27,7 @@ def iter_process_xml_elements(
             recover=True,
             strip_cdata=False,
             resolve_entities=False,
+            huge_tree=True,
         )
 
         try:

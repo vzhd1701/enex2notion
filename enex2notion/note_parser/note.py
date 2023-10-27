@@ -48,13 +48,14 @@ def _parse_note_dom(note: EvernoteNote) -> Optional[Tag]:
 
 
 def _filter_yinxiang_markdown(note_dom: Tag) -> Tag:
-    last_block = note_dom.contents[-1]
+    if len(note_dom.contents) > 0:
+        last_block = note_dom.contents[-1]
 
-    if not isinstance(last_block, Tag):
-        return note_dom
+        if not isinstance(last_block, Tag):
+            return note_dom
 
-    if "display:none" in last_block.attrs.get("style", ""):
-        last_block.extract()
+        if "display:none" in last_block.attrs.get("style", ""):
+            last_block.extract()
 
     return note_dom
 
