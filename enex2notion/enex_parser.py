@@ -78,7 +78,7 @@ def _is_webclip(note_raw: dict):
     if "webclipper" in note_attrs.get("source-application", ""):
         return True
 
-    if not note_raw.get("content", ""):
+    if not note_raw.get("content"):
         return False
 
     return bool(
