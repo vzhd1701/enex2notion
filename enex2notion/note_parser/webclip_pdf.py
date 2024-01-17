@@ -3,7 +3,7 @@ import logging
 import re
 from base64 import b64encode
 
-import fitz
+import fitz_old as fitz
 import pdfkit
 from bs4 import Tag
 
